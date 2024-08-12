@@ -41,6 +41,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu_1.root",
   double RPCX[4], RPCY[4], RPCZ[4];
   double RPCX_smeared[4], RPCY_smeared[4];
   double costheta, costheta_smeared;
+  double RpcTrkE_last;
+  double RPCTrkPz_last;
   tree_out->Branch("RPCX", RPCX, "RPCX[4]/D");
   tree_out->Branch("RPCY", RPCY, "RPCY[4]/D");
   tree_out->Branch("RPCZ", RPCZ, "RPCZ[4]/D");
@@ -48,6 +50,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu_1.root",
   tree_out->Branch("RPCY_smeared", RPCY_smeared, "RPCY_smeared[4]/D");
   tree_out->Branch("costheta", &costheta);
   tree_out->Branch("costheta_smeared", &costheta_smeared);
+  tree_out->Branch("RpcTrkE_last", &RpcTrkE_last);
+  tree_out->Branch("RPCTrkPz_last", &RPCTrkPz_last);
 
   struct timeval start, end;
   gettimeofday(&start, NULL);
@@ -105,6 +109,13 @@ void analysis(const char *infile = "../../build/root_file/CryMu_1.root",
 
     if(costheta_smeared <= 0.8) ncos8++;
     tree_out->Fill();
+
+    // Compute RpcTrkE_last.
+     RpcTrkE_last = RpcTrkE[15];
+    
+    // Compute RpcTrkPz_last.
+    RPCTrkPz_last = RpcTrkPz[15];
+
   }
 
   gettimeofday(&end, NULL);

@@ -57,10 +57,15 @@ if(ENABLE_GPROF)
 endif()
 add_compile_options(-g -Wall -Wshadow -Wextra -Werror)
 
+# Manually specify the path to yaml-cpp
+set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
+set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-include_directories(${PROJECT_SOURCE_DIR}/include ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(SYSTEM ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
 file(GLOB sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 
@@ -68,16 +73,23 @@ file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(muPos muPos.cc ${sources} ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} yaml-cpp)
+target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
 # build muPos. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(scripts vis.mac movie.mac SingleEngMu.mac CryMu.mac CryMuGps.mac run_cry.sh run.sh)
-set(scripts ${scripts} layout_default.sh layout_pb.sh layout_pb_minor.sh)
+set(scripts vis.mac SingleEngMu.mac CryMu.mac CryMuGps.mac run_cry.sh run.sh)
+
+
+
 
 foreach(script ${scripts})
     configure_file(${PROJECT_SOURCE_DIR}/${script} ${PROJECT_BINARY_DIR}/${script} COPYONLY)
 endforeach()
+
+find_package(yaml-cpp REQUIRED)
+include_directories(${YAML_CPP_INCLUDE_DIR})
+target_link_libraries(muPos ${YAML_CPP_LIBRARIES})
+add_compile_options(-Wno-shadow)

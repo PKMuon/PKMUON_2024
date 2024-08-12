@@ -3,6 +3,9 @@
 /vis/modeling/trajectories/drawByParticleID-0/default/setTimeSliceInterval 0.005 ns
 /vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 5
 
+#Set the line width of the trajectories
+/vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 5
+
 #Point source particle
 #/control/verbose 2
 #/run/initialize
@@ -10,7 +13,7 @@
 #/gps/particle mu-
 #/gps/energy 1 GeV
 
-# /gps/pos/type Point
+#/gps/pos/type Point
 #/gps/position 0 0 -527  mm
 #/gps/direction 0.0  0.0  1.
 #/rlt/SetFileName root_file/CryMu.root
@@ -34,5 +37,9 @@
 #/vis/viewer/set/timeWindow/startTime 5 ns .1 ns
 #/vis/viewer/save
 
-#export as jpgs
+# View the movie
+/vis/viewer/interpolate
+# If satisfied, use command below to export jpgs. 
 #/vis/viewer/interpolate ! ! ! ! export
+
+# Then 'ffmpeg -framerate 30 -i G4OpenGL_viewer-0_%04d.jpg -c:v libx264 -pix_fmt yuv420p out.mp4'
