@@ -31,8 +31,8 @@ include(${ROOT_USE_FILE})
 #----------------------------------------------------------------------------
 # Find yaml-cpp (required package)
 #
-#set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
-#set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
+set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
+set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
 find_package(yaml-cpp REQUIRED)
 
 #----------------------------------------------------------------------------
