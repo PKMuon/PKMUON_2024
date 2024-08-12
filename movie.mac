@@ -1,6 +1,7 @@
 #Timeslicing for movie
 /vis/scene/add/trajectories rich
 /vis/modeling/trajectories/drawByParticleID-0/default/setTimeSliceInterval 0.005 ns
+/vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 5
 
 #Point source particle
 #/control/verbose 2
