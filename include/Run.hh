@@ -28,7 +28,7 @@ public:
   void AutoSave();
 
   void AddRpcTrkInfo(int i, double Px, double Py, double Pz, double E,
-      double Edep, double X, double Y, double Z);
+      double Edep, double X, double Y, double Z, int pdgCode);
   void AddRpcAllInfo(int i, int id, double Edep, double X, double Y, double Z);
 
 private:
@@ -56,6 +56,7 @@ private:
   Double_t RpcAllX[16];
   Double_t RpcAllY[16];
   Double_t RpcAllZ[16];
+  Int_t PDG;
 
   // Mantained by us.
   Bool_t RpcTrkComplete;

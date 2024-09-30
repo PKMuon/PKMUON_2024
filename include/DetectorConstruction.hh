@@ -35,7 +35,6 @@
 #include <vector>
 #include <functional>
 
-class GpsPrimaryGeneratorAction;
 class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -50,9 +49,6 @@ public:
 
   DetectorConstruction(int options = 0);
   ~DetectorConstruction();
-
-  // Call this method before Construct().
-  void SetGpsPrimaryGeneratorAction(GpsPrimaryGeneratorAction *a) { fGpsPrimaryGeneratorAction = a; }
 
   virtual G4VPhysicalVolume *Construct();
 
@@ -85,7 +81,6 @@ private:
   void DefineFields();
 
   const int fOptions;
-  GpsPrimaryGeneratorAction *fGpsPrimaryGeneratorAction;
   G4LogicalVolumeStore *fLogicalVolumeStore;
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;

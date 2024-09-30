@@ -4,7 +4,7 @@
 /CRY/input returnPions 1
 /CRY/input returnKaons 1
 /CRY/input date 7-1-2012
-/CRY/input latitude 39.987162718
-/CRY/input altitude 0  # [XXX]
-/CRY/input subboxLength 100  # unit: m
+/CRY/input latitude 90.0
+/CRY/input altitude 0
+/CRY/input subboxLength 100
 /CRY/update

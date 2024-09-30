@@ -28,8 +28,6 @@
 /// \brief Implementation of the ActionInitialization class
 
 #include "ActionInitialization.hh"
-
-#include "EventAction.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -37,7 +35,7 @@
 
 void ActionInitialization::Build() const
 {
-  PrimaryGeneratorAction *primary = new PrimaryGeneratorAction("");
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction("");
   SetUserAction(primary);
 
   RunAction* runAction = new RunAction;

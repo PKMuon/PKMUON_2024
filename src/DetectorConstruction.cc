@@ -28,7 +28,6 @@
 
 #include "DetectorConstruction.hh"
 
-#include "G4AutoDelete.hh"
 #include "G4RunManager.hh"
 #include "GeometryConfig.hh"
 #include "PrimaryGeneratorAction.hh"
@@ -60,13 +59,7 @@
 #include "G4UserLimits.hh"
 
 DetectorConstruction::DetectorConstruction(int o)
-    : fOptions(o),
-      fGpsPrimaryGeneratorAction(NULL),
-      fWorld(NULL),
-      fElectrodeVolume(NULL),
-      fScoringHalfX(0.0),
-      fScoringHalfY(0.0),
-      fScoringHalfZ(0.0)
+    : fOptions(o), fWorld(NULL), fElectrodeVolume(NULL), fScoringHalfX(0.0), fScoringHalfY(0.0), fScoringHalfZ(0.0)
 {
   if(fOptions) throw std::invalid_argument("options unimplemented");
   fLogicalVolumeStore = G4LogicalVolumeStore::GetInstance();
@@ -204,7 +197,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
   DefineVolumes();
   DefineFields();
   PrintVolumes(NULL);
-
   ((PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
   return fWorld;
 }

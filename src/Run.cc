@@ -5,7 +5,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <filesystem>
-#include <syscall.h>
+//#include <syscall.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -40,6 +40,7 @@ void Run::InitTree()
   _file = new TFile(rootName, "RECREATE");
   _tree = new TTree("T1", "Simple Out Tree");
 
+  _tree->Branch("PDG",            &PDG,            "PDG/I"             );
   _tree->Branch("RpcTrkPx",       &RpcTrkPx,       "RpcTrkPx[16]/D"    );
   _tree->Branch("RpcTrkPy",       &RpcTrkPy,       "RpcTrkPy[16]/D"    );
   _tree->Branch("RpcTrkPz",       &RpcTrkPz,       "RpcTrkPz[16]/D"    );
@@ -107,7 +108,7 @@ void Run::AutoSave()
 }
 
 void Run::AddRpcTrkInfo(int i, double Px, double Py, double Pz,
-    double E, double Edep, double X, double Y, double Z)
+    double E, double Edep, double X, double Y, double Z, int pdgCode)
 {
   if(i < 0 || i >= 16) return;
   RpcTrkPx    [i] += Px * Edep;
@@ -119,6 +120,7 @@ void Run::AddRpcTrkInfo(int i, double Px, double Py, double Pz,
   RpcTrkY     [i] += Y  * Edep;
   RpcTrkZ     [i] += Z  * Edep;
   RpcTrkStatus[i]  = true;
+  PDG              = pdgCode;
 }
 
 void Run::AddRpcAllInfo(int i, int id, double Edep, double X, double Y, double Z)
@@ -159,22 +161,12 @@ void Run::Clear()
     RpcAllN     [i] = 0;
   }
   RpcAllComplete = false;
+  PDG = 0;
 }
 
 uint64_t Run::GetThreadId()
 {
-#ifdef __APPLE__
-  uint64_t tid;
-  pthread_threadid_np(NULL, &tid);
-  return tid;
-#else  /* __APPLE__ */
-  int64_t tid = syscall(SYS_gettid);
-  if(tid < 0) {  // probably ENOSYS
-    perror("gettid");
-    exit(EXIT_FAILURE);
-  }
-  return tid;
-#endif  /* __APPLE__ */
+  return gettid();
 }
 
 uint64_t Run::GetSeed()

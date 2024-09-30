@@ -31,9 +31,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const char *inputfile)
   char buffer[1000];
 
   if(inputFile.fail()) {
-    if(*inputfile != 0) {  //....only complain if a filename was given
+    if(*inputfile != 0)  //....only complain if a filename was given
       G4cout << "PrimaryGeneratorAction: Failed to open CRY input file= " << inputfile << G4endl;
-    }
     InputState = -1;
   } else {
     std::string setupString("");
@@ -60,11 +59,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const char *inputfile)
   // Create the messenger file
   gunMessenger = new PrimaryGeneratorMessenger(this);
 
-  fNPrimary = -1;
-  fDetectorMinZ = NAN;
-  fDetectorHalfX = NAN;
-  fDetectorHalfY = NAN;
-  fHalfTimeWindow = 25 * ns;
+  fDetectorMinZ = 0;
+  fDetectorHalfX = 0;
+  fDetectorHalfY = 0;
 }
 
 //----------------------------------------------------------------------------//
@@ -136,42 +133,31 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   vect->clear();
   gen->genEvent(vect);
 
-  ////....debug output
-  //G4cout << "\nEvent=" << anEvent->GetEventID() << " "
-  //  << "CRY generated nparticles=" << vect->size()
-  //  << G4endl;
+  //....debug output
+  G4cout << "\nEvent=" << anEvent->GetEventID() << " " << "CRY generated nparticles=" << vect->size() << G4endl;
 
-  if(__builtin_expect(vect->empty(), false)) return;
-  G4double t0 = vect->at(G4UniformRand() * vect->size())->t() * s;
-  fNPrimary = 0;
   for(unsigned j = 0; j < vect->size(); j++) {
     particleName = CRYUtils::partName((*vect)[j]->id());
 
-    ////....debug output
-    //cout << scientific << setprecision(2) << "  " << setw(12) << left << particleName
-    //  << "\tC=" << (*vect)[j]->charge()
-    //  << "\tE[MeV]=" << (*vect)[j]->ke()
-    //  << "\tX[m]=" << showpos << G4ThreeVector((*vect)[j]->x(), (*vect)[j]->y(), (*vect)[j]->z())
-    //  << "\tA=" << G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), (*vect)[j]->w()) << noshowpos
-    //  << "\tT[s]=" << (*vect)[j]->t()
-    //  << endl;
+    //....debug output
+    cout << scientific << setprecision(2) << "  " << setw(12) << left << particleName << "\tC=" << (*vect)[j]->charge()
+         << "\tE[MeV]=" << (*vect)[j]->ke() << "\tX[m]=" << showpos
+         << G4ThreeVector((*vect)[j]->x(), (*vect)[j]->y(), (*vect)[j]->z())
+         << "\tA=" << G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), (*vect)[j]->w()) << noshowpos
+         << "\tT[s]=" << (*vect)[j]->t() << endl;
 
-    G4double t = (*vect)[j]->t() * s;
-    if(fabs(t - t0) <= fHalfTimeWindow) {
-      particleGun->SetParticleDefinition(particleTable->FindParticle((*vect)[j]->PDGid()));
-      particleGun->SetParticleEnergy((*vect)[j]->ke() * MeV);
-      //particleGun->SetParticlePosition(G4ThreeVector((*vect)[j]->x()*m, (*vect)[j]->y()*m, (*vect)[j]->z()*m +
-      //fDetectorMinZ));
-      particleGun->SetParticlePosition({
-          fDetectorHalfX * (2 * G4UniformRand() - 1),
-          fDetectorHalfY * (2 * G4UniformRand() - 1),
-          fDetectorMinZ,
-      });
-      particleGun->SetParticleMomentumDirection(G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), -(*vect)[j]->w()));
-      particleGun->SetParticleTime((*vect)[j]->t() * s);
-      particleGun->GeneratePrimaryVertex(anEvent);
-      ++fNPrimary;
-    }
+    particleGun->SetParticleDefinition(particleTable->FindParticle((*vect)[j]->PDGid()));
+    particleGun->SetParticleEnergy((*vect)[j]->ke() * MeV);
+    //particleGun->SetParticlePosition(G4ThreeVector((*vect)[j]->x()*m, (*vect)[j]->y()*m, (*vect)[j]->z()*m +
+    //fDetectorMinZ));
+    particleGun->SetParticlePosition({
+        fDetectorHalfX * (2 * G4UniformRand() - 1),
+        fDetectorHalfY * (2 * G4UniformRand() - 1),
+        fDetectorMinZ,
+    });
+    particleGun->SetParticleMomentumDirection(G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), -(*vect)[j]->w()));
+    particleGun->SetParticleTime((*vect)[j]->t() * s);
+    particleGun->GeneratePrimaryVertex(anEvent);
     delete(*vect)[j];
   }
 }

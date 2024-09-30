@@ -80,11 +80,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   Run::GetInstance()->AddRpcAllInfo(igem, id, energy/MeV, x/mm, y/mm, z/mm);
   if(id == 1) {
     // Get momentum of the track.
+    // Get the particle definition
+    const G4ParticleDefinition* particle = aStep->GetTrack()->GetDefinition();
+    G4String particleName = particle->GetParticleName();  // Get particle name
+    G4int pdgCode = particle->GetPDGEncoding();          // Get PDG code if needed
+    //G4cout << "Particle: " << particleName << " (PDG Code: " << pdgCode << ")" << G4endl;
     G4ThreeVector p = aStep->GetPreStepPoint()->GetMomentum();
     G4double px = p.x();
     G4double py = p.y();
     G4double pz = p.z();
 
-    Run::GetInstance()->AddRpcTrkInfo(igem, px/MeV, py/MeV, pz/MeV, totalenergy/MeV, energy/MeV, x/mm, y/mm, z/mm);
+    Run::GetInstance()->AddRpcTrkInfo(igem, px/MeV, py/MeV, pz/MeV, totalenergy/MeV, energy/MeV, x/mm, y/mm, z/mm, pdgCode);
   }
 }
