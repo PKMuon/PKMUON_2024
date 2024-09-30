@@ -31,9 +31,15 @@ include(${ROOT_USE_FILE})
 #----------------------------------------------------------------------------
 # Find yaml-cpp (required package)
 #
-#set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
-#set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
 find_package(yaml-cpp REQUIRED)
+
+#----------------------------------------------------------------------------
+# Build and use CRY (required package)
+#
+add_subdirectory(cry)
+include_directories(cry/src)
+link_directories(cry/lib)
+add_compile_definitions(CRY_DATA=\"${CMAKE_SOURCE_DIR}/cry/data\")
 
 #----------------------------------------------------------------------------
 # General compilation and linkage options
@@ -76,7 +82,7 @@ file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(muPos muPos.cc ${sources} ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES})
+target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} CRY)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

@@ -1,0 +1,3 @@
+[submodule "cry"]
+	path = cry
+	url = git@github.com:PKMuon/cry

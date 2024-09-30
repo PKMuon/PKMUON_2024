@@ -28,14 +28,16 @@
 /// \brief Implementation of the ActionInitialization class
 
 #include "ActionInitialization.hh"
-#include "GpsPrimaryGeneratorAction.hh"
+
+#include "EventAction.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "SteppingAction.hh"
 
 void ActionInitialization::Build() const
 {
-  GpsPrimaryGeneratorAction* primary = new GpsPrimaryGeneratorAction;
+  PrimaryGeneratorAction *primary = new PrimaryGeneratorAction("");
   SetUserAction(primary);
 
   RunAction* runAction = new RunAction;
