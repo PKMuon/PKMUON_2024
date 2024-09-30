@@ -27,14 +27,14 @@
 #include "ActionInitialization.hh"
 
 #include "EventAction.hh"
-#include "GpsPrimaryGeneratorAction.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 #include "TrackingAction.hh"
 
 void ActionInitialization::Build() const
 {
-  GpsPrimaryGeneratorAction *primary = new GpsPrimaryGeneratorAction;
+  PrimaryGeneratorAction *primary = new PrimaryGeneratorAction("");
   SetUserAction(primary);
 
   RunAction *runAction = new RunAction;
