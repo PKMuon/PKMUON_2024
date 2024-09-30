@@ -69,6 +69,7 @@ void Run::InitTree()
   fTree = new TTree("tree", "tree");
   //fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
+  fTree->Branch("Scatters", new TClonesArray("Scatter"));
 
   // The params tree is only accessed here.
   TTree *params = new TTree("params", "params");
@@ -76,6 +77,12 @@ void Run::InitTree()
   TClonesArray Params("Params");
   params->Branch("Params", &Params);
   *((::Params *)Params.ConstructedAt(0)) = *fDetectorConstruction;
+  fCellX = ((::Params *)Params.UncheckedAt(0))->CellX;
+  fCellY = ((::Params *)Params.UncheckedAt(0))->CellY;
+  fNCellX = ((::Params *)Params.UncheckedAt(0))->HalfNCellX * 2;
+  fNCellY = ((::Params *)Params.UncheckedAt(0))->HalfNCellY * 2;
+  fScoringOffsetX = -((::Params *)Params.UncheckedAt(0))->HalfNCellX * fCellX;
+  fScoringOffsetY = -((::Params *)Params.UncheckedAt(0))->HalfNCellY * fCellY;
 
   TClonesArray Processes("Process");
   params->Branch("Processes", &Processes);
@@ -95,6 +102,7 @@ void Run::SaveTree()
   fTree->Write(NULL, TObject::kOverwrite);
   //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   fFile->Close();
   fTree = NULL;
   fFile = NULL;
@@ -104,6 +112,7 @@ void Run::FillAndReset()
 {
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
 
   //// Sort the tracks by ID.
   //std::vector<Track *> tracks;
@@ -114,7 +123,7 @@ void Run::FillAndReset()
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
+    for(auto &p : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = p; }
     fTree->Fill();
     Edeps->Clear();
   }
@@ -122,6 +131,7 @@ void Run::FillAndReset()
 
   //Tracks->Clear();
   fEdep.clear();
+  Scatters->Clear();
 }
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
@@ -139,6 +149,9 @@ void Run::AddStep(const G4Step *step)
   if(edep == 0) return;
 
   Int_t zid = ub - fScoringMaxZs.begin();
+  Int_t xid = (x - fScoringOffsetX) / fCellX;
+  Int_t yid = (y - fScoringOffsetY) / fCellY;
+  Int_t id = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
   if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
@@ -146,7 +159,7 @@ void Run::AddStep(const G4Step *step)
     if(it != fProcessMap.end()) process = it->second;
   }
   fStatus[zid] = true;
-  fEdep[{ zid, pid, process }].Add(edep, x, y);
+  fEdep[{ id, pid, process }] += edep;
 }
 
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
@@ -156,6 +169,12 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
   //  << G4endl;
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+}
+
+void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4DynamicParticle *ln)
+{
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
+  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { muon, lp, ln };
 }
 
 void Run::BuildProcessMap()

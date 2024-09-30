@@ -73,17 +73,21 @@ public:
   Double_t ProtonThreshold;
 
   std::vector<double> LayerZ;
+  Double_t CellX;
+  Double_t CellY;
+  Int_t HalfNCellX;
+  Int_t HalfNCellY;
 
   ClassDef(Params, 1);
 };
 
 class Edep : public TObject {
 public:
-  Edep &operator=(std::pair<const EdepKey, EdepValue> &p)
+  Edep &operator=(std::pair<const EdepKey, Double_t> &p)
   {
     auto &[key, value] = p;
     std::tie(Id, Pid, Process) = key.Tuple();
-    std::tie(Value, X, Y) = value.Finish().Tuple();
+    Value = value;
     return *this;
   }
 
@@ -91,10 +95,26 @@ public:
   Int_t Pid;
   Int_t Process;
   Double_t Value;
-  Double_t X;
-  Double_t Y;
 
   ClassDef(Edep, 1);
+};
+
+class Scatter : public TObject {
+public:
+  Scatter &operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t);
+
+  Int_t Id;
+  Int_t Pid[3];
+  Double_t Px[3];
+  Double_t Py[3];
+  Double_t Pz[3];
+  Double_t E[3];
+  Double_t X;
+  Double_t Y;
+  Double_t Z;
+  Double_t T;
+
+  ClassDef(Scatter, 1);
 };
 
 class Process : public TObject {

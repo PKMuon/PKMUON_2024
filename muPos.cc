@@ -34,6 +34,7 @@
 #include "G4UIExecutive.hh"
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
+#include "MupTargetEnToLLPhysics.hh"
 #include "Run.hh"
 
 int main(int argc, char **argv)
@@ -57,6 +58,7 @@ int main(int argc, char **argv)
   G4VModularPhysicsList *physicsList = new FTFP_BERT;
   physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
+  physicsList->RegisterPhysics(MupTargetEnToLLPhysics::GetInstance());
   runManager->SetUserInitialization(physicsList);
   runManager->SetUserInitialization(new ActionInitialization);
 
