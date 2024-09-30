@@ -24,34 +24,19 @@
 // ********************************************************************
 //
 
-#include "GpsPrimaryGeneratorAction.hh"
+#ifndef TrackingAction_h
+#define TrackingAction_h 1
 
-#include "DetectorConstruction.hh"
-#include "G4GeneralParticleSource.hh"
-#include "G4RunManager.hh"
-#include "G4SPSPosDistribution.hh"
+#include "G4UserTrackingAction.hh"
+#include "globals.hh"
 
-GpsPrimaryGeneratorAction::GpsPrimaryGeneratorAction()
-    : G4VUserPrimaryGeneratorAction(), fGeneralParticleSource(nullptr)
-{
-  fGeneralParticleSource = new G4GeneralParticleSource();
-  auto c = dynamic_cast<const DetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-  if(c) { ((DetectorConstruction *)c)->SetGpsPrimaryGeneratorAction(this); }
-}
+class TrackingAction : public G4UserTrackingAction {
+public:
+  TrackingAction();
+  ~TrackingAction() override;
 
-GpsPrimaryGeneratorAction::~GpsPrimaryGeneratorAction() { delete fGeneralParticleSource; }
+  void PreUserTrackingAction(const G4Track *) override;
+  void PostUserTrackingAction(const G4Track *) override;
+};
 
-void GpsPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
-{
-  fGeneralParticleSource->GeneratePrimaryVertex(anEvent);
-}
-
-void GpsPrimaryGeneratorAction::Initialize(DetectorConstruction *detectorConstruction)
-{
-  auto posDist = fGeneralParticleSource->GetCurrentSource()->GetPosDist();
-  posDist->SetPosDisType("Plane");
-  posDist->SetPosDisShape("Square");
-  posDist->SetCentreCoords({ 0, 0, detectorConstruction->GetDetectorMinZ() });
-  posDist->SetHalfX(detectorConstruction->GetDetectorHalfX());
-  posDist->SetHalfY(detectorConstruction->GetDetectorHalfY());
-}
+#endif

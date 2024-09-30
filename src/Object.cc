@@ -24,12 +24,51 @@
 // ********************************************************************
 //
 
-#include "SteppingAction.hh"
+#include "Object.hh"
 
-#include "Run.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MaterialCutsCouple.hh"
+#include "G4ProductionCuts.hh"
+#include "G4RToEConvForElectron.hh"
+#include "G4RToEConvForGamma.hh"
+#include "G4RToEConvForPositron.hh"
+#include "G4RToEConvForProton.hh"
+#include "G4Track.hh"
 
-SteppingAction::SteppingAction() : fScoringHalfX(0), fScoringHalfY(0), fScoringZ(0) { }
+Track &Track::operator=(const G4Track &track)
+{
+  auto position = track.GetPosition();
+  auto momentum = track.GetMomentum();
 
-SteppingAction::~SteppingAction() { }
+  Id = track.GetTrackID();
+  Mother = track.GetParentID();
+  Pid = track.GetParticleDefinition()->GetPDGEncoding();
+  Px = momentum.getX();
+  Py = momentum.getY();
+  Pz = momentum.getZ();
+  E = track.GetTotalEnergy();
+  X = position.getX();
+  Y = position.getY();
+  Z = position.getZ();
+  T = track.GetGlobalTime();
 
-void SteppingAction::UserSteppingAction(const G4Step *step) { Run::GetInstance()->AddStep(step); }
+  return *this;
+}
+
+Cuts &Cuts::operator=(const G4LogicalVolume &volume)
+{
+  G4Material *material = volume.GetMaterial();
+  G4ProductionCuts *cuts = volume.GetMaterialCutsCouple()->GetProductionCuts();
+
+  GammaCut = cuts->GetProductionCut("gamma");
+  ElectronCut = cuts->GetProductionCut("e-");
+  PositronCut = cuts->GetProductionCut("e+");
+  ProtonCut = cuts->GetProductionCut("proton");
+
+  GammaThreshold = G4RToEConvForGamma().Convert(GammaCut, material);
+  ElectronThreshold = G4RToEConvForElectron().Convert(ElectronCut, material);
+  PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
+  ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
+
+  return *this;
+}

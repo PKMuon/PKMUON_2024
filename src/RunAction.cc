@@ -32,6 +32,10 @@ RunAction::RunAction() { Run::GetInstance(); }
 
 RunAction::~RunAction() { }
 
-void RunAction::BeginOfRunAction(const G4Run *) { Run::GetInstance()->InitTree(); }
+void RunAction::BeginOfRunAction(const G4Run *)
+{
+  Run::GetInstance()->InitGeom();
+  Run::GetInstance()->InitTree();
+}
 
 void RunAction::EndOfRunAction(const G4Run *) { Run::GetInstance()->SaveTree(); }

@@ -27,8 +27,9 @@
 #include "DetectorConstruction.hh"
 
 #include "G4AutoDelete.hh"
+#include "G4RunManager.hh"
 #include "GeometryConfig.hh"
-#include "GpsPrimaryGeneratorAction.hh"
+#include "PrimaryGeneratorAction.hh"
 
 // geometry
 #include "G4Box.hh"
@@ -58,11 +59,11 @@
 
 DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
-      fGpsPrimaryGeneratorAction(NULL),
       fWorld(NULL),
       fElectrodeVolume(NULL),
-      fScoringHalfX(0.0),
-      fScoringHalfY(0.0),
+      fElectrodeHalfX(0.0),
+      fElectrodeHalfY(0.0),
+      fElectrodeHalfZ(0.0),
       fScoringHalfZ(0.0)
 {
   if(fOptions) { throw std::invalid_argument("options unimplemented"); }
@@ -110,16 +111,20 @@ void DetectorConstruction::DefineVolumes()
 
   fWorld = new G4PVPlacement(0, { 0, 0, 0 }, fLogicalVolumeStore->GetVolume("world"), "world", 0, false, 0, true);
   fElectrodeVolume = fLogicalVolumeStore->GetVolume("rpc_electrode");
-
-  fScoringHalfX = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetXHalfLength();
-  fScoringHalfY = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetYHalfLength();
-  fScoringHalfZ = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetZHalfLength();
-  fScoringZs.assign(0, 0.0);
+  fElectrodeHalfX = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetXHalfLength();
+  fElectrodeHalfY = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetYHalfLength();
+  fElectrodeHalfZ = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetZHalfLength();
+  fElectrodeZs.assign(0, 0.0);
   WalkVolume(fWorld, [this](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
     if(volume->GetLogicalVolume() != fElectrodeVolume) { return; }
-    fScoringZs.push_back(r.z());
+    fElectrodeZs.push_back(r.z());
   });
-  sort(fScoringZs.begin(), fScoringZs.end());
+  sort(fElectrodeZs.begin(), fElectrodeZs.end());
+  fScoringHalfZ = (fElectrodeZs.at(1) - fElectrodeZs.at(0)) * 0.5 - fElectrodeHalfZ;
+  fScoringZs.resize(fElectrodeZs.size() / 2);
+  for(size_t i = 0; i < fScoringZs.size(); ++i) {
+    fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
+  }
 }
 
 void DetectorConstruction::DefineFields()
@@ -135,10 +140,8 @@ void DetectorConstruction::DefineFields()
       std::unique(rpc_electrode_pairs.begin(), rpc_electrode_pairs.end()), rpc_electrode_pairs.end());
 
   // Determine electric field volume.
-  G4double x, y, z;
-  x = 2 * GetScoringHalfX(), y = 2 * GetScoringHalfY();
-  z = fScoringZs.at(1) - fScoringZs.at(0) - 2 * fScoringHalfZ;
-  auto electric = new G4Box("electric", x / 2, y / 2, z / 2);
+  G4double z = fScoringHalfZ * 2;
+  auto electric = new G4Box("electric", fElectrodeHalfX, fElectrodeHalfY, fScoringHalfZ);
 
   // Turn on electric field.
   G4double step = z * 0.01;
@@ -206,7 +209,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
   DefineVolumes();
   DefineFields();
   PrintVolumes(NULL);
-  if(fGpsPrimaryGeneratorAction) { fGpsPrimaryGeneratorAction->Initialize(this); }
+
+  ((PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
   return fWorld;
 }
 

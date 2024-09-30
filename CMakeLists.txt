@@ -36,6 +36,14 @@ include(${ROOT_USE_FILE})
 find_package(yaml-cpp REQUIRED)
 
 #----------------------------------------------------------------------------
+# Build and use CRY (required package)
+#
+add_subdirectory(cry)
+include_directories(cry/src)
+link_directories(cry/lib)
+add_compile_definitions(CRY_DATA=\"${CMAKE_SOURCE_DIR}/cry/data\")
+
+#----------------------------------------------------------------------------
 # General compilation and linkage options
 #
 option(ENABLE_SANITIZER "compile and link with sanitizing flags" OFF)
@@ -65,6 +73,14 @@ endif()
 add_compile_options(-g -Wall -Wshadow -Wextra -Werror)
 
 #----------------------------------------------------------------------------
+# Process customized TObject derivates
+#
+add_custom_command(OUTPUT Object.cxx Object_rdict.pcm COMMAND rootcint -f
+Object.cxx ${PROJECT_SOURCE_DIR}/include/Object.hh ${PROJECT_SOURCE_DIR}/src/ObjectLinkDef.h
+DEPENDS include/Object.hh src/ObjectLinkDef.h
+IMPLICIT_DEPENDS include/Object.hh)
+
+#----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -75,8 +91,8 @@ file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(muPos muPos.cc ${sources} ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES})
+add_executable(muPos muPos.cc ${sources} ${PROJECT_BINARY_DIR}/Object.cxx ${headers})
+target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} CRY)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

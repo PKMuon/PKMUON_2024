@@ -34,7 +34,6 @@
 #include "G4ThreeVector.hh"
 #include "G4VUserDetectorConstruction.hh"
 
-class GpsPrimaryGeneratorAction;
 class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -49,16 +48,13 @@ public:
   DetectorConstruction(int options = 0);
   ~DetectorConstruction() override;
 
-  // Call this method before Construct().
-  void SetGpsPrimaryGeneratorAction(GpsPrimaryGeneratorAction *a) { fGpsPrimaryGeneratorAction = a; }
-
   G4VPhysicalVolume *Construct() override;
 
   // Call these methods after Construct().
-  G4double GetScoringHalfX() const { return fScoringHalfX; }
-  G4double GetScoringHalfY() const { return fScoringHalfY; }
+  G4double GetScoringHalfX() const { return fElectrodeHalfX; }
+  G4double GetScoringHalfY() const { return fElectrodeHalfY; }
   G4double GetScoringHalfZ() const { return fScoringHalfZ; }
-  std::vector<G4double> GetScoringZs() const { return fScoringZs; }
+  const std::vector<G4double> &GetScoringZs() const { return fScoringZs; }
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
@@ -83,12 +79,12 @@ private:
   void DefineFields();
 
   const int fOptions;
-  GpsPrimaryGeneratorAction *fGpsPrimaryGeneratorAction;
   G4LogicalVolumeStore *fLogicalVolumeStore;
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;
   G4LogicalVolume *fElectrodeVolume;
-  G4double fScoringHalfX, fScoringHalfY, fScoringHalfZ;
+  G4double fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
+  std::vector<G4double> fElectrodeZs;
   std::vector<G4double> fScoringZs;
 };
 

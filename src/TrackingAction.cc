@@ -24,12 +24,17 @@
 // ********************************************************************
 //
 
-#include "SteppingAction.hh"
+#include "TrackingAction.hh"
 
 #include "Run.hh"
 
-SteppingAction::SteppingAction() : fScoringHalfX(0), fScoringHalfY(0), fScoringZ(0) { }
+TrackingAction::TrackingAction() { }
 
-SteppingAction::~SteppingAction() { }
+TrackingAction::~TrackingAction() { }
 
-void SteppingAction::UserSteppingAction(const G4Step *step) { Run::GetInstance()->AddStep(step); }
+void TrackingAction::PreUserTrackingAction([[maybe_unused]] const G4Track *track)
+{
+  Run::GetInstance()->AddTrack(track);
+}
+
+void TrackingAction::PostUserTrackingAction([[maybe_unused]] const G4Track *track) { }

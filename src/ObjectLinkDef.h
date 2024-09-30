@@ -24,12 +24,14 @@
 // ********************************************************************
 //
 
-#include "SteppingAction.hh"
+#ifdef __CINT__
 
-#include "Run.hh"
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
 
-SteppingAction::SteppingAction() : fScoringHalfX(0), fScoringHalfY(0), fScoringZ(0) { }
+#pragma link C++ class Track + ;
+#pragma link C++ class Cuts + ;
+#pragma link C++ class Edep + ;
 
-SteppingAction::~SteppingAction() { }
-
-void SteppingAction::UserSteppingAction(const G4Step *step) { Run::GetInstance()->AddStep(step); }
+#endif

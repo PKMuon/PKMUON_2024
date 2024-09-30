@@ -3,17 +3,16 @@
 # ----------------------------------------------
 
 /control/verbose 2
-/gps/verbose 0
 /material/verbose 2
 /run/verbose 2
 /event/verbose 0
 /tracking/verbose 0
 
 # ----------------------------------------------
-# General Particle Source (GPS) Settings
+# CRY Settings
 # ----------------------------------------------
 
-/control/execute CryMuGps.mac
+/control/execute Cry.mac
 
 # ----------------------------------------------
 # run
