@@ -19,6 +19,7 @@ class RunMessenger;
 class DetectorConstruction;
 class G4Step;
 class G4Track;
+class G4DynamicParticle;
 
 class Run {
 public:
@@ -35,6 +36,7 @@ public:
   void AutoSave();
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
+  void AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4DynamicParticle *ln);
 
 private:
   Run();
@@ -46,10 +48,12 @@ private:
   TTree *fTree;
   TFile *fFile;
   G4double fScoringHalfX, fScoringHalfY, fScoringZ;
+  G4double fCellX, fCellY;
+  G4int fNCellX, fNCellY;
   G4double fScoringOffsetX, fScoringOffsetY;
   std::vector<G4double> fScoringMaxZs;
   std::map<std::string, int> fProcessMap;
-  std::map<EdepKey, EdepValue> fEdep;
+  std::map<EdepKey, Double_t> fEdep;
   std::vector<bool> fStatus;
 
   void BuildProcessMap();

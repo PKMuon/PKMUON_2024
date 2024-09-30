@@ -9,6 +9,7 @@
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
 #include "GpsPrimaryGeneratorAction.hh"
+#include "MupTargetEnToLLPhysics.hh"
 #include "Run.hh"
 
 class RunMessenger::Driver {
@@ -21,6 +22,7 @@ private:
   GpsPrimaryGeneratorAction *fGpsPrimaryGeneratorAction;
 
   G4UIdirectory *fScatterDir;
+  G4UIcommand *fSetMupTargetEnToLLCmd;
   G4UIcmdWithADoubleAndUnit *fSetTotalEnergyCmd;
 };
 
@@ -60,6 +62,16 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
   fGpsPrimaryGeneratorAction =
       (GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
 
+  fScatterDir = new G4UIdirectory("/scatter/");
+  fScatterDir->SetGuidance("Control scattering processes.");
+
+  fSetMupTargetEnToLLCmd = new G4UIcommand("/scatter/mupTargetEnToLL", messenger);
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("pid", 'i', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("points_file", 's', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("xssf", 'd', false));
+  fSetMupTargetEnToLLCmd->SetGuidance("Configure MupTargetEnToLL process.");
+  fSetMupTargetEnToLLCmd->AvailableForStates(G4State_Idle);
+
   fSetTotalEnergyCmd = new G4UIcmdWithADoubleAndUnit("/gps/totalEnergy", messenger);
   fSetTotalEnergyCmd->SetGuidance("Set total energy.");
   fSetTotalEnergyCmd->SetParameterName("TotalEnergy", false);
@@ -70,10 +82,25 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
 RunMessenger::Driver::~Driver()
 {
   delete fSetTotalEnergyCmd;
+  delete fSetMupTargetEnToLLCmd;
   delete fScatterDir;
 }
 
-void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, [[maybe_unused]] G4String val)
+void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, G4String val)
 {
-  if(cmd == fSetTotalEnergyCmd) { throw std::runtime_error("setting total energy not compatible with CRY"); }
+  if(cmd == fSetTotalEnergyCmd) {
+    fGpsPrimaryGeneratorAction->SetTotalEnergy(fSetTotalEnergyCmd->GetNewDoubleValue(val));
+  } else if(cmd == fSetMupTargetEnToLLCmd) {
+    G4Tokenizer next(val);
+    G4String pid_s = next();
+    G4String points_file = next();
+    G4String xssf_s = next();
+    G4String trailing = next();
+    if(pid_s.empty() || points_file.empty() || xssf_s.empty() || !trailing.empty()) {
+      throw std::runtime_error("expect 3 arguments");
+    }
+    G4int pid = stoi(pid_s);
+    G4double xssf = stod(xssf_s);
+    MupTargetEnToLLPhysics::GetInstance()->Configure(pid, points_file, xssf);
+  }
 }

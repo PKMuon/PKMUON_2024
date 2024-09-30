@@ -75,5 +75,30 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
   LayerZ = detectorConstruction.GetScoringZs();
+  CellX = detectorConstruction.GetCellX();
+  CellY = detectorConstruction.GetCellY();
+  HalfNCellX = round(detectorConstruction.GetScoringHalfX() / detectorConstruction.GetCellX());
+  HalfNCellY = round(detectorConstruction.GetScoringHalfY() / detectorConstruction.GetCellY());
+  return *this;
+}
+
+Scatter &Scatter::operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t)
+{
+  auto [muon, lp, ln] = t;
+  Id = muon->GetTrackID();
+  const G4DynamicParticle *particles[3] = { muon->GetDynamicParticle(), lp, ln };
+  for(size_t i = 0; i < 3; ++i) {
+    Pid[i] = particles[i]->GetParticleDefinition()->GetPDGEncoding();
+    auto momentum = particles[i]->GetMomentum();
+    Px[i] = momentum.getX();
+    Py[i] = momentum.getY();
+    Pz[i] = momentum.getZ();
+    E[i] = particles[i]->GetTotalEnergy();
+  }
+  auto position = muon->GetPosition();
+  X = position.getX();
+  Y = position.getY();
+  Z = position.getZ();
+  T = muon->GetGlobalTime();
   return *this;
 }

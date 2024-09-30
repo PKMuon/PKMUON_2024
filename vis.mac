@@ -8,8 +8,22 @@
 /run/verbose 2
 #
 /run/initialize
-/control/execute CryMuGps.mac
-#
+
+# ----------------------------------------------
+# CLFV Settings
+# ----------------------------------------------
+
+/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 100000.0
+#/run/setCut 0.7 mm
+
+# ----------------------------------------------
+# General Particle Source (GPS) Settings
+# ----------------------------------------------
+
+/gps/particle mu+
+/gps/direction 0.0 0.0 1.0
+/gps/totalEnergy 50 GeV
+
 # Use this open statement to create an OpenGL view:
 /vis/open OGL 600x600-0+0
 #
@@ -68,15 +82,20 @@
 # Many other options are available with /vis/modeling and /vis/filtering.
 # For example, to select colour by particle ID:
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set e- red
-/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
-/vis/modeling/trajectories/drawByParticleID-0/set nu_e white
-/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_e white
-/vis/modeling/trajectories/drawByParticleID-0/set geantino white
-/vis/modeling/trajectories/drawByParticleID-0/set gamma green
-/vis/modeling/trajectories/drawByParticleID-0/set alpha yellow
+/vis/modeling/trajectories/drawByParticleID-0/set e- blue
+/vis/modeling/trajectories/drawByParticleID-0/set mu- green
+/vis/modeling/trajectories/drawByParticleID-0/set e+ yellow
+/vis/modeling/trajectories/drawByParticleID-0/set mu+ red
+/vis/modeling/trajectories/drawByParticleID-0/set nu_e grey
+/vis/modeling/trajectories/drawByParticleID-0/set nu_mu grey
+/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_e grey
+/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_mu grey
+/vis/modeling/trajectories/drawByParticleID-0/set geantino grey
+/vis/modeling/trajectories/drawByParticleID-0/set gamma grey
+/vis/modeling/trajectories/drawByParticleID-0/set alpha grey
 /vis/modeling/trajectories/drawByParticleID-0/set GenericIon grey
-/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton green
+/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton grey
+/vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 3
 /vis/ogl/set/displayListLimit 10000000
 #
 # To superimpose all of the events from a given run:

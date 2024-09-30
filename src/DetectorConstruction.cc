@@ -64,7 +64,9 @@ DetectorConstruction::DetectorConstruction(int o)
       fElectrodeHalfY(0.0),
       fElectrodeHalfZ(0.0),
       fScoringHalfZ(0.0),
-      fScoringGasVolume(NULL)
+      fScoringGasVolume(NULL),
+      fCellX(0.0),
+      fCellY(0.0)
 {
   if(fOptions) { throw std::invalid_argument("options unimplemented"); }
   fLogicalVolumeStore = G4LogicalVolumeStore::GetInstance();
@@ -127,6 +129,9 @@ void DetectorConstruction::DefineVolumes()
     fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
   }
   fScoringGasVolume = fLogicalVolumeStore->GetVolume("rpc_gas");
+  G4LogicalVolume *rpc_cell = fLogicalVolumeStore->GetVolume("rpc_cell");
+  fCellX = dynamic_cast<G4Box *>(rpc_cell->GetSolid())->GetXHalfLength() * 2;
+  fCellY = dynamic_cast<G4Box *>(rpc_cell->GetSolid())->GetYHalfLength() * 2;
 }
 
 void DetectorConstruction::DefineFields()

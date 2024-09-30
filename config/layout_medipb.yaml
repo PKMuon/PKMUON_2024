@@ -1,0 +1,30 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+target:
+  color: gray
+  solid: box
+  x: 200 mm
+  y: 200 mm
+  z: 80 mm
+  material: G4_Pb
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &rpc_x 430 mm
+  y: &rpc_y 430 mm
+  z: 450 mm
+  material: &world_material rpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Pb
+  - rpc_air
+external:
+  - rpc

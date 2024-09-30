@@ -59,26 +59,4 @@ struct hash<EdepKey> {
 
 }  // namespace std
 
-struct EdepValue {
-public:
-  Double_t Value;
-  Double_t X;
-  Double_t Y;
-
-  auto Tuple() && { return std::tie(Value, X, Y); }
-  auto Tuple() const && { return std::tie(Value, X, Y); }
-
-  EdepValue &Add(Double_t v, Double_t x, Double_t y)
-  {
-    Value += v, X += v * x, Y += v * y;
-    return *this;
-  }
-
-  EdepValue &&Finish()
-  {
-    if(Value > 0) X /= Value, Y /= Value;
-    return std::move(*this);
-  }
-};
-
 #endif
