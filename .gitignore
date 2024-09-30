@@ -1,0 +1,14 @@
+.DS_Store
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile
+CryMu_*.mac
+SingleEngMu_*.mac
+*.root
+build/
+*.swp
+.vscode
+*.pdf
+*.log
+lxlogin_run.txt

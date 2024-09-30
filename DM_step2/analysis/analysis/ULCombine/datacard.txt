@@ -1,0 +1,17 @@
+imax 1
+jmax 1
+kmax *
+---------------
+shapes h_bkg * /home/pku/yuxd/bond/PKMUON_G4sim/DM_step2/analysis/analysis/ULCombine/Hist.root h_BKG
+shapes h_sig * /home/pku/yuxd/bond/PKMUON_G4sim/DM_step2/analysis/analysis/ULCombine/Hist.root h_SIG
+shapes data_obs * /home/pku/yuxd/bond/PKMUON_G4sim/DM_step2/analysis/analysis/ULCombine/Hist.root h_BKG
+---------------
+bin bin1
+observation -1
+------------------------------
+bin         bin1        bin1
+process     h_sig       h_bkg
+process     0           1
+rate        -1          -1
+------------------------------
+bin1 autoMCStats 10 0 1

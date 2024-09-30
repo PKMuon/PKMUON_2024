@@ -1,0 +1,20 @@
+# Schema
+name:  # unique LV name to create
+  alternative:  # optional, disabling override
+  hidden:  # optional, disabling visualization, excluding other visualization attributes
+  color:  # optional
+  alpha:  # optional, significant with color specified
+  line_style:  # optional, unsigned integer
+  line_width:  # optional
+  solid: box  # G4Box
+  solid: bottom_up  # G4Box
+  solid: left_right  # G4Box
+  solid: rotation  # G4Box
+  components:  # significant when solid=bottom_up|left_right|rotation
+  duplicate:  # significant when solid=bottom_up|left_right, optional
+  padding:  # significant when solid=bottom_up|left_right, optional, excluding x, y, z
+  x:  # optional
+  y:  # optional
+  z:  # optional
+  offset:  # optional, significant for bottom_up and left_right
+  material:  # optional for rotation

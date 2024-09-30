@@ -1,0 +1,21 @@
+Universe   = vanilla
+Executable = run_simple.sh
+STRTEST = 'A=1 B=3'
+MYOUTFILE = '/home/pku/yuxd/bond/PKMUON_G4sim/DM_step2/analysis/analysis/out/job_$(Process).out'
+#Arguments  = "4 10 $(STRTEST)"
+Arguments = "$(MYOUTFILE) $(STRTEST)"
+
+Log        = log/job.log_$(Cluster)
+Output     = log/job.out_$(Cluster)-$(Process)
+Error      = log/job.err_$(Cluster)-$(Process)
+
+#requirements = (OpSysAndVer =?= "CentOS7")
+#request_cpus = 1
+#request_memory = 1024
+
+#requirements = (OpSysAndVer =?= "SL7") # note that system setting no longer works as we do not have SL7 in condor now
+#Requirements = (machine == "node01.phy.pku.edu.cn")
+#+AcctGroup = "pku"
+#+AcctGroupUser = "licq"
+#Queue 10
+Queue 1

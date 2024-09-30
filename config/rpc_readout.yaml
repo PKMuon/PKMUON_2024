@@ -1,0 +1,104 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+rpc_xy_readout_plate:
+  solid: box
+  x: &rpc_readout_plate_x 300 mm
+  y: &rpc_readout_plate_y 325 mm
+  z: &rpc_xy_readout_plate_z 1.5 mm
+  material: rpc_fr4
+
+rpc_xy_readout_plate_box:  # This centers the plate.
+  solid: bottom_up
+  components: [rpc_xy_readout_plate]
+  x: *rpc_readout_plate_x
+  y: &rpc_readout_plate_box_y 350 mm
+  z: *rpc_xy_readout_plate_z
+  offset: [0, -12.5 mm, 0]
+  material: rpc_gas
+
+rpc_t_readout_plate:
+  solid: box
+  x: *rpc_readout_plate_x
+  y: *rpc_readout_plate_y
+  z: &rpc_t_readout_plate_z 1.565 mm
+  material: rpc_fr4
+
+rpc_t_readout_plate_box:  # This centers the plate.
+  solid: bottom_up
+  components: [rpc_t_readout_plate]
+  x: *rpc_readout_plate_x
+  y: *rpc_readout_plate_box_y
+  z: *rpc_t_readout_plate_z
+  offset: [0, -12.5 mm, 0]
+  material: rpc_gas
+
+rpc_readout_bar:
+  solid: box
+  x: 2.0 mm
+  y: &rpc_readout_bar_y 200 mm
+  z: &rpc_readout_bar_z 0.1 mm
+  material: rpc_readout_bar
+
+rpc_readout_gas:
+  solid: box
+  x: 0.27 mm
+  y: *rpc_readout_bar_y
+  z: *rpc_readout_bar_z
+  material: rpc_gas
+
+rpc_readout_bars:
+  solid: left_right
+  components:
+    - rpc_readout_gas
+    - rpc_readout_bar
+    - rpc_readout_gas
+  duplicate: 80
+  material: rpc_gas
+
+rpc_x_readout_bars:
+  solid: rotation
+  components: [rpc_readout_bars]
+
+rpc_y_readout_bars:
+  solid: rotation
+  components: [rpc_readout_bars, [z, 90 deg]]
+
+rpc_x_readout_board:
+  solid: bottom_up
+  components:
+    - rpc_xy_readout_plate
+    - rpc_x_readout_bars
+  material: rpc_gas
+
+rpc_y_readout_board:
+  solid: bottom_up
+  components:
+    - rpc_xy_readout_plate
+    - rpc_y_readout_bars
+  material: rpc_gas
+
+rpc_t_readout_cu:
+  solid: box
+  x: 203 mm
+  y: 203 mm
+  z: 35 um
+  material: rpc_readout_cu
+
+rpc_t_readout_board:
+  solid: bottom_up
+  components:
+    - rpc_t_readout_plate
+    - rpc_t_readout_cu
+  material: rpc_gas
+
+---
+
+# Comments
+materials:
+  - rpc_fr4
+  - rpc_gas
+  - rpc_readout_bar
+  - rpc_readout_cu

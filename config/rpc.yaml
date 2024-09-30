@@ -1,0 +1,166 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+rpc_insulating_film:
+  solid: box
+  x: &rpc_mainbody_x 300 mm
+  y: &rpc_mainbody_y 300 mm
+  z: 0.1 mm
+  material: rpc_insulating_film
+
+rpc_electrode:
+  solid: box
+  x: 203 mm
+  y: 203 mm
+  z: 0.2 mm
+  material: rpc_electrode
+
+rpc_glass:
+  solid: box
+  x: *rpc_mainbody_x
+  y: *rpc_mainbody_y
+  z: 2.7 mm
+  material: rpc_glass
+
+rpc_gas:
+  solid: box
+  x: &rpc_content_x 390 mm
+  y: &rpc_content_y 390 mm
+  z: &rpc_gas_z 2 mm
+  material: rpc_gas
+
+rpc_screw_gap:
+  solid: box
+  x: *rpc_content_x
+  y: *rpc_content_y
+  z: 6 mm
+  material: rpc_gas
+
+rpc_top_gap:
+  solid: box
+  x: *rpc_content_x
+  y: *rpc_content_y
+  z: 4.2 mm
+  material: rpc_gas
+
+rpc_x_readout_board: &rpc_readout_board
+  alternative: alternative
+  solid: box
+  x: *rpc_mainbody_x
+  y: *rpc_mainbody_y
+  z: 1.6 mm
+  material: rpc_fr4
+
+rpc_t_readout_board: *rpc_readout_board
+rpc_y_readout_board: *rpc_readout_board
+
+rpc_electric:
+  solid: bottom_up
+  components:
+    - rpc_glass
+    - rpc_gas
+    - rpc_glass
+  material: rpc_gas
+
+rpc_electrode_pair:
+  solid: bottom_up
+  components:
+    - rpc_electrode
+    - rpc_electric
+    - rpc_electrode
+  material: rpc_gas
+
+rpc_electrode_pair_0:
+  solid: rotation
+  components: [rpc_electrode_pair]
+
+rpc_electrode_pair_1:
+  solid: rotation
+  components: [rpc_electrode_pair, [x, 180 deg]]
+
+rpc_mainbody:
+  solid: bottom_up
+  components:
+    - rpc_x_readout_board  # external
+    - rpc_insulating_film
+    - rpc_electrode_pair_0
+    - rpc_insulating_film
+    - rpc_gas
+    - rpc_t_readout_board  # external
+    - rpc_gas
+    - rpc_insulating_film
+    - rpc_electrode_pair_1
+    - rpc_insulating_film
+    - rpc_y_readout_board  # external
+  material: rpc_gas
+
+rpc_content:
+  solid: bottom_up
+  components:
+    - rpc_screw_gap
+    - rpc_mainbody
+    - rpc_top_gap
+  material: rpc_gas
+
+# This box is added for visualization need.
+rpc_content_box:
+  solid: bottom_up
+  components: [rpc_content]
+  material: rpc_shell
+
+rpc_without_bottom:
+  solid: bottom_up
+  components: [rpc_content_box]
+  x: 400 mm
+  y: 400 mm
+  z: 40 mm
+  offset: [0, 0, -2.5 mm]
+  material: rpc_shell
+
+rpc_bottom_connection_gas:
+  solid: box
+  x: *rpc_content_x
+  y: *rpc_content_y
+  z: &rpc_bottom_connection_z 5 mm
+  material: rpc_gas
+
+rpc_bottom_connection:
+  solid: bottom_up
+  components: [rpc_bottom_connection_gas]
+  x: &rpc_bottom_x 430 mm
+  y: &rpc_bottom_y 430 mm
+  z: *rpc_bottom_connection_z
+  material: rpc_shell
+
+rpc_bottom:
+  solid: box
+  x: *rpc_bottom_x
+  y: *rpc_bottom_y
+  z: 5 mm
+  material: rpc_shell
+
+rpc:
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - rpc_bottom
+    - rpc_bottom_connection
+    - rpc_without_bottom
+  material: rpc_air
+
+---
+
+# Comments
+materials:
+  - rpc_electrode
+  - rpc_fr4
+  - rpc_gas
+  - rpc_glass
+  - rpc_insulating_film
+  - rpc_shell
+external:
+  - rpc_x_readout_board
+  - rpc_t_readout_board
+  - rpc_y_readout_board

@@ -1,0 +1,153 @@
+/control/verbose 2
+/run/verbose 2
+/run/initialize
+
+#constant
+
+#/primary/SetFileName MuonHitDM/DM-Constant/Mu_out(mDM=100.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_100.root
+#/run/beamOn 90964
+
+#/primary/SetFileName MuonHitDM/DM-Constant/Mu_out(mDM=10.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_10.root
+#/run/beamOn 119232
+
+#/primary/SetFileName MuonHitDM/DM-Constant/Mu_out(mDM=1.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_1.root
+#/run/beamOn 199486
+
+#/primary/SetFileName MuonHitDM/DM-Constant/Mu_out(mDM=0.5GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p5.root
+#/run/beamOn 230155
+
+#/primary/SetFileName MuonHitDM/DM-Constant/Mu_out(mDM=0.05GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p05.root
+#/run/beamOn 324444
+
+#maxwell
+
+#/primary/SetFileName MuonHitDM/DM-Maxwell/Mu_out(mDM=100.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_maxwell_100.root
+#/run/beamOn 91095
+
+#/primary/SetFileName MuonHitDM/DM-Maxwell/Mu_out(mDM=10.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_maxwell_10.root
+#/run/beamOn 119406
+
+#/primary/SetFileName MuonHitDM/DM-Maxwell/Mu_out(mDM=1.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_maxwell_1.root
+#/run/beamOn 200018
+
+#/primary/SetFileName MuonHitDM/DM-Maxwell/Mu_out(mDM=0.5GeV).txt
+#/rlt/SetFileName root_file/DMmuon_maxwell_0p5.root
+#/run/beamOn 230372
+
+#/primary/SetFileName MuonHitDM/DM-Maxwell/Mu_out(mDM=0.05GeV).txt
+#/rlt/SetFileName root_file/DMmuon_maxwell_0p05.root
+#/run/beamOn 323943
+
+#constant new (add kapton)
+
+#/primary/SetFileName MuonHitDM/DM_Constant_New/Mu_out(mDM=100.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_100.root
+#/run/beamOn 91113
+
+#/primary/SetFileName MuonHitDM/DM_Constant_New/Mu_out(mDM=10.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_10.root
+#/run/beamOn 119323
+
+#/primary/SetFileName MuonHitDM/DM_Constant_New/Mu_out(mDM=1.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_1.root
+#/run/beamOn 199325
+
+#/primary/SetFileName MuonHitDM/DM_Constant_New/Mu_out(mDM=0.5GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p5.root
+#/run/beamOn 230017
+
+#/primary/SetFileName MuonHitDM/DM_Constant_New/Mu_out(mDM=0.05GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p05.root
+#/run/beamOn 324852
+
+#20230919
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=1000.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_1000.root
+#/run/beamOn 86939
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=100.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_100.root
+#/run/beamOn 91294
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=10.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_10.root
+#/run/beamOn 119587
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=1.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_1.root
+#/run/beamOn 200060
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.5GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p5.root
+#/run/beamOn 230559
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.4GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p4.root
+#/run/beamOn 240334
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.3GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p3.root
+#/run/beamOn 252750
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.2GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p2.root
+#/run/beamOn 270090
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.1GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p1.root
+#/run/beamOn 300635
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.05GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p05.root
+#/run/beamOn 324138
+
+#/primary/SetFileName MuonHitDM/DM-Constant-More/Mu_out(mDM=0.005GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p005.root
+#/run/beamOn 338058
+
+#/primary/SetFileName /Users/yuxd/Desktop/Mu_out(non-mDM).txt
+#/rlt/SetFileName root_file/non_DM.root
+#/run/beamOn 338427
+
+#20230925
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=100.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_100.root
+#/run/beamOn 90846
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=10.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_10.root
+#/run/beamOn 119157
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=1.0GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_1.root
+#/run/beamOn 199740
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=0.5GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p5.root
+#/run/beamOn 229734
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=0.2GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p2.root
+#/run/beamOn 268770
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=0.1GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p1.root
+#/run/beamOn 299624
+
+#/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=0.05GeV).txt
+#/rlt/SetFileName root_file/DMmuon_const_0p05.root
+#/run/beamOn 323751
+
+/primary/SetFileName MuonHitDM/DM-Constant-9.25/Mu_out(mDM=0.005GeV).txt
+/rlt/SetFileName root_file/DMmuon_const_0p005.root
+/run/beamOn 338008
+
+exit
