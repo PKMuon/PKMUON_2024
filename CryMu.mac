@@ -1,0 +1,31 @@
+# ----------------------------------------------
+# Settings
+# ----------------------------------------------
+
+/control/verbose 2
+/material/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+# ----------------------------------------------
+# CLFV Settings
+# ----------------------------------------------
+
+/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 1000.0
+#/run/setCut 0.7 mm
+
+# ----------------------------------------------
+# CRY Settings
+# ----------------------------------------------
+
+/control/execute Cry.mac
+
+# ----------------------------------------------
+# run
+# ----------------------------------------------
+
+/run/initialize
+/rlt/SetFileName root_file/CryMu.root
+/run/printProgress 1000
+/run/beamOn 100000

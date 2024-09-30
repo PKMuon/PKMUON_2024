@@ -1,3 +1,6 @@
+[submodule "cry"]
+	path = cry
+	url = git@github.com:PKMuon/cry
 [submodule "clfv"]
 	path = clfv
 	url = git@github.com:PKMuon/clfv

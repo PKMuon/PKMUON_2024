@@ -8,8 +8,8 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
-#include "GpsPrimaryGeneratorAction.hh"
 #include "MupTargetEnToLLPhysics.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "Run.hh"
 
 class RunMessenger::Driver {
@@ -19,7 +19,7 @@ public:
   void SetNewValue(G4UIcommand *, G4String);
 
 private:
-  GpsPrimaryGeneratorAction *fGpsPrimaryGeneratorAction;
+  PrimaryGeneratorAction *fPrimaryGeneratorAction;
 
   G4UIdirectory *fScatterDir;
   G4UIcommand *fSetMupTargetEnToLLCmd;
@@ -59,8 +59,7 @@ void RunMessenger::SetNewValue(G4UIcommand *cmd, G4String val)
 
 RunMessenger::Driver::Driver(RunMessenger *messenger)
 {
-  fGpsPrimaryGeneratorAction =
-      (GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
+  fPrimaryGeneratorAction = (PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
 
   fScatterDir = new G4UIdirectory("/scatter/");
   fScatterDir->SetGuidance("Control scattering processes.");
@@ -72,7 +71,7 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
   fSetMupTargetEnToLLCmd->SetGuidance("Configure MupTargetEnToLL process.");
   fSetMupTargetEnToLLCmd->AvailableForStates(G4State_Idle);
 
-  fSetTotalEnergyCmd = new G4UIcmdWithADoubleAndUnit("/gps/totalEnergy", messenger);
+  fSetTotalEnergyCmd = new G4UIcmdWithADoubleAndUnit("/gun/totalEnergy", messenger);
   fSetTotalEnergyCmd->SetGuidance("Set total energy.");
   fSetTotalEnergyCmd->SetParameterName("TotalEnergy", false);
   fSetTotalEnergyCmd->SetUnitCategory("Energy");
@@ -89,7 +88,7 @@ RunMessenger::Driver::~Driver()
 void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, G4String val)
 {
   if(cmd == fSetTotalEnergyCmd) {
-    fGpsPrimaryGeneratorAction->SetTotalEnergy(fSetTotalEnergyCmd->GetNewDoubleValue(val));
+    throw std::runtime_error("setting total energy not compatible with CRY");
   } else if(cmd == fSetMupTargetEnToLLCmd) {
     G4Tokenizer next(val);
     G4String pid_s = next();
