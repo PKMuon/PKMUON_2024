@@ -33,5 +33,6 @@
 #pragma link C++ class Track + ;
 #pragma link C++ class Cuts + ;
 #pragma link C++ class Edep + ;
+#pragma link C++ class Scatter + ;
 
 #endif

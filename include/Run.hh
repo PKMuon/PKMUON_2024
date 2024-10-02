@@ -33,9 +33,9 @@ public:
   void SaveTree();
   void FillAndReset();
   void AutoSave();
-
-  void AddStep(const G4Step *step);
-  void AddTrack(const G4Track *step);
+  void AddTrack(const G4Track *);
+  void AddStep(const G4Step *);
+  void AddScatter(double probability, double xs, const G4Track *muon, const G4Track *lp, const G4Track *ln);
 
 private:
   Run();

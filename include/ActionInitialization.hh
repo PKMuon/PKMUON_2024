@@ -29,8 +29,6 @@
 
 #include "G4VUserActionInitialization.hh"
 
-class G4VSteppingVerbose;
-
 class ActionInitialization : public G4VUserActionInitialization {
 public:
   void Build() const override;

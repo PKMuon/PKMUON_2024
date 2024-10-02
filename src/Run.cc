@@ -70,6 +70,7 @@ void Run::InitTree()
   fTree = new TTree("tree", "tree");
   fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
+  fTree->Branch("Scatters", new TClonesArray("Scatter"));
 
   // The cut tree is only accessed here.
   TClonesArray Cuts("Cuts");
@@ -88,6 +89,7 @@ void Run::SaveTree()
   fTree->Write(NULL, TObject::kOverwrite);
   delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   fFile->Close();
   fTree = NULL;
   fFile = NULL;
@@ -97,6 +99,7 @@ void Run::FillAndReset()
 {
   auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
 
   // Sort the tracks by ID.
   std::vector<Track *> tracks;
@@ -115,6 +118,7 @@ void Run::FillAndReset()
 
   Tracks->Clear();
   fEdepData.clear();
+  Scatters->Clear();
 }
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
@@ -146,6 +150,12 @@ void Run::AddTrack(const G4Track *track)
   //  << G4endl;
   auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   *(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+}
+
+void Run::AddScatter(double probability, double xs, const G4Track *muon, const G4Track *lp, const G4Track *ln)
+{
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
+  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { probability, xs, muon, lp, ln };
 }
 
 uint64_t Run::GetThreadId()

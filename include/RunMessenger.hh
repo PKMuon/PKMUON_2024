@@ -43,6 +43,9 @@ private:
   Run *fRun;
   G4UIdirectory *fFileNameDir;
   G4UIcmdWithAString *fSetFileNameCmd;
+
+  class Driver;
+  class Driver *fDriver;
 };
 
 #endif

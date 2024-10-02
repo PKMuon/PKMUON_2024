@@ -29,6 +29,7 @@
 
 #include <TObject.h>
 
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -121,6 +122,26 @@ public:
   Double_t Z;
 
   ClassDef(Edep, 1);
+};
+
+class Scatter : public TObject {
+public:
+  Scatter &operator=(const std::tuple<Double_t, Double_t, const G4Track *, const G4Track *, const G4Track *> &t);
+
+  Double_t Prob;
+  Double_t XS;
+  Int_t Id[3];
+  Int_t Pid[3];
+  Double_t Px[3];
+  Double_t Py[3];
+  Double_t Pz[3];
+  Double_t E[3];
+  Double_t X;
+  Double_t Y;
+  Double_t Z;
+  Double_t T;
+
+  ClassDef(Scatter, 1);
 };
 
 #endif

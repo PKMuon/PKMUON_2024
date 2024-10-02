@@ -26,13 +26,19 @@
 
 #include "EventAction.hh"
 
+#include "DetectorConstruction.hh"
 #include "G4Event.hh"
+#include "G4RunManager.hh"
 #include "Run.hh"
 
-void EventAction::BeginOfEventAction(const G4Event *)
+EventAction::EventAction()
 {
-  // empty
+  fDetectorConstruction = (DetectorConstruction *)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
 }
+
+EventAction::~EventAction() { }
+
+void EventAction::BeginOfEventAction(const G4Event *) { fScatterZ = fDetectorConstruction->GetScatterZ(); }
 
 void EventAction::EndOfEventAction(const G4Event *evt)
 {

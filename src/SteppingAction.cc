@@ -26,10 +26,43 @@
 
 #include "SteppingAction.hh"
 
+#include "EventAction.hh"
+#include "G4Step.hh"
+#include "Randomize.hh"
 #include "Run.hh"
+#include "ScatterProcess.hh"
 
-SteppingAction::SteppingAction() : fScoringHalfX(0), fScoringHalfY(0), fScoringZ(0) { }
+SteppingAction::SteppingAction(EventAction *eventAction)
+    : fEventAction(eventAction), fScoringHalfX(0), fScoringHalfY(0), fScoringZ(0)
+{
+  memset(fScatterProbability, 0, sizeof fScatterProbability);
+  memset(fScatterProcess, 0, sizeof fScatterProcess);
+}
 
 SteppingAction::~SteppingAction() { }
 
-void SteppingAction::UserSteppingAction(const G4Step *step) { Run::GetInstance()->AddStep(step); }
+void SteppingAction::UserSteppingAction([[maybe_unused]] const G4Step *step)
+{
+  Run::GetInstance()->AddStep(step);
+
+  G4Track *lp_track = step->GetTrack(), *ln_track;
+  //G4cout << "Step of track " << lp_track->GetTrackID() << ": " << lp_track->GetPosition().getZ() << G4endl;
+  if(lp_track->GetTrackID() == 1 && lp_track->GetPosition().getZ() >= fEventAction->GetScatterZ()) {
+    double r = G4UniformRand(), s = 0;
+    for(size_t i = 0; i < 2; ++i) {
+      s += fScatterProbability[i];
+      if(s <= r) continue;
+      G4Track *muon_track = lp_track;
+      double xs = fScatterProcess[i]->Scatter(lp_track, ln_track);
+      Run::GetInstance()->AddScatter(fScatterProbability[i], xs, muon_track, lp_track, ln_track);
+      break;
+    }
+  }
+}
+
+void SteppingAction::SetMupTargetEnToLL(size_t index, double probability, const char *points_file)
+{
+  if(fScatterProbability[1 - index] + probability > 1) throw std::logic_error("probability sum exceeds 1");
+  fScatterProbability[index] = probability;
+  fScatterProcess[index] = new MupTargetEnToLL(11 + index * 2, points_file);
+}

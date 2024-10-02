@@ -74,3 +74,26 @@ Cuts &Cuts::operator=(const G4LogicalVolume &volume)
 }
 
 std::vector<Double_t> EdepData::fScoringZs;
+
+Scatter &Scatter::operator=(const std::tuple<Double_t, Double_t, const G4Track *, const G4Track *, const G4Track *> &t)
+{
+  auto [prob, xs, muon, lp, ln] = t;
+  Prob = prob;
+  XS = xs;
+  const G4Track *tracks[3] = { muon, lp, ln };
+  for(size_t i = 0; i < 3; ++i) {
+    Id[i] = tracks[i]->GetTrackID();
+    Pid[i] = tracks[i]->GetParticleDefinition()->GetPDGEncoding();
+    auto momentum = tracks[i]->GetMomentum();
+    Px[i] = momentum.getX();
+    Py[i] = momentum.getY();
+    Pz[i] = momentum.getZ();
+    E[i] = tracks[i]->GetTotalEnergy();
+  }
+  auto position = tracks[0]->GetPosition();
+  X = position.getX();
+  Y = position.getY();
+  Z = position.getZ();
+  T = tracks[0]->GetGlobalTime();
+  return *this;
+}
