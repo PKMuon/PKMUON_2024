@@ -30,6 +30,7 @@
 #include <TObject.h>
 
 #include <utility>
+#include <vector>
 
 class G4Track;
 class G4LogicalVolume;
@@ -94,6 +95,8 @@ public:
     if(Value) X /= Value, Y /= Value;
     return std::move(*this);
   }
+
+  static std::vector<Double_t> fScoringZs;
 };
 
 class Edep : public TObject {
@@ -106,6 +109,7 @@ public:
     Value = data.Value;
     X = data.X;
     Y = data.Y;
+    Z = data.fScoringZs[Layer];
     return *this;
   }
 
@@ -114,6 +118,7 @@ public:
   Double_t Value;
   Double_t X;
   Double_t Y;
+  Double_t Z;
 
   ClassDef(Edep, 1);
 };

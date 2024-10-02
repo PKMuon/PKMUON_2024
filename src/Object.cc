@@ -72,3 +72,5 @@ Cuts &Cuts::operator=(const G4LogicalVolume &volume)
 
   return *this;
 }
+
+std::vector<Double_t> EdepData::fScoringZs;

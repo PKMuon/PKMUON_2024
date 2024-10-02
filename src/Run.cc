@@ -50,8 +50,10 @@ void Run::InitGeom()
   fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
   fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
   G4double scoringHalfZ = fDetectorConstruction->GetScoringHalfZ();
+  const std::vector<G4double> &scoringZs = fDetectorConstruction->GetScoringZs();
   fScoringZ = scoringHalfZ * 2;
-  fScoringMaxZs = fDetectorConstruction->GetScoringZs();
+  EdepData::fScoringZs.assign(scoringZs.begin(), scoringZs.end());
+  fScoringMaxZs = scoringZs;
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
   fStatus.resize(fScoringMaxZs.size());
 }
