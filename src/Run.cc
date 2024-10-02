@@ -47,15 +47,17 @@ Run *Run::GetInstance()
 
 void Run::InitGeom()
 {
-  fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
-  fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
   G4double scoringHalfZ = fDetectorConstruction->GetScoringHalfZ();
   const std::vector<G4double> &scoringZs = fDetectorConstruction->GetScoringZs();
+
+  fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
+  fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
   fScoringZ = scoringHalfZ * 2;
-  EdepData::fScoringZs.assign(scoringZs.begin(), scoringZs.end());
   fScoringMaxZs = scoringZs;
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
   fStatus.resize(fScoringMaxZs.size());
+
+  EdepData::fScoringZs.assign(scoringZs.begin(), scoringZs.end());
 }
 
 void Run::InitTree()
@@ -69,6 +71,7 @@ void Run::InitTree()
   fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
 
+  // The cut tree is only accessed here.
   TClonesArray Cuts("Cuts");
   TTree *cuts = new TTree("cuts", "cuts");
   cuts->Branch("Cuts", &Cuts);
@@ -95,6 +98,14 @@ void Run::FillAndReset()
   auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
 
+  // Sort the tracks by ID.
+  std::vector<Track *> tracks;
+  tracks.resize(Tracks->GetEntries());
+  for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
+  sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
+  for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
+
+  // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
     for(auto &[id, data] : fEdepData) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = { id, data.EndSum() }; }
     fTree->Fill();
