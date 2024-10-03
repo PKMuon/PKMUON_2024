@@ -43,7 +43,7 @@ void ActionInitialization::Build() const
   EventAction *eventAction = new EventAction;
   SetUserAction(eventAction);
 
-  SteppingAction *stepAction = new SteppingAction(eventAction);
+  SteppingAction *stepAction = new SteppingAction;
   SetUserAction(stepAction);
 
   TrackingAction *trackAction = new TrackingAction;

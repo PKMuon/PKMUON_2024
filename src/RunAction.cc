@@ -39,3 +39,5 @@ void RunAction::BeginOfRunAction(const G4Run *)
 }
 
 void RunAction::EndOfRunAction(const G4Run *) { Run::GetInstance()->SaveTree(); }
+
+Run *RunAction::GetRun() const { return Run::GetInstance(); }

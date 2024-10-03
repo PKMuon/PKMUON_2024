@@ -35,6 +35,7 @@
 
 class G4Track;
 class G4LogicalVolume;
+class G4DynamicParticle;
 
 class Track : public TObject {
 public:
@@ -126,11 +127,9 @@ public:
 
 class Scatter : public TObject {
 public:
-  Scatter &operator=(const std::tuple<Double_t, Double_t, const G4Track *, const G4Track *, const G4Track *> &t);
+  Scatter &operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t);
 
-  Double_t Prob;
-  Double_t XS;
-  Int_t Id[3];
+  Int_t Id;
   Int_t Pid[3];
   Double_t Px[3];
   Double_t Py[3];

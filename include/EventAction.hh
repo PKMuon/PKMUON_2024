@@ -27,11 +27,7 @@
 #ifndef EventAction_h
 #define EventAction_h 1
 
-#include "G4Types.hh"
 #include "G4UserEventAction.hh"
-
-class DetectorConstruction;
-class G4Event;
 
 class EventAction : public G4UserEventAction {
 public:
@@ -40,12 +36,6 @@ public:
 
   void BeginOfEventAction(const G4Event *) override;
   void EndOfEventAction(const G4Event *) override;
-
-  G4double GetScatterZ() const { return fScatterZ; };
-
-private:
-  DetectorConstruction *fDetectorConstruction;
-  G4double fScatterZ;
 };
 
 #endif

@@ -19,6 +19,7 @@ class PrimaryGeneratorAction;
 class DetectorConstruction;
 class G4Step;
 class G4Track;
+class G4DynamicParticle;
 
 class Run {
 public:
@@ -35,7 +36,7 @@ public:
   void AutoSave();
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
-  void AddScatter(double probability, double xs, const G4Track *muon, const G4Track *lp, const G4Track *ln);
+  void AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4DynamicParticle *ln);
 
 private:
   Run();

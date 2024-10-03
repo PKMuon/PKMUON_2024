@@ -61,7 +61,6 @@ DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
       fWorld(NULL),
       fElectrodeVolume(NULL),
-      fWorldZ(0.0),
       fElectrodeHalfX(0.0),
       fElectrodeHalfY(0.0),
       fElectrodeHalfZ(0.0),
@@ -111,7 +110,6 @@ void DetectorConstruction::DefineVolumes()
   for(const std::string &path : paths) { GeometryConfig::LoadVolumes(path.c_str()); }
 
   fWorld = new G4PVPlacement(0, { 0, 0, 0 }, fLogicalVolumeStore->GetVolume("world"), "world", 0, false, 0, true);
-  fWorldZ = 2 * dynamic_cast<G4Box *>(fWorld->GetLogicalVolume()->GetSolid())->GetZHalfLength();
   fElectrodeVolume = fLogicalVolumeStore->GetVolume("rpc_electrode");
   fElectrodeHalfX = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetXHalfLength();
   fElectrodeHalfY = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetYHalfLength();
@@ -383,5 +381,3 @@ G4double DetectorConstruction::GetDetectorHalfY() const
   //return dynamic_cast<G4Box *>(fLogicalVolumeStore->GetVolume("rpc")->GetSolid())->GetYHalfLength();  // more precise
   return GetScoringHalfY();  // faster
 }
-
-G4double DetectorConstruction::GetScatterZ() const { return (0.5 - G4UniformRand()) * fWorldZ; }

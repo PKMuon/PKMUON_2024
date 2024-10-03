@@ -29,6 +29,8 @@
 
 #include "G4UserRunAction.hh"
 
+class Run;
+
 class RunAction : public G4UserRunAction {
 public:
   RunAction();
@@ -36,6 +38,8 @@ public:
 
   void BeginOfRunAction(const G4Run *) override;
   void EndOfRunAction(const G4Run *) override;
+
+  Run *GetRun() const;  // for CLFV package
 };
 
 #endif

@@ -1,1 +1,0 @@
-../clfv/src/ScatterProcess.cc

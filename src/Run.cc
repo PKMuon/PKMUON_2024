@@ -152,10 +152,10 @@ void Run::AddTrack(const G4Track *track)
   *(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
 }
 
-void Run::AddScatter(double probability, double xs, const G4Track *muon, const G4Track *lp, const G4Track *ln)
+void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4DynamicParticle *ln)
 {
   auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
-  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { probability, xs, muon, lp, ln };
+  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { muon, lp, ln };
 }
 
 uint64_t Run::GetThreadId()

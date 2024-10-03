@@ -27,38 +27,15 @@
 #ifndef SteppingAction_h
 #define SteppingAction_h 1
 
-#include <vector>
-
 #include "G4UserSteppingAction.hh"
 #include "globals.hh"
 
-class MupTargetEnToLL;
-class EventAction;
-
 class SteppingAction : public G4UserSteppingAction {
 public:
-  SteppingAction(EventAction *);
+  SteppingAction();
   ~SteppingAction() override;
+
   void UserSteppingAction(const G4Step *) override;
-
-  void SetMupTargetEnToEE(double probability, const char *points_file)
-  {
-    SetMupTargetEnToLL(0, probability, points_file);
-  }
-
-  void SetMupTargetEnToMuMu(double probability, const char *points_file)
-  {
-    SetMupTargetEnToLL(1, probability, points_file);
-  }
-
-private:
-  EventAction *fEventAction;
-  G4double fScatterProbability[2];      // e, mu
-  MupTargetEnToLL *fScatterProcess[2];  // e, mu
-  std::vector<G4double> fScoringMaxZs;
-  G4double fScoringHalfX, fScoringHalfY, fScoringZ;
-
-  void SetMupTargetEnToLL(size_t index, double probability, const char *points_file);
 };
 
 #endif

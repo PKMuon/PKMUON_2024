@@ -6,10 +6,11 @@
 #include "G4Tokenizer.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
+#include "MupTargetEnToLLPhysics.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "Run.hh"
-#include "SteppingAction.hh"
 
 class RunMessenger::Driver {
 public:
@@ -19,10 +20,9 @@ public:
 
 private:
   PrimaryGeneratorAction *fPrimaryGeneratorAction;
-  SteppingAction *fSteppingAction;
+
   G4UIdirectory *fScatterDir;
-  G4UIcommand *fSetMupTargetEnToEECmd;
-  G4UIcommand *fSetMupTargetEnToMuMuCmd;
+  G4UIcommand *fSetMupTargetEnToLLCmd;
   G4UIcmdWithADoubleAndUnit *fSetTotalEnergyCmd;
 };
 
@@ -60,24 +60,16 @@ void RunMessenger::SetNewValue(G4UIcommand *cmd, G4String val)
 RunMessenger::Driver::Driver(RunMessenger *messenger)
 {
   fPrimaryGeneratorAction = (PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
-  fSteppingAction = (SteppingAction *)G4RunManager::GetRunManager()->GetUserSteppingAction();
 
-  fScatterDir = new G4UIdirectory("/scatter");
+  fScatterDir = new G4UIdirectory("/scatter/");
   fScatterDir->SetGuidance("Control scattering processes.");
 
-  fSetMupTargetEnToEECmd = new G4UIcommand("/scatter/mupTargetEnToEE", messenger);
-  fSetMupTargetEnToEECmd->SetParameter(new G4UIparameter("probability", 'd', false));
-  fSetMupTargetEnToEECmd->GetParameter(0)->SetParameterRange("probability >= 0.0 && probability <= 1.0");
-  fSetMupTargetEnToEECmd->SetParameter(new G4UIparameter("points_file", 's', false));
-  fSetMupTargetEnToEECmd->SetGuidance("Configure MupTargetEnToEE process.");
-  fSetMupTargetEnToEECmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
-  fSetMupTargetEnToMuMuCmd = new G4UIcommand("/scatter/mupTargetEnToMuMu", messenger);
-  fSetMupTargetEnToMuMuCmd->SetParameter(new G4UIparameter("probability", 'd', false));
-  fSetMupTargetEnToMuMuCmd->GetParameter(0)->SetParameterRange("probability >= 0.0 && probability <= 1.0");
-  fSetMupTargetEnToMuMuCmd->SetParameter(new G4UIparameter("points_file", 's', false));
-  fSetMupTargetEnToMuMuCmd->SetGuidance("Configure MupTargetEnToMuMu process.");
-  fSetMupTargetEnToMuMuCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+  fSetMupTargetEnToLLCmd = new G4UIcommand("/scatter/mupTargetEnToLL", messenger);
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("pid", 'i', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("points_file", 's', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("xssf", 'd', false));
+  fSetMupTargetEnToLLCmd->SetGuidance("Configure MupTargetEnToLL process.");
+  fSetMupTargetEnToLLCmd->AvailableForStates(G4State_Idle);
 
   fSetTotalEnergyCmd = new G4UIcmdWithADoubleAndUnit("/gun/totalEnergy", messenger);
   fSetTotalEnergyCmd->SetGuidance("Set total energy.");
@@ -89,29 +81,25 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
 RunMessenger::Driver::~Driver()
 {
   delete fSetTotalEnergyCmd;
-  delete fSetMupTargetEnToMuMuCmd;
-  delete fSetMupTargetEnToEECmd;
+  delete fSetMupTargetEnToLLCmd;
   delete fScatterDir;
 }
 
 void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, G4String val)
 {
   if(cmd == fSetTotalEnergyCmd) {
-    //fPrimaryGeneratorAction->SetTotalEnergy(fSetTotalEnergyCmd->GetNewDoubleValue(val));
     throw std::runtime_error("setting total energy not compatible with CRY");
-  } else if(cmd == fSetMupTargetEnToEECmd || cmd == fSetMupTargetEnToMuMuCmd) {
+  } else if(cmd == fSetMupTargetEnToLLCmd) {
     G4Tokenizer next(val);
-    G4String probability_s = next();
+    G4String pid_s = next();
     G4String points_file = next();
+    G4String xssf_s = next();
     G4String trailing = next();
-    if(probability_s.empty() || points_file.empty() || !trailing.empty()) {
-      throw std::runtime_error("expect 2 arguments");
+    if(pid_s.empty() || points_file.empty() || xssf_s.empty() || !trailing.empty()) {
+      throw std::runtime_error("expect 3 arguments");
     }
-    G4double probability = std::stod(probability_s);
-    if(cmd == fSetMupTargetEnToEECmd) {
-      fSteppingAction->SetMupTargetEnToEE(probability, points_file);
-    } else {
-      fSteppingAction->SetMupTargetEnToMuMu(probability, points_file);
-    }
+    G4int pid = stoi(pid_s);
+    G4double xssf = stod(xssf_s);
+    MupTargetEnToLLPhysics::GetInstance()->Configure(pid, points_file, xssf);
   }
 }

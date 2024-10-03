@@ -58,7 +58,6 @@ public:
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
-  G4double GetScatterZ() const;
 
   // Hierarchic options.
   void PrintVolumes(G4VPhysicalVolume *) const;
@@ -84,7 +83,7 @@ private:
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;
   G4LogicalVolume *fElectrodeVolume;
-  G4double fWorldZ, fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
+  G4double fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
   std::vector<G4double> fElectrodeZs;
   std::vector<G4double> fScoringZs;
 };
