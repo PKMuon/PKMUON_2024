@@ -24,28 +24,32 @@
 // ********************************************************************
 //
 
-#include "ActionInitialization.hh"
+#ifndef GpsPrimaryGeneratorAction_h
+#define GpsPrimaryGeneratorAction_h 1
 
-#include "EventAction.hh"
-#include "GpsPrimaryGeneratorAction.hh"
-#include "RunAction.hh"
-#include "SteppingAction.hh"
-#include "TrackingAction.hh"
+#include "G4Types.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
 
-void ActionInitialization::Build() const
-{
-  GpsPrimaryGeneratorAction *primary = new GpsPrimaryGeneratorAction;
-  SetUserAction(primary);
+class G4GeneralParticleSource;
+class G4Event;
+class DetectorConstruction;
 
-  RunAction *runAction = new RunAction;
-  SetUserAction(runAction);
+/// \ingroup primary_generator
+/// \brief The primary generator class with general particle source
+///
+/// \author I. Hrivnacova; IPN Orsay
 
-  EventAction *eventAction = new EventAction;
-  SetUserAction(eventAction);
+class GpsPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+public:
+  GpsPrimaryGeneratorAction();
+  ~GpsPrimaryGeneratorAction() override;
 
-  SteppingAction *stepAction = new SteppingAction;
-  SetUserAction(stepAction);
+  void GeneratePrimaries(G4Event *) override;
+  void Initialize(DetectorConstruction *);
+  void SetTotalEnergy(G4double);
 
-  TrackingAction *trackAction = new TrackingAction;
-  SetUserAction(trackAction);
-}
+private:
+  G4GeneralParticleSource *fGeneralParticleSource;
+};
+
+#endif

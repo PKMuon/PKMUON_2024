@@ -29,7 +29,7 @@
 #include "G4AutoDelete.hh"
 #include "G4RunManager.hh"
 #include "GeometryConfig.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "GpsPrimaryGeneratorAction.hh"
 
 // geometry
 #include "G4Box.hh"
@@ -210,7 +210,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
   DefineFields();
   PrintVolumes(NULL);
 
-  ((PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
+  ((GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
   return fWorld;
 }
 

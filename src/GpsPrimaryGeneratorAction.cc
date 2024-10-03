@@ -24,28 +24,39 @@
 // ********************************************************************
 //
 
-#include "ActionInitialization.hh"
-
-#include "EventAction.hh"
 #include "GpsPrimaryGeneratorAction.hh"
-#include "RunAction.hh"
-#include "SteppingAction.hh"
-#include "TrackingAction.hh"
 
-void ActionInitialization::Build() const
+#include "DetectorConstruction.hh"
+#include "G4GeneralParticleSource.hh"
+#include "G4SPSPosDistribution.hh"
+
+GpsPrimaryGeneratorAction::GpsPrimaryGeneratorAction()
+    : G4VUserPrimaryGeneratorAction(), fGeneralParticleSource(nullptr)
 {
-  GpsPrimaryGeneratorAction *primary = new GpsPrimaryGeneratorAction;
-  SetUserAction(primary);
+  fGeneralParticleSource = new G4GeneralParticleSource();
+}
 
-  RunAction *runAction = new RunAction;
-  SetUserAction(runAction);
+GpsPrimaryGeneratorAction::~GpsPrimaryGeneratorAction() { delete fGeneralParticleSource; }
 
-  EventAction *eventAction = new EventAction;
-  SetUserAction(eventAction);
+void GpsPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
+{
+  fGeneralParticleSource->GeneratePrimaryVertex(anEvent);
+}
 
-  SteppingAction *stepAction = new SteppingAction;
-  SetUserAction(stepAction);
+void GpsPrimaryGeneratorAction::Initialize(DetectorConstruction *detectorConstruction)
+{
+  auto posDist = fGeneralParticleSource->GetCurrentSource()->GetPosDist();
+  posDist->SetPosDisType("Plane");
+  posDist->SetPosDisShape("Square");
+  posDist->SetCentreCoords({ 0, 0, detectorConstruction->GetDetectorMinZ() });
+  posDist->SetHalfX(detectorConstruction->GetDetectorHalfX());
+  posDist->SetHalfY(detectorConstruction->GetDetectorHalfY());
+}
 
-  TrackingAction *trackAction = new TrackingAction;
-  SetUserAction(trackAction);
+void GpsPrimaryGeneratorAction::SetTotalEnergy(G4double energy)
+{
+  auto eneDist = fGeneralParticleSource->GetCurrentSource()->GetEneDist();
+  energy -= fGeneralParticleSource->GetCurrentSource()->GetParticleDefinition()->GetPDGMass();
+  if(energy < 0) throw std::invalid_argument("energy less than mass");
+  eneDist->SetMonoEnergy(energy);
 }

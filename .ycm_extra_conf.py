@@ -37,4 +37,3 @@ exec(open(filename).read())
 
 # Add include paths for this project.
 flags.append('-I' + os.path.join(dirname_org, 'include'))
-flags.append('-I' + os.path.join(dirname_org, 'cry', 'src'))

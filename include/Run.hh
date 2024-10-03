@@ -15,7 +15,6 @@ class TFile;
 class TTree;
 
 class RunMessenger;
-class PrimaryGeneratorAction;
 class DetectorConstruction;
 class G4Step;
 class G4Track;
@@ -43,7 +42,6 @@ private:
   ~Run();
 
   RunMessenger *fRunMessenger;
-  PrimaryGeneratorAction *fPrimaryGeneratorAction;
   DetectorConstruction *fDetectorConstruction;
   G4String fRootName;
   TTree *fTree;

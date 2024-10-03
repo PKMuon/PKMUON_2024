@@ -14,12 +14,12 @@ for I in $(seq 0 $[N-1]); do
     else
         let IPROC+=1
     fi
-    cp CryMu.mac CryMu_$I.mac
-    sed -i "s/CryMu\\.root/CryMu_${I}.root/g" CryMu_$I.mac
+    cp mup_50GeV.mac mup_50GeV_$I.mac
+    sed -i "s/mup_50GeV\\.root/mup_50GeV_${I}.root/g" mup_50GeV_$I.mac
 
     # 运行Geant4模拟
-    echo ./muPos CryMu_$I.mac
-    ./muPos CryMu_$I.mac &> root_file/CryMu_${I}.root.log &
+    echo ./muPos mup_50GeV_$I.mac
+    ./muPos mup_50GeV_$I.mac &> root_file/mup_50GeV_${I}.root.log &
     PIDS=(${PIDS[@]} $!)
 done
 wait

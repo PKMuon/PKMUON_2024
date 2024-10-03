@@ -20,13 +20,11 @@
 #include "G4Track.hh"
 #include "G4ios.hh"
 #include "Object.hh"
-#include "PrimaryGeneratorAction.hh"
 #include "RunMessenger.hh"
 
 Run::Run()
 {
   fRunMessenger = new RunMessenger(this);
-  fPrimaryGeneratorAction = (PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
   fDetectorConstruction = (DetectorConstruction *)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
   fRootName = "CryMu.root";
   fTree = NULL;
@@ -146,7 +144,6 @@ void Run::AddTrack(const G4Track *track)
 {
   //G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID()
   //  << "(" << track->GetParentID() << ")"
-  //  << ": primary=" << fPrimaryGeneratorAction->IsPrimary(track->GetTrackID())
   //  << G4endl;
   auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   *(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
