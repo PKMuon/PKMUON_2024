@@ -1,104 +1,106 @@
+#include <Math/Vector3D.h>
 #include <TFile.h>
 #include <TTree.h>
-#include <Math/Vector3D.h>
 #include <math.h>
+
 #include <fstream>
+#include <tuple>
+#include <vector>
 
 using namespace std;
 
-Int_t PoCA_sim(const char *infile = "../../build/root_file/CryMuAna_1.root",
-    const char *outfile = "../../build/root_file/CryMuAnaPoCA_1.root",
-    bool smeared = true)
+Long64_t PoCA_sim(const char *infile = "../../build/root_file/mupana_50GeV.root",
+    const char *outfile = "../../build/root_file/muppoca_50GeV.root")
 {
-  // 读取探测器数据
+  // Input file and tree.
   TFile *file_in = new TFile(infile);
-  TTree *T1 = (TTree *)file_in->Get("T1");
-  Double_t x[4], y[4], z[4];
-  if(smeared) {
-    T1->SetBranchAddress("RPCX_smeared", x);
-    T1->SetBranchAddress("RPCY_smeared", y);
-  } else {
-    T1->SetBranchAddress("RPCX", x);
-    T1->SetBranchAddress("RPCY", y);
-  }
-  T1->SetBranchAddress("RPCZ", z);
+  TTree *tree_in = (TTree *)file_in->Get("tree");
+  vector<Double_t> *XEdep = NULL, *YEdep = NULL, *ZEdep = NULL, *XSmeared = NULL, *YSmeared = NULL;
+  tree_in->SetBranchAddress("XEdep", &XEdep);
+  tree_in->SetBranchAddress("YEdep", &YEdep);
+  tree_in->SetBranchAddress("ZEdep", &ZEdep);
+  tree_in->SetBranchAddress("XSmeared", &XSmeared);
+  tree_in->SetBranchAddress("YSmeared", &YSmeared);
 
-  Double_t ang;  // 散射角
-  Double_t d;
-  Double_t poca_x, poca_y, poca_z;
-
+  // Output file and tree.
   TFile *file_out = new TFile(outfile, "RECREATE");
-  TTree *Trec = new TTree("Trec", "Reconstruction DATA");
-  Trec->Branch("x", &poca_x);
-  Trec->Branch("y", &poca_y);
-  Trec->Branch("z", &poca_z);
-  Trec->Branch("x1", &x[0]);
-  Trec->Branch("y1", &y[0]);
-  Trec->Branch("z1", &z[0]);
-  Trec->Branch("x2", &x[1]);
-  Trec->Branch("y2", &y[1]);
-  Trec->Branch("z2", &z[1]);
-  Trec->Branch("x3", &x[2]);
-  Trec->Branch("y3", &y[2]);
-  Trec->Branch("z3", &z[2]);
-  Trec->Branch("x4", &x[3]);
-  Trec->Branch("y4", &y[3]);
-  Trec->Branch("z4", &z[3]);
-  Trec->Branch("ang", &ang);
-  Trec->Branch("d", &d);
+  TTree *tree_out = new TTree("tree", "tree");
+  tree_out = tree_in->CloneTree(0);  // copy 0 entries
+  Double_t DPoCAEdep, XPoCAEdep, YPoCAEdep, ZPoCAEdep;
+  Double_t DPoCASmeared, XPoCASmeared, YPoCASmeared, ZPoCASmeared;
+  tree_out->Branch("DPoCAEdep", &DPoCAEdep);
+  tree_out->Branch("XPoCAEdep", &XPoCAEdep);
+  tree_out->Branch("YPoCAEdep", &YPoCAEdep);
+  tree_out->Branch("ZPoCAEdep", &ZPoCAEdep);
+  tree_out->Branch("DPoCASmeared", &DPoCASmeared);
+  tree_out->Branch("XPoCASmeared", &XPoCASmeared);
+  tree_out->Branch("YPoCASmeared", &YPoCASmeared);
+  tree_out->Branch("ZPoCASmeared", &ZPoCASmeared);
 
-  Long64_t ientry, nentry = T1->GetEntries();
-  for(ientry = 0; ientry < nentry; ientry++){
-    T1->GetEntry(ientry);
+  Long64_t nentry = tree_in->GetEntries();
+  for(Long64_t ientry = 0; ientry < nentry; ientry++) {
+    if(ientry % 1000 == 0) {
+      cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
+    }
+    tree_in->GetEntry(ientry);
 
-    ROOT::Math::XYZVector a, b, va, vb, uva, uvb, vab;
-    ROOT::Math::XYZVector vn, uvn;
-    ROOT::Math::XYZVector vm;
+    auto args = {
+      tie(*XEdep, *YEdep, *ZEdep, DPoCAEdep, XPoCAEdep, YPoCAEdep, ZPoCAEdep),
+      tie(*XSmeared, *YSmeared, *ZEdep, DPoCASmeared, XPoCASmeared, YPoCASmeared, ZPoCASmeared),
+    };
+    for(auto &[x, y, z, d_poca, x_poca, y_poca, z_poca] : args) {
+      ROOT::Math::XYZVector a, b, va, vb, uva, uvb, vab;
+      ROOT::Math::XYZVector vn, uvn;
+      ROOT::Math::XYZVector vm;
 
-    a.SetCoordinates(x[1], y[1], z[1]);  // 点 a 定义为打在第二层探测器上的位置
-    b.SetCoordinates(x[2], y[2], z[2]);  // 点 b 定义为打在第三层探测器上的位置
-    va.SetCoordinates(x[1]-x[0], y[1]-y[0], z[1]-z[0]);  // va 是未归一化的过点 a 的径迹方向矢量
-    vb.SetCoordinates(x[3]-x[2], y[3]-y[2], z[3]-z[2]);  // vb 是未归一化的过点 b 的径迹方向矢量
-    ang = acos(va.Dot(vb) / sqrt(va.Dot(va) * vb.Dot(vb)));  // 夹角 <va, vb> 为散射角
+      size_t n = x.size();
+      assert(n >= 4 && n % 2 == 0);
+      size_t i1 = 0, i2 = n / 2 - 1, i3 = n / 2, i4 = n - 1;
 
-    uva = va.Unit(),   uvb = vb.Unit();
-    vn = va.Cross(vb), uvn = vn.Unit();  // 计算公垂线方向向量
-    vab = b - a;
-    d = vab.Dot(uvn);  // 两条直线的距离
-    a += d * uvn;  // 将 a 平移以 uvn 为法向量，包含 b 的平面上
+      a.SetCoordinates(x[i2], y[i2], z[i2]);  // 点 a 定义为打在第二层探测器上的位置
+      b.SetCoordinates(x[i3], y[i3], z[i3]);  // 点 b 定义为打在第三层探测器上的位置
+      va.SetCoordinates(x[i2] - x[i1], y[i2] - y[i1], z[i2] - z[i1]);  // va 是未归一化的过点 a 的径迹方向矢量
+      vb.SetCoordinates(x[i4] - x[i3], y[i4] - y[i3], z[i4] - z[i3]);  // vb 是未归一化的过点 b 的径迹方向矢量
 
-    /*
-     * Move a -> A.
-     *
-     * a ----A--> [u]va
-     *       |
-     *       b
-     *        \
-     *         \
-     *          * [u]vb
-     */
-    vab = b - a;  // 在该平面内重新计算 vab
-    a += uva * uva.Dot(vab);    // 将 a 平移到 [b 到过 a 点的径迹上的垂足]
+      uva = va.Unit(), uvb = vb.Unit();
+      vn = va.Cross(vb), uvn = vn.Unit();  // 计算公垂线方向向量
+      vab = b - a;
+      d_poca = vab.Dot(uvn);  // 两条直线的距离
+      a += d_poca * uvn;      // 将 a 平移以 uvn 为法向量，包含 b 的平面上
 
-    /*
-     * Compute m.
-     *
-     *   --m-a--> [u]va
-     *      \|
-     *       b
-     *        \
-     *         \
-     *          * [u]vb
-     */
-    vab = b - a;  // 计算 b 到过 a 点的径迹之间的距离 Ab
-    vm = b - uvb * (vab.Dot(vab) / uvb.Dot(vab));  // 轨迹交点
-    vm -= 0.5 * d * uvn;  // PoCA 点
-    poca_x = vm.x(), poca_y = vm.y(), poca_z = vm.z();
+      /*
+       * Move a -> A.
+       *
+       * a ----A--> [u]va
+       *       |
+       *       b
+       *        \
+       *         \
+       *          * [u]vb
+       */
+      vab = b - a;              // 在该平面内重新计算 vab
+      a += uva * uva.Dot(vab);  // 将 a 平移到 [b 到过 a 点的径迹上的垂足]
 
-    Trec->Fill();	   
+      /*
+       * Compute m.
+       *
+       *   --m-a--> [u]va
+       *      \|
+       *       b
+       *        \
+       *         \
+       *          * [u]vb
+       */
+      vab = b - a;                                   // 计算 b 到过 a 点的径迹之间的距离 ab
+      vm = b - uvb * (vab.Dot(vab) / uvb.Dot(vab));  // 轨迹交点
+      vm -= 0.5 * d_poca * uvn;                      // PoCA 点
+      x_poca = vm.x(), y_poca = vm.y(), z_poca = vm.z();
+    }
+
+    tree_out->Fill();
   }
 
-  Trec->Write();
+  tree_out->Write(NULL, TObject::kOverwrite);
   file_out->Close();
   file_in->Close();
   return nentry;

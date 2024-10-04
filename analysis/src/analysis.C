@@ -1,110 +1,132 @@
-#include <TRandom.h>
+#include <TClonesArray.h>
 #include <TFile.h>
+#include <TRandom.h>
 #include <TTree.h>
-#include <TMath.h>
-#include <TVector3.h>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <cstring>
-#include <algorithm>
 #include <sys/time.h>
+
+#include <iomanip>
+#include <iostream>
+#include <vector>
+
+#include "../../include/Object.hh"
 
 using namespace std;
 
-void analysis(const char *infile = "../../build/root_file/CryMu_1.root",
-    const char *outfile = "../../build/root_file/CryMuAna_1.root",
-    bool use_rpcall = false)
+static Double_t GetCosTheta(Double_t x1, Double_t y1, double_t z1, Double_t x2, Double_t y2, double_t z2)
+{
+  Double_t dot = x1 * x2 + y1 * y2 + z1 * z2;
+  Double_t square1 = x1 * x1 + y1 * y1 + z1 * z1;
+  Double_t square2 = x2 * x2 + y2 * y2 + z2 * z2;
+  return dot / sqrt(square1 * square2);
+}
+
+static Double_t GetCosTheta(const vector<Double_t> &X, const vector<Double_t> &Y, const vector<Double_t> &Z)
+{
+  size_t n = X.size();
+  assert(n >= 4 && n % 2 == 0);
+  size_t i1 = 0, i2 = n / 2 - 1, i3 = n / 2, i4 = n - 1;
+  Double_t x1 = X[i2] - X[i1];
+  Double_t y1 = Y[i2] - Y[i1];
+  Double_t z1 = Z[i2] - Z[i1];
+  Double_t x2 = X[i4] - X[i3];
+  Double_t y2 = Y[i4] - Y[i3];
+  Double_t z2 = Z[i4] - Z[i3];
+  return GetCosTheta(x1, y1, z1, x2, y2, z2);
+}
+
+void analysis(const char *infile = "../../build/root_file/mup_50GeV.root",
+    const char *outfile = "../../build/root_file/mupana_50GeV.root", size_t nlayer = 4)
 {
   TRandom *rand = new TRandom();
 
   // Input file and tree.
-  TFile *file_in = new TFile(infile);
-  TTree *tree_in = (TTree *)file_in->Get("T1");
-  double RpcTrkX[16], RpcTrkY[16], RpcTrkZ[16];
-  bool RpcTrkComplete;
-  if(use_rpcall) {
-    tree_in->SetBranchAddress("RpcAllX",        &RpcTrkX);
-    tree_in->SetBranchAddress("RpcAllY",        &RpcTrkY);
-    tree_in->SetBranchAddress("RpcAllZ",        &RpcTrkZ);
-    tree_in->SetBranchAddress("RpcAllComplete", &RpcTrkComplete);
-  } else {
-    tree_in->SetBranchAddress("RpcTrkX",        &RpcTrkX);
-    tree_in->SetBranchAddress("RpcTrkY",        &RpcTrkY);
-    tree_in->SetBranchAddress("RpcTrkZ",        &RpcTrkZ);
-    tree_in->SetBranchAddress("RpcTrkComplete", &RpcTrkComplete);
-  }
+  TFile *file_in = TFile::Open(infile);
+  TTree *tree_in = (TTree *)file_in->Get("tree");
+  TClonesArray *Edeps = NULL;
+  tree_in->SetBranchAddress("Edeps", &Edeps);
 
   // Output file and tree.
-  TFile *file_out = new TFile(outfile, "RECREATE");
-  TTree *tree_out = new TTree("T1", "Analysis Out Tree");
-  tree_out = tree_in->CloneTree(0);  // copy 0 entries
-  double RPCX[4], RPCY[4], RPCZ[4];
-  double RPCX_smeared[4], RPCY_smeared[4];
-  double costheta, costheta_smeared;
-  tree_out->Branch("RPCX", RPCX, "RPCX[4]/D");
-  tree_out->Branch("RPCY", RPCY, "RPCY[4]/D");
-  tree_out->Branch("RPCZ", RPCZ, "RPCZ[4]/D");
-  tree_out->Branch("RPCX_smeared", RPCX_smeared, "RPCX_smeared[4]/D");
-  tree_out->Branch("RPCY_smeared", RPCY_smeared, "RPCY_smeared[4]/D");
-  tree_out->Branch("costheta", &costheta);
-  tree_out->Branch("costheta_smeared", &costheta_smeared);
+  TFile *file_out = TFile::Open(outfile, "RECREATE");
+  TTree *tree_out = new TTree("tree", "tree");
+  //tree_out = tree_in->CloneTree(0);  // copy 0 entries
+  vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer);
+  vector<Double_t> XSmeared(nlayer), YSmeared(nlayer);
+  Double_t CosThetaEdep, CosThetaSmeared;
+  tree_out->Branch("XEdep", &XEdep);
+  tree_out->Branch("YEdep", &YEdep);
+  tree_out->Branch("ZEdep", &ZEdep);
+  tree_out->Branch("XSmeared", &XSmeared);
+  tree_out->Branch("YSmeared", &YSmeared);
+  tree_out->Branch("CosThetaEdep", &CosThetaEdep);
+  tree_out->Branch("CosThetaSmeared", &CosThetaSmeared);
 
+  // Temporaries.
+  vector<Double_t> X2(nlayer * 2), Y2(nlayer * 2), Z2(nlayer * 2), E2(nlayer * 2);
+  Long64_t nvalid = 0;
   struct timeval start, end;
   gettimeofday(&start, NULL);
-  Long64_t nvalid = 0, ncos8 = 0;
 
   Long64_t nentry = tree_in->GetEntries();
   for(Long64_t ientry = 0; ientry < nentry; ientry++) {
     if(ientry % 1000 == 0) {
-      cout << "Processing progress: " << fixed << setprecision(2)
-           << (ientry / (double)nentry) * 100 << "%" << endl;
+      cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
     }
     tree_in->GetEntry(ientry);
-    if(!RpcTrkComplete) continue;
+
+    // Simulate detector response.
+    E2.assign(E2.size(), 0);
+    X2.assign(X2.size(), 0);
+    Y2.assign(Y2.size(), 0);
+    Z2.assign(Z2.size(), 0);
+    Int_t nedep = Edeps->GetEntries();
+    for(Int_t iedep = 0; iedep < nedep; ++iedep) {
+      auto edep = (Edep *)Edeps->UncheckedAt(iedep);
+      if(edep->Pid != -13) continue;
+      assert((size_t)edep->Layer < E2.size());
+      E2[edep->Layer] += edep->Value;
+      X2[edep->Layer] += edep->Value * edep->X;
+      Y2[edep->Layer] += edep->Value * edep->Y;
+      Z2[edep->Layer] += edep->Value * edep->Z;
+    }
+    bool valid = true;
+    for(size_t l = 0; l < nlayer * 2; ++l) {
+      if(!(E2[l] > 0)) {
+        valid = false;
+        break;
+      }
+      X2[l] /= E2[l], Y2[l] /= E2[l], Z2[l] /= E2[l];
+    }
+    if(!valid) continue;
     nvalid++;
 
-    double validRpcTrkX[8], validRpcTrkY[8], validRpcTrkZ[8];
-    for(int i = 0; i < 8; i++) {
-      validRpcTrkX[i] = (RpcTrkX[2*i] + RpcTrkX[2*i + 1]) / 2.0;
-      validRpcTrkY[i] = (RpcTrkY[2*i] + RpcTrkY[2*i + 1]) / 2.0;
-      validRpcTrkZ[i] = (RpcTrkZ[2*i] + RpcTrkZ[2*i + 1]) / 2.0;
+    // Simulate readout system.
+    for(size_t l = 0; l < nlayer; ++l) {
+      XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
+      YEdep[l] = Y2[2 * l];                          // YEdep-readout
+      ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
     }
 
-    // Compute RPC[XYZ].
-    for(int i = 0; i < 4; ++i) {
-      RPCX[i] = validRpcTrkX[2*i + 1];  // X-readout
-      RPCY[i] = validRpcTrkY[2*i];      // Y-readout
-      RPCZ[i] = (validRpcTrkZ[2*i] + validRpcTrkZ[2*i + 1]) / 2.0;
-    }
-
-    // Compute RPC[XY]_smeared.
-    for(int i = 0; i < 4; i++) {
-      double radius, phi, deltaphi, newphi;
-      double sigma = 0.057;  // mm
-
-      radius = hypot(RPCX[i], RPCY[i]);  // mm
+    // Simulate detector resolution.
+    for(size_t l = 0; l < nlayer; l++) {
+      Double_t radius, phi, deltaphi, newphi;
+      Double_t sigma = 0.057;      // mm
+      radius = hypot(XEdep[l], YEdep[l]);  // mm
       if(radius == 0) {
-        RPCX_smeared[i] = RPCX[i];
-        RPCY_smeared[i] = RPCY[i];
+        XSmeared[l] = XEdep[l];
+        YSmeared[l] = YEdep[l];
       } else {
-        phi = atan2(RPCY[i], RPCX[i]);
+        phi = atan2(YEdep[l], XEdep[l]);
         deltaphi = rand->Gaus(0, sigma) / radius;
         newphi = phi + deltaphi;
-        RPCX_smeared[i] = radius * cos(newphi);
-        RPCY_smeared[i] = radius * sin(newphi);
+        XSmeared[l] = radius * cos(newphi);
+        YSmeared[l] = radius * sin(newphi);
       }
     }
 
-    // Compute costheta and costheta_smeared.
-    TVector3 vec_in  = TVector3(RPCX[1], RPCY[1], RPCZ[1]) - TVector3(RPCX[0], RPCY[0], RPCZ[0]);
-    TVector3 vec_out = TVector3(RPCX[3], RPCY[3], RPCZ[3]) - TVector3(RPCX[2], RPCY[2], RPCZ[2]);
-    costheta = cos(vec_in.Angle(vec_out));
-    vec_in  = TVector3(RPCX_smeared[1], RPCY_smeared[1], RPCZ[1]) - TVector3(RPCX_smeared[0], RPCY_smeared[0], RPCZ[0]);
-    vec_out = TVector3(RPCX_smeared[3], RPCY_smeared[3], RPCZ[3]) - TVector3(RPCX_smeared[2], RPCY_smeared[2], RPCZ[2]);
-    costheta_smeared = cos(vec_in.Angle(vec_out));
+    // Compute scatter angle.
+    CosThetaEdep = GetCosTheta(XEdep, YEdep, ZEdep);
+    CosThetaSmeared = GetCosTheta(XSmeared, YSmeared, ZEdep);
 
-    if(costheta_smeared <= 0.8) ncos8++;
     tree_out->Fill();
   }
 
@@ -113,13 +135,12 @@ void analysis(const char *infile = "../../build/root_file/CryMu_1.root",
   printf("time = %lf s\n", time / 1e6);
   cout << "Event count: " << nentry << endl;
   cout << "Event valid: " << nvalid << endl;
-  cout << "cos < 0.8: " << ncos8 << endl;
   double quotient = static_cast<double>(nvalid) / nentry;
   double efficiency = quotient * 100;
   cout << "Efficiency: " << fixed << setprecision(2) << efficiency << "%" << endl;
 
   file_out->cd();
-  file_out->Write();
+  file_out->Write(NULL, TObject::kOverwrite);
   file_out->Close();
   file_in->Close();
 

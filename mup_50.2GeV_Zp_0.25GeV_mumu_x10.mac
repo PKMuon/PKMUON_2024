@@ -13,7 +13,7 @@
 # CLFV Settings
 # ----------------------------------------------
 
-/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 1000.0
+/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.500000000000000000e-01.root 10.0
 #/run/setCut 0.7 mm
 
 # ----------------------------------------------
@@ -22,13 +22,13 @@
 
 /gps/particle mu+
 /gps/direction 0.0 0.0 1.0
-/gps/totalEnergy 50 GeV
+/gps/totalEnergy 50.2 GeV
 
 # ----------------------------------------------
 # run
 # ----------------------------------------------
 
 /run/initialize
-/rlt/SetFileName root_file/mup_50GeV.root
+/rlt/SetFileName root_file/mup_50.2GeV_Zp_0.25GeV_mumu_x10.root
 /run/printProgress 1000
 /run/beamOn 100000
