@@ -39,6 +39,8 @@ wait
     POCAFILES="${POCAFILE/.root/_*.root}"
     POCAPLOT="${POCAFILE/.root/.pdf}"
     hadd -f "${POCAFILE}" $(ls -v ${POCAFILES})
-    root -l -q -b 'src/draw_sim.C("'"${POCAFILE}"'", "'"${POCAPLOT}"'")'
+    root -l -q -b 'src/draw_sim.C("'"${POCAFILE}"'", "'"${POCAPLOT}"'")' &
+    root -l -q -b 'src/draw_sim.C("'"${POCAFILE}"'", "'"${POCAPLOT/.pdf/_signal.pdf}"'", "Scatters.Id")' &
+    wait
 ) &
 wait

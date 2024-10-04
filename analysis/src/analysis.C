@@ -42,8 +42,9 @@ void analysis(const char *infile = "../../build/root_file/mup_50GeV.root",
   // Input file and tree.
   TFile *file_in = TFile::Open(infile);
   TTree *tree_in = (TTree *)file_in->Get("tree");
-  TClonesArray *Edeps = NULL;
+  TClonesArray *Edeps = NULL, *Scatters = NULL;
   tree_in->SetBranchAddress("Edeps", &Edeps);
+  tree_in->SetBranchAddress("Scatters", &Scatters);
 
   // Output file and tree.
   TFile *file_out = TFile::Open(outfile, "RECREATE");
@@ -59,6 +60,8 @@ void analysis(const char *infile = "../../build/root_file/mup_50GeV.root",
   tree_out->Branch("YSmeared", &YSmeared);
   tree_out->Branch("CosThetaEdep", &CosThetaEdep);
   tree_out->Branch("CosThetaSmeared", &CosThetaSmeared);
+  tree_out->Branch("Scatters", Scatters);
+  tree_out->SetBranchAddress("Scatters", &Scatters);
 
   // Temporaries.
   vector<Double_t> X2(nlayer * 2), Y2(nlayer * 2), Z2(nlayer * 2), E2(nlayer * 2);

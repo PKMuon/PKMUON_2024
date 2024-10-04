@@ -7,6 +7,8 @@
 #include <tuple>
 #include <vector>
 
+#include "../../include/Object.hh"
+
 using namespace std;
 
 Long64_t PoCA_sim(const char *infile = "../../build/root_file/mupana_50GeV.root",

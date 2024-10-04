@@ -4,14 +4,17 @@
 #include <TH3D.h>
 #include <TMath.h>
 #include <TTree.h>
+#include <TTreeFormula.h>
 #include <math.h>
 
 #include <fstream>
 
+#include "../../include/Object.hh"
+
 using namespace std;
 
 TCanvas *draw_sim(const char *infile = "../../build/root_file/muppoca_50GeV.root",
-    const char *outfile = "../../build/root_file/muppoca_50GeV.pdf", Double_t min_theta = 0.001)
+    const char *outfile = "../../build/root_file/muppoca_50GeV.pdf", const char *selection = NULL, Double_t min_theta = 0.001)
 {
   const Int_t Nx = 40, Ny = 40, Nz = 40;  // 控制像元大小
   const Double_t Xdown = -200, Xup = 200, Ydown = -200, Yup = 200, Zdown = -360, Zup = 360;
@@ -19,6 +22,7 @@ TCanvas *draw_sim(const char *infile = "../../build/root_file/muppoca_50GeV.root
   // 输入
   TFile *file_in = TFile::Open(infile);
   TTree *tree = (TTree *)file_in->Get("tree");
+  TTreeFormula *formula = selection ? new TTreeFormula("tree_cut", selection, tree) : NULL;
   Double_t d, x, y, z, cos_theta;
   tree->SetBranchAddress("DPoCAEdep", &d);
   tree->SetBranchAddress("XPoCAEdep", &x);
@@ -30,10 +34,14 @@ TCanvas *draw_sim(const char *infile = "../../build/root_file/muppoca_50GeV.root
   Double_t sig[Nx][Ny][Nz] = { 0 };
   Int_t count[Nx][Ny][Nz] = { 0 };
 
-  Long64_t nentries = tree->GetEntries();
-  for(Long64_t i = 0; i < nentries; i++) {
+  Long64_t nentry = tree->GetEntries();
+  for(Long64_t i = 0; i < nentry; i++) {
     tree->GetEntry(i);
+    if(i % 1000 == 0) {
+      cout << "Processing progress: " << fixed << setprecision(2) << (i / (double)nentry) * 100 << "%" << endl;
+    }
     if(acos(cos_theta) < min_theta) continue;
+    if(formula && !formula->EvalInstance()) continue;
 
     // 给 PoCA 点以及路径上的像元赋值
     Int_t u = (x - Xdown) / vox;
@@ -99,5 +107,6 @@ TCanvas *draw_sim(const char *infile = "../../build/root_file/muppoca_50GeV.root
   hxyz->SetStats(0);
 
   c1->SaveAs(outfile);
+  delete formula;
   return c1;
 }
