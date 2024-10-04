@@ -8,13 +8,16 @@
 #include <math.h>
 
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 
 #include "../../include/Object.hh"
 
 using namespace std;
 
 TCanvas *draw_sim(const char *infile = "../../build/root_file/muppoca_50GeV.root",
-    const char *outfile = "../../build/root_file/muppoca_50GeV.pdf", const char *selection = NULL, Double_t min_theta = 0.001)
+    const char *outfile = "../../build/root_file/muppoca_50GeV.pdf", const char *selection = NULL,
+    Double_t min_theta = 0.001)
 {
   const Int_t Nx = 40, Ny = 40, Nz = 40;  // 控制像元大小
   const Double_t Xdown = -200, Xup = 200, Ydown = -200, Yup = 200, Zdown = -360, Zup = 360;

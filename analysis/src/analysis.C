@@ -112,7 +112,7 @@ void analysis(const char *infile = "../../build/root_file/mup_50GeV.root",
     // Simulate detector resolution.
     for(size_t l = 0; l < nlayer; l++) {
       Double_t radius, phi, deltaphi, newphi;
-      Double_t sigma = 0.057;      // mm
+      Double_t sigma = 0.057;              // mm
       radius = hypot(XEdep[l], YEdep[l]);  // mm
       if(radius == 0) {
         XSmeared[l] = XEdep[l];
