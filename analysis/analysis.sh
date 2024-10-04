@@ -1,35 +1,44 @@
 #!/bin/bash
 
-NPROC=$(nproc || sysctl -n hw.logicalcpu || getconf _NPROCESSORS_ONLN)
-N=0
-PIDS=()
+if [ $# = 0 ] || [ $# -gt 1 ]; then
+    1>&2 echo "usage: $(basename "$0") <macfile>"
+    exit 1
+fi
 
-for ROOTFILE in $(ls -v ../build/root_file/CryMu_*.root); do
-    if [ $N = $NPROC ]; then
+MAC="$1"
+
+NPROC=$(nproc || sysctl -n hw.logicalcpu || getconf _NPROCESSORS_ONLN)
+IPROC=0
+PIDS=()
+ROOTFILE="$(dirname "${MAC}")/$(grep /rlt/SetFileName "${MAC}" | awk '{print $2;}')"
+ROOTDIR="$(dirname "${ROOTFILE}")"
+ROOTBASE="$(basename "${ROOTFILE}")"
+ROOTFILES="${ROOTFILE/.root/_*.root}"
+
+for ROOTFILE in $(ls -v ${ROOTFILES}); do
+    if [ $IPROC = $NPROC ]; then
         wait $PIDS
         PIDS=(${PIDS[@]:1})
     else
-        let N+=1
+        let IPROC+=1
     fi
     (
-        echo root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ROOTFILE/CryMu/CryMuAna}"'")'
-        root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ROOTFILE/CryMu/CryMuAna}"'")' &>${ROOTFILE/CryMu/CryMuAna}.log
-        echo root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ROOTFILE/CryMu/CryMuAll}"'", true)'
-        root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ROOTFILE/CryMu/CryMuAll}"'", true)' &>${ROOTFILE/CryMu/CryMuAll}.log
+        ROOTBASE="$(basename "${ROOTFILE}")"
+        ANAFILE="${ROOTDIR}/ana_${ROOTBASE}"
+        POCAFILE="${ROOTDIR}/poca_${ROOTBASE}"
+        echo root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ANAFILE}"'")'
+        root -l -q -b 'src/analysis.C("'"${ROOTFILE}"'", "'"${ANAFILE}"'")' &> "${ANAFILE}.log"
+        echo root -l -q -b 'src/PoCA_sim.C("'"${ANAFILE}"'", "'"${POCAFILE}"'")'
+        root -l -q -b 'src/PoCA_sim.C("'"${ANAFILE}"'", "'"${POCAFILE}"'")' &> "${POCAFILE}.log"
     ) &
     PIDS=(${PIDS[@]} $!)
 done
 wait
 (
-    hadd -f ../build/root_file/CryMuAna.root $(ls -v ../build/root_file/CryMuAna_*.root)
-    root -l -q -b 'src/PoCA_sim.C("../build/root_file/CryMuAna.root", "../build/root_file/CryMuAnaPoCA.root")'
-    root -l -q -b 'src/draw_sim.C("../build/root_file/CryMuAnaPoCA.root", "draw_sim_ana.pdf")'
-    root -l -q -b 'src/draw_sim.C("../build/root_file/CryMuAnaPoCA.root", "draw_sim_ana_0.05.pdf", 0.05)'
-) &
-(
-    hadd -f ../build/root_file/CryMuAll.root $(ls -v ../build/root_file/CryMuAll_*.root)
-    root -l -q -b 'src/PoCA_sim.C("../build/root_file/CryMuAll.root", "../build/root_file/CryMuAllPoCA.root")'
-    root -l -q -b 'src/draw_sim.C("../build/root_file/CryMuAllPoCA.root", "draw_sim_all.pdf")'
-    root -l -q -b 'src/draw_sim.C("../build/root_file/CryMuAllPoCA.root", "draw_sim_all_0.05.pdf", 0.05)'
+    POCAFILE="${ROOTDIR}/poca_${ROOTBASE}"
+    POCAFILES="${POCAFILE/.root/_*.root}"
+    POCAPLOT="${POCAFILE/.root/.pdf}"
+    hadd -f "${POCAFILE}" $(ls -v ${POCAFILES})
+    root -l -q -b 'src/draw_sim.C("'"${POCAFILE}"'", "'"${POCAPLOT}"'")'
 ) &
 wait
