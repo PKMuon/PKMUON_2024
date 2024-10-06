@@ -63,7 +63,7 @@ void Run::InitTree()
 
   fFile = TFile::Open(fRootName, "RECREATE");
   fTree = new TTree("tree", "tree");
-  fTree->Branch("Tracks", new TClonesArray("Track"));
+  //fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
   fTree->Branch("Scatters", new TClonesArray("Scatter"));
 
@@ -88,7 +88,7 @@ void Run::SaveTree()
   if(!fFile) { return; }
   fFile->cd();
   fTree->Write(NULL, TObject::kOverwrite);
-  delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   fFile->Close();
@@ -98,16 +98,16 @@ void Run::SaveTree()
 
 void Run::FillAndReset()
 {
-  auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
 
-  // Sort the tracks by ID.
-  std::vector<Track *> tracks;
-  tracks.resize(Tracks->GetEntries());
-  for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
-  sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
-  for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
+  //// Sort the tracks by ID.
+  //std::vector<Track *> tracks;
+  //tracks.resize(Tracks->GetEntries());
+  //for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
+  //sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
+  //for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
@@ -117,7 +117,7 @@ void Run::FillAndReset()
   }
   fStatus.assign(fStatus.size(), false);
 
-  Tracks->Clear();
+  //Tracks->Clear();
   fEdep.clear();
   Scatters->Clear();
 }
@@ -146,13 +146,13 @@ void Run::AddStep(const G4Step *step)
   fEdep[id] += edep;
 }
 
-void Run::AddTrack(const G4Track *track)
+void Run::AddTrack([[maybe_unused]] const G4Track *track)
 {
   //G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID()
   //  << "(" << track->GetParentID() << ")"
   //  << G4endl;
-  auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
-  *(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+  //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
 }
 
 void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4DynamicParticle *ln)
