@@ -58,6 +58,9 @@ public:
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
+  G4LogicalVolume *GetScoringGasVolume() const { return fScoringGasVolume; }
+  G4double GetCellX() const { return fCellX; }
+  G4double GetCellY() const { return fCellY; }
 
   // Hierarchic options.
   void PrintVolumes(G4VPhysicalVolume *) const;
@@ -86,6 +89,8 @@ private:
   G4double fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
   std::vector<G4double> fElectrodeZs;
   std::vector<G4double> fScoringZs;
+  G4LogicalVolume *fScoringGasVolume;
+  G4double fCellX, fCellY;
 };
 
 #endif

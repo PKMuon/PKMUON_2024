@@ -33,8 +33,8 @@
 #include <utility>
 #include <vector>
 
+class DetectorConstruction;
 class G4Track;
-class G4LogicalVolume;
 class G4DynamicParticle;
 
 class Track : public TObject {
@@ -56,9 +56,9 @@ public:
   ClassDef(Track, 1);
 };
 
-class Cuts : public TObject {
+class Params : public TObject {
 public:
-  Cuts &operator=(const G4LogicalVolume &);
+  Params &operator=(const DetectorConstruction &);
 
   Double_t GammaCut;
   Double_t GammaThreshold;
@@ -69,58 +69,31 @@ public:
   Double_t ProtonCut;
   Double_t ProtonThreshold;
 
-  ClassDef(Cuts, 1);
+  std::vector<double> LayerZ;
+  Double_t CellX;
+  Double_t CellY;
+  Int_t HalfNCellX;
+  Int_t HalfNCellY;
+
+  ClassDef(Params, 1);
 };
 
 class Edep;
 
-class EdepData {
-  friend class Edep;
-
-private:
-  Double_t Value;
-  Double_t X;
-  Double_t Y;
-
-public:
-  EdepData() : Value(0.0), X(0.0), Y(0.0) { }
-
-  EdepData &Add(Double_t value, Double_t x, double y)
-  {
-    Value += value;
-    X += value * x, Y += value * y;
-    return *this;
-  }
-
-  EdepData &&EndSum()
-  {
-    if(Value) X /= Value, Y /= Value;
-    return std::move(*this);
-  }
-
-  static std::vector<Double_t> fScoringZs;
-};
-
 class Edep : public TObject {
 public:
-  Edep &operator=(const std::pair<Long64_t, EdepData &&> &p)
+  Edep &operator=(const std::pair<Long64_t, Double_t> &p)
   {
-    auto &[id, data] = p;
-    Layer = id >> 32;
+    auto &[id, value] = p;
+    Id = id >> 32;
     Pid = (uint32_t)id;
-    Value = data.Value;
-    X = data.X;
-    Y = data.Y;
-    Z = data.fScoringZs[Layer];
+    Value = value;
     return *this;
   }
 
-  Int_t Layer;
+  Int_t Id;
   Int_t Pid;
   Double_t Value;
-  Double_t X;
-  Double_t Y;
-  Double_t Z;
 
   ClassDef(Edep, 1);
 };

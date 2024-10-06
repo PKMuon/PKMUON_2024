@@ -28,7 +28,15 @@ rpc_gas:
   solid: box
   x: &rpc_content_x 390 mm
   y: &rpc_content_y 390 mm
-  z: 2 mm
+  z: &rpc_gas_z 2 mm
+  material: rpc_gas
+
+# Specifies resolution, not a part of construct.
+rpc_cell:
+  solid: box
+  x: 0.5 mm
+  y: 0.5 mm
+  z: *rpc_gas_z
   material: rpc_gas
 
 rpc_screw_gap:

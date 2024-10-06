@@ -14,7 +14,6 @@
 #include <filesystem>
 
 #include "DetectorConstruction.hh"
-#include "G4LogicalVolumeStore.hh"
 #include "G4RunManager.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -54,8 +53,6 @@ void Run::InitGeom()
   fScoringMaxZs = scoringZs;
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
   fStatus.resize(fScoringMaxZs.size());
-
-  EdepData::fScoringZs.assign(scoringZs.begin(), scoringZs.end());
 }
 
 void Run::InitTree()
@@ -70,14 +67,20 @@ void Run::InitTree()
   fTree->Branch("Edeps", new TClonesArray("Edep"));
   fTree->Branch("Scatters", new TClonesArray("Scatter"));
 
-  // The cut tree is only accessed here.
-  TClonesArray Cuts("Cuts");
-  TTree *cuts = new TTree("cuts", "cuts");
-  cuts->Branch("Cuts", &Cuts);
-  *((::Cuts *)Cuts.ConstructedAt(0)) = *G4LogicalVolumeStore::GetInstance()->GetVolume("world");
-  cuts->Fill();
-  cuts->Write(NULL, cuts->kOverwrite);
-  cuts->SetBranchAddress("Cuts", NULL);
+  // The params tree is only accessed here.
+  TClonesArray Params("Params");
+  TTree *params = new TTree("params", "params");
+  params->Branch("Params", &Params);
+  *((::Params *)Params.ConstructedAt(0)) = *fDetectorConstruction;
+  fCellX = ((::Params *)Params.UncheckedAt(0))->CellX;
+  fCellY = ((::Params *)Params.UncheckedAt(0))->CellY;
+  fNCellX = ((::Params *)Params.UncheckedAt(0))->HalfNCellX * 2;
+  fNCellY = ((::Params *)Params.UncheckedAt(0))->HalfNCellY * 2;
+  fScoringOffsetX = -((::Params *)Params.UncheckedAt(0))->HalfNCellX * fCellX;
+  fScoringOffsetY = -((::Params *)Params.UncheckedAt(0))->HalfNCellY * fCellY;
+  params->Fill();
+  params->Write(NULL, params->kOverwrite);
+  params->SetBranchAddress("Params", NULL);
 }
 
 void Run::SaveTree()
@@ -108,14 +111,14 @@ void Run::FillAndReset()
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &[id, data] : fEdepData) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = { id, data.EndSum() }; }
+    for(auto &[id, value] : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = { id, value }; }
     fTree->Fill();
     Edeps->Clear();
   }
   fStatus.assign(fStatus.size(), false);
 
   Tracks->Clear();
-  fEdepData.clear();
+  fEdep.clear();
   Scatters->Clear();
 }
 
@@ -125,7 +128,7 @@ void Run::AddStep(const G4Step *step)
 {
   const G4ThreeVector &r = step->GetTrack()->GetPosition();
   G4double x = r.x(), y = r.y(), z = r.z();
-  if(fabs(x) > fScoringHalfX || fabs(y) > fScoringHalfY) return;
+  if(fabs(x) >= fScoringHalfX || fabs(y) >= fScoringHalfY) return;
   auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
   if(ub == fScoringMaxZs.end()) return;
   if(z < *ub - fScoringZ) return;
@@ -133,11 +136,14 @@ void Run::AddStep(const G4Step *step)
   G4double edep = step->GetTotalEnergyDeposit();
   if(edep == 0) return;
 
-  Long64_t layer = ub - fScoringMaxZs.begin();
+  Long64_t zid = ub - fScoringMaxZs.begin();
+  Long64_t xid = (x - fScoringOffsetX) / fCellX;
+  Long64_t yid = (y - fScoringOffsetY) / fCellY;
+  Long64_t rid = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
   Long64_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  Long64_t id = (layer << 32) | pid;
-  fStatus[layer] = true;
-  fEdepData[id].Add(edep, x, y);
+  Long64_t id = (rid << 32) | pid;
+  fStatus[zid] = true;
+  fEdep[id] += edep;
 }
 
 void Run::AddTrack(const G4Track *track)

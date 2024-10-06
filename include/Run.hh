@@ -8,7 +8,6 @@
 #include <map>
 #include <vector>
 
-#include "Object.hh"
 #include "globals.hh"
 
 class TFile;
@@ -47,8 +46,11 @@ private:
   TTree *fTree;
   TFile *fFile;
   G4double fScoringHalfX, fScoringHalfY, fScoringZ;
+  G4double fCellX, fCellY;
+  G4int fNCellX, fNCellY;
+  G4double fScoringOffsetX, fScoringOffsetY;
   std::vector<G4double> fScoringMaxZs;
-  std::map<Long64_t, EdepData> fEdepData;
+  std::map<Long64_t, Double_t> fEdep;
   std::vector<bool> fStatus;
 };
 

@@ -26,6 +26,9 @@
 
 #include "Object.hh"
 
+#include <math.h>
+
+#include "DetectorConstruction.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MaterialCutsCouple.hh"
 #include "G4ProductionCuts.hh"
@@ -55,10 +58,11 @@ Track &Track::operator=(const G4Track &track)
   return *this;
 }
 
-Cuts &Cuts::operator=(const G4LogicalVolume &volume)
+Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
-  G4Material *material = volume.GetMaterial();
-  G4ProductionCuts *cuts = volume.GetMaterialCutsCouple()->GetProductionCuts();
+  const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringGasVolume()->GetMaterialCutsCouple();
+  const G4Material *material = couple->GetMaterial();
+  G4ProductionCuts *cuts = couple->GetProductionCuts();
 
   GammaCut = cuts->GetProductionCut("gamma");
   ElectronCut = cuts->GetProductionCut("e-");
@@ -70,10 +74,13 @@ Cuts &Cuts::operator=(const G4LogicalVolume &volume)
   PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
+  LayerZ = detectorConstruction.GetScoringZs();
+  CellX = detectorConstruction.GetCellX();
+  CellY = detectorConstruction.GetCellY();
+  HalfNCellX = round(detectorConstruction.GetScoringHalfX() / detectorConstruction.GetCellX());
+  HalfNCellY = round(detectorConstruction.GetScoringHalfY() / detectorConstruction.GetCellY());
   return *this;
 }
-
-std::vector<Double_t> EdepData::fScoringZs;
 
 Scatter &Scatter::operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t)
 {
