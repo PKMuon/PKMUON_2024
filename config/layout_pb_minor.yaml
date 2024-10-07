@@ -17,7 +17,7 @@ world_minor_gap:
   components: [target]
   x: &rpc_x 430 mm
   y: &rpc_y 430 mm
-  z: 155 mm
+  z: 150 mm
   material: &world_material rpc_air
 
 ---
