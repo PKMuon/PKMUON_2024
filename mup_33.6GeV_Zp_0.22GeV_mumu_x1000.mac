@@ -13,7 +13,7 @@
 # CLFV Settings
 # ----------------------------------------------
 
-/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 100.0
+/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 1000.0
 #/run/setCut 0.7 mm
 
 # ----------------------------------------------
@@ -29,6 +29,6 @@
 # ----------------------------------------------
 
 /run/initialize
-/rlt/SetFileName root_file/mup_33.6GeV_Zp_0.22GeV_mumu_x100.root
+/rlt/SetFileName root_file/mup_33.6GeV_Zp_0.22GeV_mumu_x1000.root
 /run/printProgress 1000
 /run/beamOn 100000
