@@ -43,7 +43,11 @@ world:
     - rpc
     - world_minor_gap_down
     - rpc
+    - world_minor_gap_down
+    - rpc
     - world_major_gap
+    - rpc
+    - world_minor_gap_up
     - rpc
     - world_minor_gap_up
     - rpc
