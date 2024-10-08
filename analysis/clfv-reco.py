@@ -64,8 +64,8 @@ def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
     return Edeps_Id, Edeps_Value
 Edeps_Id, Edeps_Value = simulate_pid_response()
 tree['Edeps.Id'] = Edeps_Id
-tree['Edeps.Pid'] = ak.zeros_like(Edeps_Id)
 tree['Edeps.Value'] = Edeps_Value
+tree = tree[[field for field in tree.fields if field != 'Edeps.Pid']]
 
 # Decode energy deposit positions.
 tree['Edeps.Layer'] = tree['Edeps.Id'] // (NCellX * NCellY)
@@ -83,15 +83,32 @@ def decode_xyz():
     return X, Y, Z
 X, Y, Z = decode_xyz()
 tree['Edeps.X'] = X; tree['Edeps.Y'] = Y; tree['Edeps.Z'] = Z
+for ievent, event in enumerate(tree):
+    if ievent >= 10: break
+    print(f'event_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Value'], sep='\n  - ')
 
 # Simulate readout structure.
 assert NLayer % 2 == 0
 NLayer //= 2
 Edeps = tree[[field for field in tree.fields if field.startswith('Edeps.')]]
-Edeps = Edeps[Edeps['Edeps.Layer'] % 2 == 0]  # [XXX] We drop half of the layers temporarily.
 Edeps = Edeps[Edeps['Edeps.Value'] >= 1]  # Require minimum energy deposition 1 MeV.
+XEdeps = Edeps[Edeps['Edeps.Layer'] % 2 == 0]  # Require consistent x-y waveforms.
+YEdeps = Edeps[Edeps['Edeps.Layer'] % 2 == 1]
+mask_0 = ak.num(XEdeps['Edeps.Id'], axis=1) == ak.num(YEdeps['Edeps.Id'], axis=1)
+XEdeps, YEdeps = XEdeps[mask_0], YEdeps[mask_0]
+mask_1 = ak.all(XEdeps['Edeps.Id'] % (NCellX * NCellY) == YEdeps['Edeps.Id'] % (NCellX * NCellY), axis=1)
+XEdeps, YEdeps = XEdeps[mask_1], YEdeps[mask_1]
+Edeps = XEdeps
 Edeps['Edeps.Layer'] = Edeps['Edeps.Layer'] // 2
+Edeps['Edeps.Z'] = (XEdeps['Edeps.Z'] + YEdeps['Edeps.Z']) / 2
+Edeps['Edeps.Value'] = XEdeps['Edeps.Value'] + YEdeps['Edeps.Value']
+tree = tree[mask_0]
+tree = tree[mask_1]
 for field in Edeps.fields: tree[field] = Edeps[field]
+tree = tree[[field for field in tree.fields if field != 'Edeps.Id']]
+for ievent, event in enumerate(tree):
+    if ievent >= 10: break
+    print(f'event_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Value'], sep='\n  - ')
 
 # Select events with hits pattern [0, 1, 2, 2, 3, 3].
 tree = tree[ak.num(tree['Edeps.Layer'], axis=1) == 6]
@@ -147,11 +164,11 @@ signal     = tree[tree['MC.IsSignal'] == True ]
 background = tree[tree['MC.IsSignal'] == False]
 for ievent, event in enumerate(signal):
     if ievent >= 10: break
-    print(f'signal_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Pid'],
+    print(f'signal_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'],
           event['Edeps.Value'], event['Reco.A12'], sep='\n  - ')
 for ievent, event in enumerate(background):
     if ievent >= 10: break
-    print(f'background_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Pid'],
+    print(f'background_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'],
           event['Edeps.Value'], event['Reco.A12'], sep='\n  - ')
 print('Signal:', ak.num(signal, axis=0))
 print('Background:', ak.num(background, axis=0))
