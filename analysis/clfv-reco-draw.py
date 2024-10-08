@@ -30,6 +30,15 @@ for ievent, event in enumerate(tree):
 # Compute auxiliary variables.
 tree['Reco.A0M'] = np.maximum(tree['Reco.A01'], tree['Reco.A02'])
 tree['Reco.AMM'] = np.maximum(tree['Reco.A0M'], tree['Reco.A12'])
+p0 = tree['MC.P0']
+p1 = tree['MC.P1']
+p2 = tree['MC.P2']
+up0, up1, up2 = map(lambda p: p / np.linalg.norm(p, axis=-1, keepdims=True), [p0, p1, p2])
+tree['MC.A01'] = np.arccos(np.sum(up0 * up1, axis=-1))
+tree['MC.A02'] = np.arccos(np.sum(up0 * up2, axis=-1))
+tree['MC.A12'] = np.arccos(np.sum(up1 * up2, axis=-1))
+tree['MC.A0M'] = np.maximum(tree['MC.A01'], tree['MC.A02'])
+tree['MC.AMM'] = np.maximum(tree['MC.A0M'], tree['MC.A12'])
 
 # Split signal and background.
 signal     = tree[tree['MC.IsSignal'] == True ]
@@ -49,6 +58,7 @@ def savefig(path):
 
 plt.hist(signal['Reco.A01'], bins=10, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A01'], bins=10, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A01'], bins=10, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_1$>')
 plt.ylabel('Events')
 plt.legend()
@@ -58,6 +68,7 @@ plt.close()
 
 plt.hist(signal['Reco.A02'], bins=10, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A02'], bins=10, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A02'], bins=10, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.legend()
@@ -67,6 +78,7 @@ plt.close()
 
 plt.hist(signal['Reco.A12'], bins=10, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A12'], bins=10, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A12'], bins=10, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_1$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.legend()
@@ -76,6 +88,7 @@ plt.close()
 
 plt.hist(signal['Reco.A0M'], bins=10, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A0M'], bins=10, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A0M'], bins=10, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.legend()
@@ -85,6 +98,7 @@ plt.close()
 
 plt.hist(signal['Reco.AMM'], bins=10, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.AMM'], bins=10, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.AMM'], bins=10, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>, <$\vec{p}_1$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.legend()
