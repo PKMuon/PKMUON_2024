@@ -123,7 +123,7 @@ void DetectorConstruction::DefineVolumes()
     fElectrodeZs.push_back(r.z());
   });
   sort(fElectrodeZs.begin(), fElectrodeZs.end());
-  fScoringHalfZ = (fElectrodeZs.at(1) - fElectrodeZs.at(0)) * 0.5 - fElectrodeHalfZ;
+  fScoringHalfZ = (fElectrodeZs.at(1) - fElectrodeZs.at(0)) * 0.5 - 0.9 * fElectrodeHalfZ;
   fScoringZs.resize(fElectrodeZs.size() / 2);
   for(size_t i = 0; i < fScoringZs.size(); ++i) {
     fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
