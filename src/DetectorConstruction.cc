@@ -60,7 +60,6 @@
 DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
       fWorld(NULL),
-      fElectrodeVolume(NULL),
       fElectrodeHalfX(0.0),
       fElectrodeHalfY(0.0),
       fElectrodeHalfZ(0.0),
@@ -113,17 +112,18 @@ void DetectorConstruction::DefineVolumes()
   for(const std::string &path : paths) { GeometryConfig::LoadVolumes(path.c_str()); }
 
   fWorld = new G4PVPlacement(0, { 0, 0, 0 }, fLogicalVolumeStore->GetVolume("world"), "world", 0, false, 0, true);
-  fElectrodeVolume = fLogicalVolumeStore->GetVolume("rpc_electrode");
-  fElectrodeHalfX = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetXHalfLength();
-  fElectrodeHalfY = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetYHalfLength();
-  fElectrodeHalfZ = dynamic_cast<G4Box *>(fElectrodeVolume->GetSolid())->GetZHalfLength();
+  G4LogicalVolume *rpc_electrode = fLogicalVolumeStore->GetVolume("rpc_electrode");
+  fElectrodeHalfX = dynamic_cast<G4Box *>(rpc_electrode->GetSolid())->GetXHalfLength();
+  fElectrodeHalfY = dynamic_cast<G4Box *>(rpc_electrode->GetSolid())->GetYHalfLength();
+  fElectrodeHalfZ = dynamic_cast<G4Box *>(rpc_electrode->GetSolid())->GetZHalfLength();
   fElectrodeZs.assign(0, 0.0);
-  WalkVolume(fWorld, [this](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
-    if(volume->GetLogicalVolume() != fElectrodeVolume) { return; }
-    fElectrodeZs.push_back(r.z());
-  });
+  WalkVolume(
+      fWorld, [rpc_electrode, this](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
+        if(volume->GetLogicalVolume() != rpc_electrode) { return; }
+        fElectrodeZs.push_back(r.z());
+      });
   sort(fElectrodeZs.begin(), fElectrodeZs.end());
-  fScoringHalfZ = (fElectrodeZs.at(1) - fElectrodeZs.at(0)) * 0.5 - 0.9 * fElectrodeHalfZ;
+  fScoringHalfZ = (fElectrodeZs.at(1) - fElectrodeZs.at(0)) * 0.5 - fElectrodeHalfZ;
   fScoringZs.resize(fElectrodeZs.size() / 2);
   for(size_t i = 0; i < fScoringZs.size(); ++i) {
     fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
@@ -136,15 +136,14 @@ void DetectorConstruction::DefineVolumes()
 
 void DetectorConstruction::DefineFields()
 {
-  // Find all unique physical occurrences of rpc_electrode_pair.
-  G4String name = "rpc_electrode_pair";
-  std::vector<G4VPhysicalVolume *> rpc_electrode_pairs;
-  WalkVolume(NULL, [&name, &rpc_electrode_pairs](G4VPhysicalVolume *v) {
-    if(v->GetLogicalVolume()->GetName() == name) { rpc_electrode_pairs.push_back(v); }
+  // Find all unique physical occurrences of rpc_electric.
+  G4String name = "rpc_electric";
+  std::vector<G4VPhysicalVolume *> rpc_electrics;
+  WalkVolume(NULL, [&name, &rpc_electrics](G4VPhysicalVolume *v) {
+    if(v->GetLogicalVolume()->GetName() == name) { rpc_electrics.push_back(v); }
   });
-  std::sort(rpc_electrode_pairs.begin(), rpc_electrode_pairs.end());
-  rpc_electrode_pairs.erase(
-      std::unique(rpc_electrode_pairs.begin(), rpc_electrode_pairs.end()), rpc_electrode_pairs.end());
+  std::sort(rpc_electrics.begin(), rpc_electrics.end());
+  rpc_electrics.erase(std::unique(rpc_electrics.begin(), rpc_electrics.end()), rpc_electrics.end());
 
   // Determine electric field volume.
   G4double z = fScoringHalfZ * 2;
@@ -165,11 +164,11 @@ void DetectorConstruction::DefineFields()
   G4AutoDelete::Register(field);
   G4AutoDelete::Register(magField);
 
-  for(G4VPhysicalVolume *rpc_electrode_pair : rpc_electrode_pairs) {
-    // Split rpc_electrode_pair into two parts, w/ and w/o electric field.
-    PrintVolumes(rpc_electrode_pair);
-    rpc_electrode_pair = PartitionVolume(
-        rpc_electrode_pair, [&electric, &name](G4VSolid *solid, const G4ThreeVector &r, const G4RotationMatrix &rm) {
+  for(G4VPhysicalVolume *rpc_electric : rpc_electrics) {
+    // Split rpc_electric into two parts, w/ and w/o electric field.
+    PrintVolumes(rpc_electric);
+    rpc_electric = PartitionVolume(
+        rpc_electric, [&electric, &name](G4VSolid *solid, const G4ThreeVector &r, const G4RotationMatrix &rm) {
           // r_s = r + rm * r'_s  <=>  r'_s = - (rm^-1 * r) + rm^-1 * r_s
           static size_t g_id;
           size_t id = g_id++;
@@ -184,8 +183,8 @@ void DetectorConstruction::DefineFields()
           G4AutoDelete::Register(rotation);
           return parts;
         });
-    PrintVolumes(rpc_electrode_pair);
-    G4VPhysicalVolume *electric_volume = rpc_electrode_pair->GetLogicalVolume()->GetDaughter(0);
+    PrintVolumes(rpc_electric);
+    G4VPhysicalVolume *electric_volume = rpc_electric->GetLogicalVolume()->GetDaughter(0);
     electric_volume->GetLogicalVolume()->SetFieldManager(manager, true);
     {
       G4VisAttributes attr;

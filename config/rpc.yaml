@@ -64,29 +64,29 @@ rpc_x_readout_board: &rpc_readout_board
 rpc_t_readout_board: *rpc_readout_board
 rpc_y_readout_board: *rpc_readout_board
 
+rpc_electric:
+  solid: bottom_up
+  components:
+    - rpc_glass
+    - rpc_gas
+    - rpc_glass
+  material: rpc_gas
+
 rpc_electrode_pair:
   solid: bottom_up
   components:
     - rpc_electrode
-    - rpc_glass
-    - rpc_gas
-    - rpc_glass
+    - rpc_electric
     - rpc_electrode
-  material: rpc_gas
-
-# This box makes rpc_electrode_pair physically unique.
-rpc_electrode_pair_box:
-  solid: bottom_up
-  components: [rpc_electrode_pair]
   material: rpc_gas
 
 rpc_electrode_pair_0:
   solid: rotation
-  components: [rpc_electrode_pair_box]
+  components: [rpc_electrode_pair]
 
 rpc_electrode_pair_1:
   solid: rotation
-  components: [rpc_electrode_pair_box, [x, 180 deg]]
+  components: [rpc_electrode_pair, [x, 180 deg]]
 
 rpc_mainbody:
   solid: bottom_up
