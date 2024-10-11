@@ -24,22 +24,42 @@
 // ********************************************************************
 //
 
-#include "TrackingAction.hh"
+#include <TString.h>
 
-//#include "G4VProcess.hh"
-#include "Run.hh"
+#ifndef EdepKey_h
+#define EdepKey_h 1
 
-TrackingAction::TrackingAction() { }
+struct EdepKey {
+public:
+  Int_t Id;
+  Int_t Pid;
+  TString Process;
 
-TrackingAction::~TrackingAction() { }
+  // Typically ROOT is not built with C++20, unfortunately.
+  //auto operator<=>(const EdepKey &) const = default;
+};
 
-void TrackingAction::PreUserTrackingAction([[maybe_unused]] const G4Track *track)
+inline bool operator<(const EdepKey &lhs, const EdepKey &rhs)
 {
-  Run::GetInstance()->AddTrack(track);
-  //if(const G4VProcess *process = track->GetCreatorProcess()) {
-  //  G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID() << ": "
-  //         << track->GetParticleDefinition()->GetParticleName() << ", " << process->GetProcessName() << G4endl;
-  //}
+  return lhs.Id < rhs.Id || (lhs.Id == rhs.Id && lhs.Pid < rhs.Pid)
+      || (lhs.Id == rhs.Id && lhs.Pid == rhs.Pid && lhs.Process < rhs.Process);
 }
 
-void TrackingAction::PostUserTrackingAction([[maybe_unused]] const G4Track *track) { }
+inline bool operator==(const EdepKey &lhs, const EdepKey &rhs)
+{
+  return lhs.Id == rhs.Id && lhs.Pid == rhs.Pid && lhs.Process == rhs.Process;
+}
+
+namespace std {
+
+template<>
+struct hash<EdepKey> {
+  size_t operator()(const EdepKey &key) const
+  {
+    return hash<size_t>{}(((size_t)key.Id << 32) | key.Pid) ^ hash<const char *>{}(key.Process);
+  }
+};
+
+}  // namespace std
+
+#endif

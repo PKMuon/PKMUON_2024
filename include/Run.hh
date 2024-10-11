@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 
+#include "EdepKey.hh"
 #include "globals.hh"
 
 class TFile;
@@ -50,7 +51,7 @@ private:
   G4int fNCellX, fNCellY;
   G4double fScoringOffsetX, fScoringOffsetY;
   std::vector<G4double> fScoringMaxZs;
-  std::map<Long64_t, Double_t> fEdep;
+  std::map<EdepKey, Double_t> fEdep;
   std::vector<bool> fStatus;
 };
 

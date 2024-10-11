@@ -28,10 +28,13 @@
 #define Object_h 1
 
 #include <TObject.h>
+#include <TString.h>
 
 #include <tuple>
 #include <utility>
 #include <vector>
+
+#include "EdepKey.hh"
 
 class DetectorConstruction;
 class G4Track;
@@ -78,21 +81,19 @@ public:
   ClassDef(Params, 1);
 };
 
-class Edep;
-
 class Edep : public TObject {
 public:
-  Edep &operator=(const std::pair<Long64_t, Double_t> &p)
+  Edep &operator=(const std::pair<EdepKey, Double_t> &p)
   {
-    auto &[id, value] = p;
-    Id = id >> 32;
-    Pid = (uint32_t)id;
-    Value = value;
+    auto &[key, value] = p;
+    auto &[id, pid, process] = key;
+    std::tie(Id, Pid, Process, Value) = std::tie(id, pid, process, value);
     return *this;
   }
 
   Int_t Id;
   Int_t Pid;
+  TString Process;
   Double_t Value;
 
   ClassDef(Edep, 1);

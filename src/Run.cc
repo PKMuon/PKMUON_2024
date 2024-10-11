@@ -111,7 +111,7 @@ void Run::FillAndReset()
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &[id, value] : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = { id, value }; }
+    for(auto &[key, value] : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = { key, value }; }
     fTree->Fill();
     Edeps->Clear();
   }
@@ -136,14 +136,15 @@ void Run::AddStep(const G4Step *step)
   G4double edep = step->GetTotalEnergyDeposit();
   if(edep == 0) return;
 
-  Long64_t zid = ub - fScoringMaxZs.begin();
-  Long64_t xid = (x - fScoringOffsetX) / fCellX;
-  Long64_t yid = (y - fScoringOffsetY) / fCellY;
-  Long64_t rid = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
-  Long64_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  Long64_t id = (rid << 32) | pid;
+  Int_t zid = ub - fScoringMaxZs.begin();
+  Int_t xid = (x - fScoringOffsetX) / fCellX;
+  Int_t yid = (y - fScoringOffsetY) / fCellY;
+  Int_t id = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
+  Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+  TString process;
+  if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) process = p->GetProcessName();
   fStatus[zid] = true;
-  fEdep[id] += edep;
+  fEdep[{id, pid, process}] += edep;
 }
 
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
