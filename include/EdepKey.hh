@@ -26,6 +26,8 @@
 
 #include <Rtypes.h>
 
+#include <tuple>
+
 #ifndef EdepKey_h
 #define EdepKey_h 1
 
@@ -35,20 +37,15 @@ public:
   Int_t Pid;
   Int_t Process;
 
+  auto Tuple() { return std::tie(Id, Pid, Process); }
+  auto Tuple() const { return std::tie(Id, Pid, Process); }
+
   // Typically ROOT is not built with C++20, unfortunately.
   //auto operator<=>(const EdepKey &) const = default;
 };
 
-inline bool operator<(const EdepKey &lhs, const EdepKey &rhs)
-{
-  return lhs.Id < rhs.Id || (lhs.Id == rhs.Id && lhs.Pid < rhs.Pid)
-      || (lhs.Id == rhs.Id && lhs.Pid == rhs.Pid && lhs.Process < rhs.Process);
-}
-
-inline bool operator==(const EdepKey &lhs, const EdepKey &rhs)
-{
-  return lhs.Id == rhs.Id && lhs.Pid == rhs.Pid && lhs.Process == rhs.Process;
-}
+inline bool operator<(const EdepKey &lhs, const EdepKey &rhs) { return lhs.Tuple() < rhs.Tuple(); }
+inline bool operator==(const EdepKey &lhs, const EdepKey &rhs) { return lhs.Tuple() == rhs.Tuple(); }
 
 namespace std {
 
@@ -56,7 +53,7 @@ template<>
 struct hash<EdepKey> {
   size_t operator()(const EdepKey &key) const
   {
-    return hash<size_t>{}(((size_t)key.Id << 32) | (unsigned)key.Pid) ^ hash<unsigned>{}(key.Process);
+    return hash<int>()(key.Id) ^ hash<int>()(key.Pid) ^ hash<int>()(key.Process);
   }
 };
 

@@ -28,8 +28,8 @@
 #define Object_h 1
 
 #include <TObject.h>
-#include <TString.h>
 
+#include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -86,8 +86,8 @@ public:
   Edep &operator=(const std::pair<EdepKey, Double_t> &p)
   {
     auto &[key, value] = p;
-    auto &[id, pid, process] = key;
-    std::tie(Id, Pid, Process, Value) = std::tie(id, pid, process, value);
+    std::tie(Id, Pid, Process) = key.Tuple();
+    Value = value;
     return *this;
   }
 
@@ -119,14 +119,16 @@ public:
 
 class Process : public TObject {
 public:
-  Process &operator=(const std::pair<Int_t, const TString &> &t)
+  Process &operator=(const std::pair<Int_t, const std::string &> &t)
   {
     std::tie(Id, Name) = t;
     return *this;
   }
 
   Int_t Id;
-  TString Name;
+  std::string Name;
+
+  ClassDef(Process, 1);
 };
 
 #endif
