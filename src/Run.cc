@@ -14,9 +14,13 @@
 #include <filesystem>
 
 #include "DetectorConstruction.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
+#include "G4ProcessManager.hh"
 #include "G4RunManager.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
+#include "G4VProcess.hh"
 #include "G4ios.hh"
 #include "Object.hh"
 #include "RunMessenger.hh"
@@ -68,8 +72,9 @@ void Run::InitTree()
   fTree->Branch("Scatters", new TClonesArray("Scatter"));
 
   // The params tree is only accessed here.
-  TClonesArray Params("Params");
   TTree *params = new TTree("params", "params");
+
+  TClonesArray Params("Params");
   params->Branch("Params", &Params);
   *((::Params *)Params.ConstructedAt(0)) = *fDetectorConstruction;
   fCellX = ((::Params *)Params.UncheckedAt(0))->CellX;
@@ -78,9 +83,16 @@ void Run::InitTree()
   fNCellY = ((::Params *)Params.UncheckedAt(0))->HalfNCellY * 2;
   fScoringOffsetX = -((::Params *)Params.UncheckedAt(0))->HalfNCellX * fCellX;
   fScoringOffsetY = -((::Params *)Params.UncheckedAt(0))->HalfNCellY * fCellY;
+
+  TClonesArray Processes("Process");
+  params->Branch("Processes", &Processes);
+  BuildProcessMap();
+  for(auto &[name, id] : fProcessMap) *(::Process *)Processes.ConstructedAt(Processes.GetEntries()) = { id, name };
+
   params->Fill();
   params->Write(NULL, params->kOverwrite);
   params->SetBranchAddress("Params", NULL);
+  params->SetBranchAddress("Processes", NULL);
 }
 
 void Run::SaveTree()
@@ -141,10 +153,13 @@ void Run::AddStep(const G4Step *step)
   Int_t yid = (y - fScoringOffsetY) / fCellY;
   Int_t id = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  TString process;
-  if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) process = p->GetProcessName();
+  Int_t process = -1;
+  if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
+    auto it = fProcessMap.find(p->GetProcessName());
+    if(it != fProcessMap.end()) process = it->second;
+  }
   fStatus[zid] = true;
-  fEdep[{id, pid, process}] += edep;
+  fEdep[{ id, pid, process }] += edep;
 }
 
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
@@ -160,6 +175,29 @@ void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *lp, const G4D
 {
   auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { muon, lp, ln };
+}
+
+void Run::BuildProcessMap()
+{
+  auto &iter = *G4ParticleTable::GetParticleTable()->GetIterator();
+  iter.reset();
+  while(iter()) {
+    G4ParticleDefinition *particle = iter.value();
+    G4ProcessManager *processManager = particle->GetProcessManager();
+    if(!processManager) continue;
+    G4ProcessVector *processList = processManager->GetProcessList();
+    if(!processList) continue;
+    for(size_t i = 0; i < processList->size(); ++i) {
+      G4VProcess *process = (*processList)[i];
+      //G4cout << __PRETTY_FUNCTION__ << ": " << particle->GetParticleName() << ", " << process->GetProcessName() << G4endl;
+      fProcessMap[process->GetProcessName()] = 0;  // Delay numbering to the end.
+    }
+  }
+  size_t i = 0;
+  for(auto &[name, id] : fProcessMap) {
+    id = i++;
+    G4cout << __PRETTY_FUNCTION__ << ": " << std::setw(3) << id << " " << name << G4endl;
+  }
 }
 
 uint64_t Run::GetThreadId()

@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 
-#include <TString.h>
+#include <Rtypes.h>
 
 #ifndef EdepKey_h
 #define EdepKey_h 1
@@ -33,7 +33,7 @@ struct EdepKey {
 public:
   Int_t Id;
   Int_t Pid;
-  TString Process;
+  Int_t Process;
 
   // Typically ROOT is not built with C++20, unfortunately.
   //auto operator<=>(const EdepKey &) const = default;
@@ -56,7 +56,7 @@ template<>
 struct hash<EdepKey> {
   size_t operator()(const EdepKey &key) const
   {
-    return hash<size_t>{}(((size_t)key.Id << 32) | key.Pid) ^ hash<const char *>{}(key.Process);
+    return hash<size_t>{}(((size_t)key.Id << 32) | (unsigned)key.Pid) ^ hash<unsigned>{}(key.Process);
   }
 };
 

@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <string>
 
 #include "EdepKey.hh"
 #include "globals.hh"
@@ -51,8 +52,11 @@ private:
   G4int fNCellX, fNCellY;
   G4double fScoringOffsetX, fScoringOffsetY;
   std::vector<G4double> fScoringMaxZs;
+  std::map<std::string, int> fProcessMap;
   std::map<EdepKey, Double_t> fEdep;
   std::vector<bool> fStatus;
+
+  void BuildProcessMap();
 };
 
 #endif  // GEANT4_INTRODUCTION_RUN_H

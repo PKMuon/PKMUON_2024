@@ -93,7 +93,7 @@ public:
 
   Int_t Id;
   Int_t Pid;
-  TString Process;
+  Int_t Process;
   Double_t Value;
 
   ClassDef(Edep, 1);
@@ -115,6 +115,18 @@ public:
   Double_t T;
 
   ClassDef(Scatter, 1);
+};
+
+class Process : public TObject {
+public:
+  Process &operator=(const std::pair<Int_t, const TString &> &t)
+  {
+    std::tie(Id, Name) = t;
+    return *this;
+  }
+
+  Int_t Id;
+  TString Name;
 };
 
 #endif
