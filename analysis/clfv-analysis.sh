@@ -15,12 +15,6 @@ ROOTDIR="$(dirname "${ROOTFILE}")"
 ROOTBASE="$(basename "${ROOTFILE}")"
 ROOTFILES="${ROOTFILE/.root/_*.root}"
 
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export VECLIB_MAXIMUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
-
 for ROOTFILE in $(ls -v ${ROOTFILES}); do
     if [ $IPROC = $NPROC ]; then
         wait $PIDS
@@ -29,6 +23,11 @@ for ROOTFILE in $(ls -v ${ROOTFILES}); do
         let IPROC+=1
     fi
     (
+        export OMP_NUM_THREADS=1
+        export OPENBLAS_NUM_THREADS=1
+        export MKL_NUM_THREADS=1
+        export VECLIB_MAXIMUM_THREADS=1
+        export NUMEXPR_NUM_THREADS=1
         ROOTBASE="$(basename "${ROOTFILE}")"
         RECOFILE="${ROOTDIR}/reco_${ROOTBASE}"
         echo ./clfv-reco.py "${ROOTFILE}" -o "${RECOFILE}"

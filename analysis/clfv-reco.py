@@ -170,14 +170,13 @@ def min_chi2_match():
         Chi2.append(chi2)
         T0.append(t0); T1.append(t1); T2.append(t2)
     return Chi2, T0, T1, T2
-Chi2, T0, T1, T2 = min_chi2_match()
-tree['Reco.Chi2'] = np.array(Chi2)
-tree['Reco.T0'] = np.array(T0)
-tree['Reco.T1'] = np.array(T1)
-tree['Reco.T2'] = np.array(T2)
+Chi2, T0, T1, T2 = map(np.array, min_chi2_match())
+tree['Reco.T0'] = T0
+tree['Reco.T1'] = T1
+tree['Reco.T2'] = T2
 #for ievent, event in enumerate(tree):
 #    if ievent >= 10: break
-#    print(f'event_{ievent}:', event['Reco.Chi2'], event['Reco.T0'], event['Reco.T1'], event['Reco.T2'], sep='\n  - ')
+#    print(f'event_{ievent}:', event['Reco.T0'], event['Reco.T1'], event['Reco.T2'], sep='\n  - ')
 
 # 3D line fit.
 def line_fit(t):  # [NEvent, NLayer // 2, 3]
@@ -185,12 +184,23 @@ def line_fit(t):  # [NEvent, NLayer // 2, 3]
     points = np.array([line.point for line in lines])
     directions = np.array([line.direction for line in lines])
     return points, directions
-tree['Reco.P0'], tree['Reco.D0'] = line_fit(tree['Reco.T0'])
-tree['Reco.P1'], tree['Reco.D1'] = line_fit(tree['Reco.T1'])
-tree['Reco.P2'], tree['Reco.D2'] = line_fit(tree['Reco.T2'])
+P0, D0 = line_fit(tree['Reco.T0'])
+P1, D1 = line_fit(tree['Reco.T1'])
+P2, D2 = line_fit(tree['Reco.T2'])
+tree['Reco.P0'], tree['Reco.D0'] = P0, D0
+tree['Reco.P1'], tree['Reco.D1'] = P1, D1
+tree['Reco.P2'], tree['Reco.D2'] = P2, D2
 tree['Reco.A01'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D0'] * tree['Reco.D1'], axis=-1)))
 tree['Reco.A02'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D0'] * tree['Reco.D2'], axis=-1)))
 tree['Reco.A12'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D1'] * tree['Reco.D2'], axis=-1)))
+
+# Recompute Chi2.
+P0, D0, P1, D1, P2, D2 = map(lambda x: x.reshape(-1, 1, 3), [P0, D0, P1, D1, P2, D2])
+Chi2 = 0
+Chi2 += np.sum((P0 + D0 * (T0[:,:,2:] - P0[:,:,2:]) / D0[:,:,2:] - T0)**2, axis=(1, 2))
+Chi2 += np.sum((P1 + D1 * (T1[:,:,2:] - P1[:,:,2:]) / D1[:,:,2:] - T1)**2, axis=(1, 2))
+Chi2 += np.sum((P2 + D2 * (T2[:,:,2:] - P2[:,:,2:]) / D2[:,:,2:] - T2)**2, axis=(1, 2))
+tree['Reco.Chi2'] = Chi2
 
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
@@ -214,11 +224,11 @@ background = tree[tree['MC.IsSignal'] == False]
 for ievent, event in enumerate(signal):
     if ievent >= 2: break
     print(f'signal_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'],
-          event['Edeps.Value'], event['Reco.A12'], sep='\n  - ')
+          event['Edeps.Value'], event['Reco.A12'], event['Reco.Chi2'], sep='\n  - ')
 for ievent, event in enumerate(background):
     if ievent >= 2: break
     print(f'background_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'],
-          event['Edeps.Value'], event['Reco.A12'], sep='\n  - ')
+          event['Edeps.Value'], event['Reco.A12'], event['Reco.Chi2'], sep='\n  - ')
 print('Signal:', ak.num(signal, axis=0))
 print('Background:', ak.num(background, axis=0))
 
