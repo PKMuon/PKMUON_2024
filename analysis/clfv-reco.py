@@ -47,6 +47,11 @@ NCellX = 2 * HalfNCellX
 NCellY = 2 * HalfNCellY
 XOffset = -HalfNCellX * CellX
 YOffset = -HalfNCellY * CellY
+VarInv = np.array([
+    12 / CellX**2,
+    12 / CellY**2,
+    1.0,  # not inf to avoid (0.0 * inf)
+])
 
 # Simulate PID specific detector response.
 @numba.jit
@@ -150,7 +155,7 @@ def min_chi2_match():
         for l in range(NLayer // 2):
             ra = r[ievent, l]
             r0_a = r0[ievent] + d0[ievent] * (ra[2] - r0[ievent, 2]) / d0[ievent, 2]
-            chi2 += np.sum((ra - r0_a) ** 2); t0.append(ra)
+            chi2 += np.sum((ra - r0_a)**2 * VarInv); t0.append(ra)
 
         # The second half.
         for l in range(NLayer // 2, NLayer):
@@ -160,8 +165,8 @@ def min_chi2_match():
             r2_a = r2[ievent] + d2[ievent] * (rb[2] - r2[ievent, 2]) / d2[ievent, 2]
             r1_b = r1[ievent] + d1[ievent] * (rb[2] - r1[ievent, 2]) / d1[ievent, 2]
             r2_b = r2[ievent] + d2[ievent] * (ra[2] - r2[ievent, 2]) / d2[ievent, 2]
-            chi2_a = np.sum((ra - r1_a) ** 2) + np.sum((rb - r2_a) ** 2)
-            chi2_b = np.sum((rb - r1_b) ** 2) + np.sum((ra - r2_b) ** 2)
+            chi2_a = np.sum((ra - r1_a)**2 * VarInv) + np.sum((rb - r2_a)**2 * VarInv)
+            chi2_b = np.sum((rb - r1_b)**2 * VarInv) + np.sum((ra - r2_b)**2 * VarInv)
             if chi2_a <= chi2_b:
                 chi2 += chi2_a; t1.append(ra); t2.append(rb)
             else:
@@ -197,9 +202,9 @@ tree['Reco.A12'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D1'] * tree['Reco
 # Recompute Chi2.
 P0, D0, P1, D1, P2, D2 = map(lambda x: x.reshape(-1, 1, 3), [P0, D0, P1, D1, P2, D2])
 Chi2 = 0
-Chi2 += np.sum((P0 + D0 * (T0[:,:,2:] - P0[:,:,2:]) / D0[:,:,2:] - T0)**2, axis=(1, 2))
-Chi2 += np.sum((P1 + D1 * (T1[:,:,2:] - P1[:,:,2:]) / D1[:,:,2:] - T1)**2, axis=(1, 2))
-Chi2 += np.sum((P2 + D2 * (T2[:,:,2:] - P2[:,:,2:]) / D2[:,:,2:] - T2)**2, axis=(1, 2))
+Chi2 += np.sum((P0 + D0 * (T0[:,:,2:] - P0[:,:,2:]) / D0[:,:,2:] - T0)**2 * VarInv.reshape(1, 1, 3), axis=(1, 2))
+Chi2 += np.sum((P1 + D1 * (T1[:,:,2:] - P1[:,:,2:]) / D1[:,:,2:] - T1)**2 * VarInv.reshape(1, 1, 3), axis=(1, 2))
+Chi2 += np.sum((P2 + D2 * (T2[:,:,2:] - P2[:,:,2:]) / D2[:,:,2:] - T2)**2 * VarInv.reshape(1, 1, 3), axis=(1, 2))
 tree['Reco.Chi2'] = Chi2
 
 ## Drop multiple scattering events.
