@@ -30,10 +30,13 @@ include(${ROOT_USE_FILE})
 
 #----------------------------------------------------------------------------
 # Find yaml-cpp (required package)
-#
-#set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
-#set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
+#  YAML_CPP_INCLUDE_DIR       - include directory
+#  YAML_CPP_LIBRARY_DIR       - directory containing libraries
+#  YAML_CPP_SHARED_LIBS_BUILT - whether we have built shared libraries or not
+#  YAML_CPP_LIBRARIES         - libraries to link against
 find_package(yaml-cpp REQUIRED)
+include_directories(SYSTEM ${YAML_CPP_INCLUDE_DIR})
+link_directories(${YAML_CPP_LIBRARY_DIR})
 
 #----------------------------------------------------------------------------
 # General compilation and linkage options
@@ -62,7 +65,7 @@ if(ENABLE_GPROF)
     add_compile_options(${GPROF_OPTIONS})
     add_link_options(${GPROF_OPTIONS})
 endif()
-add_compile_options(-g -Wall -Wshadow -Wextra -Werror)
+add_compile_options(-g -Wall -Wshadow -Wextra -Werror -Wno-error=cpp)
 
 #----------------------------------------------------------------------------
 # Process customized TObject derivates
@@ -76,7 +79,7 @@ IMPLICIT_DEPENDS include/Object.hh)
 # Locate sources and headers for this project
 #
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(SYSTEM ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIR})
+include_directories(SYSTEM ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
 file(GLOB sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 
