@@ -211,12 +211,14 @@ tree['Reco.Chi2'] = Chi2
 
 # Compute process_contributions.
 Edeps = tree[['Edeps.Process', 'Edeps.ProcessValue']]
-ProcessContributions = np.empty((len(tree), NProcess))
-for process in range(NProcess):
+ProcessContributions = np.empty((len(tree), NProcess + 1))
+for process in range(-1, NProcess):
     edeps = Edeps[Edeps['Edeps.Process'] == process]
     # [TODO] Filter pid.
     ProcessContributions[:, process] = ak.sum(edeps['Edeps.ProcessValue'], axis=1)
 tree['Reco.ProcessContributions'] = ProcessContributions
+Processes = ak.Array([*Processes, 'Primary'])
+NProcess += 1
 
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
