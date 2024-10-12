@@ -6,6 +6,7 @@ import uproot
 import awkward as ak
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 
 # Parse command line arguments.
 parser = argparse.ArgumentParser(description='Draw reconstructed CLFV events.')
@@ -55,6 +56,29 @@ print('Background:', ak.num(background, axis=0))
 def savefig(path):
     plt.savefig(path)
     print(f'Plot saved to {path}')
+
+# Plot Chi2.
+dof = 0
+dof += np.array(tree['Reco.T0']).shape[1] - 2
+dof += np.array(tree['Reco.T1']).shape[1] - 2
+dof += np.array(tree['Reco.T2']).shape[1] - 2
+dof *= 2
+_, bins, _ = plt.hist(signal['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='signal')
+_, bins, _ = plt.hist(background['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='background')
+plt.plot(bins, stats.chi2(dof).pdf(bins), label=r'$\chi^2(' + str(dof) + ')$')
+plt.xlabel(r'$\chi^2$')
+plt.ylabel('Events')
+plt.yscale('log')
+plt.grid()
+plt.legend()
+plt.tight_layout()
+savefig(args.output + '_Chi2.pdf')
+plt.close()
+
+# Apply Chi2 cut.
+tree       = tree[tree['Reco.Chi2'] <= dof    ]
+signal     = tree[tree['MC.IsSignal'] == True ]
+background = tree[tree['MC.IsSignal'] == False]
 
 plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='background')
