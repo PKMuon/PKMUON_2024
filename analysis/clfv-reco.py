@@ -255,6 +255,6 @@ tree = tree[[
 ]]
 file = uproot.recreate(args.output)
 file['tree'] = tree
-file['proc'] = {'Processes.Name': Processes}
+file['meta'] = {'Meta.Processes': np.array(['@'.join(Processes)])}
 file.close()
 print(f'Output written to: {args.output}')
