@@ -195,9 +195,9 @@ P2, D2 = line_fit(tree['Reco.T2'])
 tree['Reco.P0'], tree['Reco.D0'] = P0, D0
 tree['Reco.P1'], tree['Reco.D1'] = P1, D1
 tree['Reco.P2'], tree['Reco.D2'] = P2, D2
-tree['Reco.A01'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D0'] * tree['Reco.D1'], axis=-1)))
-tree['Reco.A02'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D0'] * tree['Reco.D2'], axis=-1)))
-tree['Reco.A12'] = np.arccos(np.minimum(1.0, np.sum(tree['Reco.D1'] * tree['Reco.D2'], axis=-1)))
+tree['Reco.A01'] = np.arccos(np.minimum(1.0, np.sum(np.abs(tree['Reco.D0'] * tree['Reco.D1']), axis=-1)))
+tree['Reco.A02'] = np.arccos(np.minimum(1.0, np.sum(np.abs(tree['Reco.D0'] * tree['Reco.D2']), axis=-1)))
+tree['Reco.A12'] = np.arccos(np.minimum(1.0, np.sum(np.abs(tree['Reco.D1'] * tree['Reco.D2']), axis=-1)))
 
 # Recompute Chi2.
 P0, D0, P1, D1, P2, D2 = map(lambda x: x.reshape(-1, 1, 3), [P0, D0, P1, D1, P2, D2])
