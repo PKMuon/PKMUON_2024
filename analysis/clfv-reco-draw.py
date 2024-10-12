@@ -24,6 +24,9 @@ print('tree:', *tree.fields, sep='\n  - ')
 for ievent, event in enumerate(tree):
     if ievent >= 2: break
     print(f'event_{ievent}:', event['Reco.A01'], event['Reco.A02'], event['Reco.A12'], sep='\n  - ')
+proc = uproot.concatenate([f'{path}:proc' for path in args.input])
+Processes = proc['Processes.Name']
+print('processes:', *Processes, sep='\n  - ')
 
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
@@ -138,4 +141,36 @@ plt.grid()
 plt.legend()
 plt.tight_layout()
 savefig(args.output + '_AMM.pdf')
+plt.close()
+
+sigproc = ak.Array({
+    'Processes.Name': proc['Processes.Name'],
+    'Processes.Contribution': np.sum(signal['Reco.ProcessContributions'], axis=0),
+})
+sigproc = sigproc[sigproc['Processes.Contribution'] > 0]
+sigproc = sorted([[p['Processes.Contribution'], p['Processes.Name']] for p in sigproc], reverse=True)
+plt.bar(range(len(sigproc)), [p[0] for p in sigproc])
+plt.xticks(range(len(sigproc)), [p[1] for p in sigproc], rotation=90)
+plt.xlabel('Process')
+plt.ylabel('Contribution to energy deposition')
+plt.yscale('log')
+plt.grid(axis='y')
+plt.tight_layout()
+savefig(args.output + '_Contrib_Sgn.pdf')
+plt.close()
+
+bkgproc = ak.Array({
+    'Processes.Name': proc['Processes.Name'],
+    'Processes.Contribution': np.sum(background['Reco.ProcessContributions'], axis=0),
+})
+bkgproc = bkgproc[bkgproc['Processes.Contribution'] > 0]
+bkgproc = sorted([[p['Processes.Contribution'], p['Processes.Name']] for p in bkgproc], reverse=True)
+plt.bar(range(len(bkgproc)), [p[0] for p in bkgproc])
+plt.xticks(range(len(bkgproc)), [p[1] for p in bkgproc], rotation=90)
+plt.xlabel('Process')
+plt.ylabel('Contribution to energy deposition')
+plt.yscale('log')
+plt.grid(axis='y')
+plt.tight_layout()
+savefig(args.output + '_Contrib_Bkg.pdf')
 plt.close()

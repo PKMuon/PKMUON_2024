@@ -28,20 +28,22 @@ for ievent, event in enumerate(tree):
     print(f'event_{ievent}:', event['Edeps.Id'], event['Edeps.Pid'], event['Edeps.Value'], sep='\n  - ')
 
 # Read parameter setting.
-def reduce_param(param):  # [NRun, 1]
+def reduce_param(param):  # [NRun, NField]
     param = param
     assert ak.all(param == param[:1])
-    return param[0,0]
-LayerZ = reduce_param(params['Params.LayerZ'])
-CellX = reduce_param(params['Params.CellX'])
-CellY = reduce_param(params['Params.CellY'])
-HalfNCellX = reduce_param(params['Params.HalfNCellX'])
-HalfNCellY = reduce_param(params['Params.HalfNCellY'])
+    return param[0]
+LayerZ = reduce_param(params['Params.LayerZ'])[0]
+CellX = reduce_param(params['Params.CellX'])[0]
+CellY = reduce_param(params['Params.CellY'])[0]
+HalfNCellX = reduce_param(params['Params.HalfNCellX'])[0]
+HalfNCellY = reduce_param(params['Params.HalfNCellY'])[0]
+Processes = reduce_param(params['Processes.Name'])
 print('LayerZ:', LayerZ)
 print('CellX:', CellX)
 print('CellY:', CellY)
 print('HalfNCellX:', HalfNCellX)
 print('HalfNCellY:', HalfNCellY)
+print('Processes:', Processes)
 NLayer = len(LayerZ)
 NCellX = 2 * HalfNCellX
 NCellY = 2 * HalfNCellY
@@ -52,6 +54,7 @@ VarInv = np.array([
     12 / CellY**2,
     1.0,  # not inf to avoid (0.0 * inf)
 ])
+NProcess = len(Processes)
 
 # Simulate PID specific detector response.
 @numba.jit
@@ -69,9 +72,9 @@ def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
         Edeps_Value.append(edeps_value)
     return Edeps_Id, Edeps_Value
 Edeps_Id, Edeps_Value = simulate_pid_response()
+tree['Edeps.ProcessValue'] = tree['Edeps.Value']
 tree['Edeps.Id'] = Edeps_Id
 tree['Edeps.Value'] = Edeps_Value
-tree = tree[[field for field in tree.fields if field != 'Edeps.Pid']]
 
 # Decode energy deposit positions.
 tree['Edeps.Layer'] = tree['Edeps.Id'] // (NCellX * NCellY)
@@ -111,7 +114,6 @@ Edeps['Edeps.Value'] = XEdeps['Edeps.Value'] + YEdeps['Edeps.Value']
 tree = tree[mask_0]
 tree = tree[mask_1]
 for field in Edeps.fields: tree[field] = Edeps[field]
-tree = tree[[field for field in tree.fields if field != 'Edeps.Id']]
 #for ievent, event in enumerate(tree):
 #    if ievent >= 10: break
 #    print(f'event_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Value'], sep='\n  - ')
@@ -207,6 +209,15 @@ Chi2 += np.sum((P1 + D1 * (T1[:,:,2:] - P1[:,:,2:]) / D1[:,:,2:] - T1)**2 * VarI
 Chi2 += np.sum((P2 + D2 * (T2[:,:,2:] - P2[:,:,2:]) / D2[:,:,2:] - T2)**2 * VarInv.reshape(1, 1, 3), axis=(1, 2))
 tree['Reco.Chi2'] = Chi2
 
+# Compute process_contributions.
+Edeps = tree[['Edeps.Process', 'Edeps.ProcessValue']]
+ProcessContributions = np.empty((len(tree), NProcess))
+for process in range(NProcess):
+    edeps = Edeps[Edeps['Edeps.Process'] == process]
+    # [TODO] Filter pid.
+    ProcessContributions[:, process] = ak.sum(edeps['Edeps.ProcessValue'], axis=1)
+tree['Reco.ProcessContributions'] = ProcessContributions
+
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
 
@@ -238,8 +249,12 @@ print('Signal:', ak.num(signal, axis=0))
 print('Background:', ak.num(background, axis=0))
 
 # Output to ROOT file.
-tree = tree[[field for field in tree.fields if field.startswith('Reco.') or field.startswith('MC.')]]
+tree = tree[[
+    field for field in tree.fields
+    if field.startswith('Reco.') or field.startswith('MC.')
+]]
 file = uproot.recreate(args.output)
 file['tree'] = tree
+file['proc'] = {'Processes.Name': Processes}
 file.close()
 print(f'Output written to: {args.output}')
