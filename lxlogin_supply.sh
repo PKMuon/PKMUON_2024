@@ -10,15 +10,18 @@ if [ -z "${RUNNING}" ]; then
     count-events -r -t tree build/root_file/
 fi
 
-IMAC=0
+IMAC=-1
 for MACI in $(cat lxlogin_run.txt); do
+    if [ "${IMAC}" = -1 ]; then
+        N="${MACI}"; IMAC=0; continue
+    fi
     COMPLETE=1
     RECOS=""
     echo "Checking for ${MACI}..."
-    [ -f "build/root_file/reco_${MACI/.mac/.root}" ] && continue
-    for IRUN in $(seq 0 99); do
-        ROOT="${MACI/.mac/_${IRUN}.root}"
-        LOG="${MACI/.mac/_${IRUN}.mac.log}"
+    [ -f "build/root_file/reco_${MACI/.mac/_pb.root}" ] && continue
+    for IRUN in $(seq 0 $[${N}-1]); do
+        ROOT="${MACI/.mac/_pb_${IRUN}.root}"
+        LOG="${MACI/.mac/_pb_${IRUN}.mac.log}"
         RECO="reco_${ROOT}"
         if [ -f "build/root_file/${RECO}" ]; then
             rm -f "build/root_file/${ROOT}" "build/root_file/${LOG}"
@@ -26,7 +29,7 @@ for MACI in $(cat lxlogin_run.txt); do
             continue
         fi
         COMPLETE=0
-        I=$[${IMAC}*100+${IRUN}]
+        I=$[${IMAC}*${N}+${IRUN}]
         if egrep -q "^${I}$" <<< "${RUNNING}"; then
             echo "Running reco ${I}: build/root_file/${RECO}"
             continue
@@ -36,8 +39,8 @@ for MACI in $(cat lxlogin_run.txt); do
             -o lxlogin_run_1.log -e lxlogin_run_2.log
     done
     if [ "${COMPLETE}" = 1 ]; then
-        echo "Generating build/root_file/reco_${MACI/.mac/.root}"
-        hadd -f "build/root_file/reco_${MACI/.mac/.root}" ${RECOS} && rm ${RECOS}
+        echo "Generating build/root_file/reco_${MACI/.mac/_pb.root}"
+        hadd -f "build/root_file/reco_${MACI/.mac/_pb.root}" ${RECOS} && rm ${RECOS}
     fi
     let IMAC+=1
 done
