@@ -1,8 +1,14 @@
 #!/bin/bash
 
+if [ $# != 1 ]; then
+    echo "usage: $(basename $0) <postfix>" >&2
+    exit 1
+fi
+POSTFIX="$1"
+
 # Collect running jobs.
 echo "Collecting running jobs..."
-RUNNING="$(hep_q -u $USER | egrep -o 'lxlogin_run.sh [0-9]+$' | egrep -o '[0-9]+$')"
+RUNNING="$(hep_q -u $USER | egrep -o "lxlogin_run.sh [0-9]+ ${POSTFIX}$")"
 echo "Done!"
 
 # Remove empty outputs.
@@ -18,19 +24,20 @@ for MACI in $(cat lxlogin_run.txt); do
     COMPLETE=1
     RECOS=""
     echo "Checking for ${MACI}..."
-    [ -f "build/root_file/reco_${MACI/.mac/_pb.root}" ] && continue
+    [ -f "build/root_file/reco_${MACI/.mac/_${POSTFIX}.root}" ] && continue
     for IRUN in $(seq 0 $[${N}-1]); do
-        ROOT="${MACI/.mac/_pb_${IRUN}.root}"
-        LOG="${MACI/.mac/_pb_${IRUN}.mac.log}"
+        MAC="${MACI/.mac/_${POSTFIX}_${IRUN}.mac}"
+        ROOT="${MACI/.mac/_${POSTFIX}_${IRUN}.root}"
+        LOG="${MACI/.mac/_${POSTFIX}_${IRUN}.mac.log}"
         RECO="reco_${ROOT}"
         if [ -f "build/root_file/${RECO}" ]; then
-            rm -f "build/root_file/${ROOT}" "build/root_file/${LOG}"
+            rm -f "build/root_file/${MAC}" "build/root_file/${ROOT}" "build/root_file/${LOG}"
             RECOS="${RECOS} build/root_file/${RECO}"
             continue
         fi
         COMPLETE=0
         I=$[${IMAC}*${N}+${IRUN}]
-        if egrep -q "^${I}$" <<< "${RUNNING}"; then
+        if egrep -q " ${I} " <<< "${RUNNING}"; then
             echo "Running reco ${I}: build/root_file/${RECO}"
             continue
         fi
@@ -39,8 +46,8 @@ for MACI in $(cat lxlogin_run.txt); do
             -o lxlogin_run_1.log -e lxlogin_run_2.log
     done
     if [ "${COMPLETE}" = 1 ]; then
-        echo "Generating build/root_file/reco_${MACI/.mac/_pb.root}"
-        hadd -f "build/root_file/reco_${MACI/.mac/_pb.root}" ${RECOS} && rm ${RECOS}
+        echo "Generating build/root_file/reco_${MACI/.mac/_${POSTFIX}.root}"
+        hadd -f "build/root_file/reco_${MACI/.mac/_${POSTFIX}.root}" ${RECOS} && rm ${RECOS}
     fi
     let IMAC+=1
 done
