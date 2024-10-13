@@ -220,8 +220,8 @@ tree['Reco.ProcessContributions'] = ProcessContributions
 Processes = ak.Array([*Processes, 'Primary'])
 NProcess += 1
 
-## Drop multiple scattering events.
-#tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
+# Drop multiple scattering events.
+tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
 
 # Store MC truth.
 tree['MC.IsSignal'] = np.where(ak.num(tree['Scatters.Id'], axis=1) == 1, True, False)
