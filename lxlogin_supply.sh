@@ -5,13 +5,22 @@ echo "Collecting running jobs..."
 RUNNING="$(hep_q -u $USER | egrep -o 'lxlogin_run.sh [0-9]+$' | egrep -o '[0-9]+$')"
 echo "Done!"
 
+# Remove empty outputs.
+if [ -z "${RUNNING}" ]; then
+    count-events -r -t tree build/root_file/
+fi
+
 IMAC=0
 for MACI in $(cat lxlogin_run.txt); do
     echo "Checking for ${MACI}..."
     for IRUN in $(seq 0 99); do
         ROOT="${MACI/.mac/_${IRUN}.root}"
+        LOG="${MACI/.mac/_${IRUN}.mac.log}"
         RECO="reco_${ROOT}"
-        [ -f "build/root_file/${RECO}" ] && continue
+        if [ -f "build/root_file/${RECO}" ]; then
+            rm -f "build/root_file/${ROOT}" "build/root_file/${LOG}"
+            continue
+        fi
         I=$[${IMAC}*100+${IRUN}]
         if egrep -q "^${I}$" <<< "${RUNNING}"; then
             echo "Running reco ${I}: build/root_file/${RECO}"
