@@ -92,10 +92,11 @@ plt.close()
 tree       = tree[tree['Reco.Chi2'] <= dof    ]
 signal     = tree[tree['MC.IsSignal'] == True ]
 background = tree[tree['MC.IsSignal'] == False]
+signal_A0X = np.concatenate([signal['MC.A01'], signal['MC.A02']])
 
 plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal['MC.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_1$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -107,7 +108,7 @@ plt.close()
 
 plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal')
 plt.hist(background['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal['MC.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.yscale('log')
