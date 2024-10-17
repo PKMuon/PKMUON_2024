@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
-import uproot
-import awkward as ak
-import numba
-import numpy as np
-from skspatial.objects import Line
+import argparse
 
 # Parse command line arguments.
 parser = argparse.ArgumentParser(description='Reconstruct CLFV events.')
 parser.add_argument('input', metavar='INPUT', type=str, nargs='+', help='input root files')
-parser.add_argument('-o', metavar='OUTPUT', dest='output', type=str, nargs='?', help='specify output root file')
+parser.add_argument('--output', '-o', type=str, nargs='?', help='specify output root file')
+parser.add_argument('--electron-veto-rate', '-e', type=float, default=0.0, help='specify electron veto rate')
 args = parser.parse_args()
 if args.output is None:
     if len(args.input) != 1: raise ValueError('require output name for multiple input names')
     args.output = os.path.join(os.path.dirname(args.input[0]), 'reco_' + os.path.basename(args.input[0]))
     args.output = args.output.replace('_*', '').replace('-*', '').replace('*', '')
+
+import uproot
+import awkward as ak
+import numba
+import numpy as np
+from skspatial.objects import Line
+import random
 
 # Load input files.
 tree = uproot.concatenate([f'{path}:tree' for path in args.input])
@@ -64,7 +67,7 @@ def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
         edeps_id, edeps_value = [ ], [ ]
         last_id, last_edep = None, 0.0
         for id, pid, edep in zip(event['Edeps.Id'], event['Edeps.Pid'], event['Edeps.Value']):
-            # [TODO] Filter pid.
+            if abs(id) == 11 and random.random() < args.electron_veto_rate: continue
             if last_id is not None and last_id != id: edeps_id.append(last_id); edeps_value.append(last_edep); last_edep = 0.0
             last_id = id; last_edep += edep
         if last_id is not None: edeps_id.append(last_id); edeps_value.append(last_edep)
