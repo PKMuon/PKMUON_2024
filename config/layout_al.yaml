@@ -6,8 +6,8 @@ schema: volume_schema.yaml
 target:
   color: gray
   solid: box
-  x: 120 mm
-  y: 120 mm
+  x: 200 mm
+  y: 200 mm
   z: 30 mm
   material: G4_Al
 
