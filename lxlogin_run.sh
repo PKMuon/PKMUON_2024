@@ -23,13 +23,16 @@ sed "s@/rlt/SetFileName.*@/rlt/SetFileName ${ROOT}@g" "${MAC}" > "${MACI}"
 popd
 
 pushd analysis
-./clfv-reco.py "../build/${ROOT}"
+RECO="../build/root_file/reco_$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.root}")"
+RENE="../build/root_file/reco_$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.root}")"
+./clfv-reco.py "../build/${ROOT}" -o "${RECO}"
+./clfv-reco.py "../build/${ROOT}" -o "${RENE}" -e 1.0
 popd
 
 pushd build
 (
 echo rm -f "${MACI}"
 echo rm -f "${MACI}.log"
-echo rm -f "${ROOT}"
+#echo rm -f "${ROOT}"
 ) | sh
 popd
