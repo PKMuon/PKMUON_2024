@@ -18,6 +18,8 @@ source layout_"${POSTFIX}".sh
 mkdir -p root_file
 MACI="root_file/$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.mac}")"
 ROOT="${MACI/.mac/.root}"
+RECO="root_file/reco_$(basename "${ROOT}")"
+[ -f "${RECO}" ] && exit 0 || :
 sed "s@/rlt/SetFileName.*@/rlt/SetFileName ${ROOT}@g" "${MAC}" > "${MACI}"
 [ -f "${ROOT}" ] || ./muPos "${MACI}" &> "${MACI}.log"
 popd
