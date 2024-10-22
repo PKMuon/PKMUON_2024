@@ -22,7 +22,7 @@ if args.output is None:
     args.output = args.output.replace('_*', '').replace('-*', '').replace('*', '').replace('.root', '')
 if args.xssf is None:
     if len(args.input) != 1: raise ValueError('require xssf for multiple input names')
-    try: args.xssf = float(__import__('re').search(r'[xX]([0-9.eE+-]*)\.root$', args.input[0]).group(1))
+    try: args.xssf = float(__import__('re').search(r'[xX]([0-9.eE+-]*)_[^_]*\.root$', args.input[0]).group(1))
     except Exception: raise ValueError('require xssf for unconventional input name')
     print(f'NOTE: XSSF deducted as {args.xssf}')
 
