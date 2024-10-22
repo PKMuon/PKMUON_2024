@@ -12,11 +12,19 @@ from scipy import stats
 parser = argparse.ArgumentParser(description='Draw reconstructed CLFV events.')
 parser.add_argument('input', metavar='INPUT', type=str, nargs='+', help='input root files')
 parser.add_argument('-o', metavar='OUTPUT', dest='output', type=str, nargs='?', help='specify output root file')
+parser.add_argument('-n', metavar='NEVENT', dest='nevent', type=float, help='specify original event number')
+parser.add_argument('-s', metavar='XSSF', dest='xssf', type=float, help='specify global cross section scale factor')
+parser.add_argument('-e', metavar='EXPOSURE', dest='exposure', type=float, default=3e13, help='specify total incoming muons')
 args = parser.parse_args()
 if args.output is None:
     if len(args.input) != 1: raise ValueError('require output name for multiple input names')
     args.output = os.path.join(os.path.dirname(args.input[0]), os.path.basename(args.input[0]))
     args.output = args.output.replace('_*', '').replace('-*', '').replace('*', '').replace('.root', '')
+if args.xssf is None:
+    if len(args.input) != 1: raise ValueError('require xssf for multiple input names')
+    try: args.xssf = float(__import__('re').search(r'[xX]([0-9.eE+-]*)\.root$', args.input[0]).group(1))
+    except Exception: raise ValueError('require xssf for unconventional input name')
+    print(f'NOTE: XSSF deducted as {args.xssf}')
 
 # Load input files.
 tree = uproot.concatenate([f'{path}:tree' for path in args.input])
@@ -74,12 +82,13 @@ def savefig(path):
     plt.savefig(path)
     print(f'Plot saved to {path}')
 
-# Plot Chi2.
 dof = 0
 dof += np.array(tree['Reco.T0']).shape[1] - 2
 dof += np.array(tree['Reco.T1']).shape[1] - 2
 dof += np.array(tree['Reco.T2']).shape[1] - 2
 dof *= 2
+
+# Plot Chi2.
 _, bins, _ = plt.hist(signal['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='signal')
 _, bins, _ = plt.hist(background['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='background')
 plt.plot(bins, stats.chi2(dof).pdf(bins), label=r'$\chi^2(' + str(dof) + ')$')
@@ -98,9 +107,9 @@ signal     = tree[tree['MC.IsSignal'] == True ]
 background = tree[tree['MC.IsSignal'] == False]
 signal_A0X = np.concatenate([signal['MC.A01'], signal['MC.A02']])
 
-plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.02), histtype='step', label='signal')
-plt.hist(background['Reco.A01'], bins=100, range=(0, 0.02), histtype='step', label='background')
-plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.02), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(background['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_1$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -110,9 +119,9 @@ plt.tight_layout()
 savefig(args.output + '_A01.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.02), histtype='step', label='signal')
-plt.hist(background['Reco.A02'], bins=100, range=(0, 0.02), histtype='step', label='background')
-plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.02), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(background['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -122,9 +131,9 @@ plt.tight_layout()
 savefig(args.output + '_A02.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A12'], bins=100, range=(0, 0.02), histtype='step', label='signal')
-plt.hist(background['Reco.A12'], bins=100, range=(0, 0.02), histtype='step', label='background')
-plt.hist(signal['MC.A12'], bins=100, range=(0, 0.02), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(background['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_1$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -134,9 +143,9 @@ plt.tight_layout()
 savefig(args.output + '_A12.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A0M'], bins=100, range=(0, 0.02), histtype='step', label='signal')
-plt.hist(background['Reco.A0M'], bins=100, range=(0, 0.02), histtype='step', label='background')
-plt.hist(signal['MC.A0M'], bins=100, range=(0, 0.02), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(background['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -146,9 +155,9 @@ plt.tight_layout()
 savefig(args.output + '_A0M.pdf')
 plt.close()
 
-plt.hist(signal['Reco.AMM'], bins=100, range=(0, 0.02), histtype='step', label='signal')
-plt.hist(background['Reco.AMM'], bins=100, range=(0, 0.02), histtype='step', label='background')
-plt.hist(signal['MC.AMM'], bins=100, range=(0, 0.02), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(background['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>, <$\vec{p}_1$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -190,3 +199,22 @@ plt.grid(axis='y')
 plt.tight_layout()
 savefig(args.output + '_Contrib_Bkg.pdf')
 plt.close()
+
+if args.nevent is not None:
+    signal = signal[signal['Reco.AMM'] < 0.003]
+    background = background[background['Reco.AMM'] < 0.003]
+    from scipy.stats import chi2
+    from scipy.optimize import fsolve
+    chi21_95 = chi2(1).ppf(0.95)
+    func = lambda s: chi21_95 - 2 * (s + b * np.log(b / (s + b)))
+    s = len(signal)
+    b = len(background)
+    print(f's={s} b={b}')
+    if b == 0: b = 1
+    s *= args.exposure / args.nevent
+    b *= args.exposure / args.nevent
+    s_solve = fsolve(func, s)[0]
+    diff = func(s_solve)
+    assert diff < 1e-3
+    ul = args.xssf * s_solve / s
+    print(f'ul={ul}')
