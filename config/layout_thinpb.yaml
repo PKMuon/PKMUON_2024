@@ -8,7 +8,7 @@ target:
   solid: box
   x: 200 mm
   y: 200 mm
-  z: 20 mm
+  z: 30 mm
   material: G4_Pb
 
 world_major_gap:
