@@ -19,7 +19,7 @@ mkdir -p root_file
 MACI="root_file/$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.mac}")"
 ROOT="${MACI/.mac/.root}"
 sed "s@/rlt/SetFileName.*@/rlt/SetFileName ${ROOT}@g" "${MAC}" > "${MACI}"
-./muPos "${MACI}" &> "${MACI}.log"
+[ -f "${ROOT}" ] || ./muPos "${MACI}" &> "${MACI}.log"
 popd
 
 pushd analysis
