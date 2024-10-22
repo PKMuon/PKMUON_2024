@@ -60,6 +60,7 @@ VarInv = np.array([
 NProcess = len(Processes)
 
 # Simulate PID specific detector response.
+electron_veto_rate = args.electron_veto_rate
 @numba.jit
 def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
     Edeps_Id, Edeps_Value = [ ], [ ]
@@ -67,7 +68,7 @@ def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
         edeps_id, edeps_value = [ ], [ ]
         last_id, last_edep = None, 0.0
         for id, pid, edep in zip(event['Edeps.Id'], event['Edeps.Pid'], event['Edeps.Value']):
-            if abs(id) == 11 and random.random() < args.electron_veto_rate: continue
+            if abs(id) == 11 and random.random() < electron_veto_rate: continue
             if last_id is not None and last_id != id: edeps_id.append(last_id); edeps_value.append(last_edep); last_edep = 0.0
             last_id = id; last_edep += edep
         if last_id is not None: edeps_id.append(last_id); edeps_value.append(last_edep)
