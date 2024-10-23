@@ -89,7 +89,7 @@ dof += np.array(tree['Reco.T2']).shape[1] - 2
 dof *= 2
 
 # Plot Chi2.
-_, bins, _ = plt.hist(signal['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='signal')
+_, bins, _ = plt.hist(signal['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label=f'signal ($\\times {args.xssf}$)')
 _, bins, _ = plt.hist(background['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='background')
 plt.plot(bins, stats.chi2(dof).pdf(bins), label=r'$\chi^2(' + str(dof) + ')$')
 plt.xlabel(r'$\chi^2$')
@@ -107,7 +107,7 @@ signal     = tree[tree['MC.IsSignal'] == True ]
 background = tree[tree['MC.IsSignal'] == False]
 signal_A0X = np.concatenate([signal['MC.A01'], signal['MC.A02']])
 
-plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
 plt.hist(background['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='background')
 plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_1$>')
@@ -119,7 +119,7 @@ plt.tight_layout()
 savefig(args.output + '_A01.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
 plt.hist(background['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='background')
 plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_2$>')
@@ -131,7 +131,7 @@ plt.tight_layout()
 savefig(args.output + '_A02.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(signal['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
 plt.hist(background['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='background')
 plt.hist(signal['MC.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_1$, $\vec{p}_2$>')
@@ -143,7 +143,7 @@ plt.tight_layout()
 savefig(args.output + '_A12.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(signal['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
 plt.hist(background['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='background')
 plt.hist(signal['MC.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>}')
@@ -155,7 +155,7 @@ plt.tight_layout()
 savefig(args.output + '_A0M.pdf')
 plt.close()
 
-plt.hist(signal['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal')
+plt.hist(signal['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
 plt.hist(background['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='background')
 plt.hist(signal['MC.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>, <$\vec{p}_1$, $\vec{p}_2$>}')
