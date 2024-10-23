@@ -1,6 +1,6 @@
 #!/bin/bash
 
-N=500
+N=1000
 NPROC=$(nproc || sysctl -n hw.logicalcpu || getconf _NPROCESSORS_ONLN)
 IPROC=0
 PIDS=()
