@@ -49,6 +49,24 @@ Processes = Processes.replace('muBrems', r'$\mu$-Brem')
 Processes = Processes.replace('muonNuclear', r'$\mu$-$N$')
 Processes = Processes.split('@')
 print('processes:', *Processes, sep='\n  - ')
+NEvent = meta['Meta.NEvent'][0]
+tree['Weight'] = args.exposure / NEvent
+
+# Load supplementary background events.
+import re
+background_path = set(re.sub(r'Zp_.*?GeV_mumu_x[^_]*', 'background_mumu', path) for path in args.input)
+if len(background_path) > 2:
+    raise RuntimeError(f'Ambiguous background path: {", ".join(sorted(background_path))}')
+if background_path:
+    background_path = list(background_path)[0]
+    background_tree = uproot.concatenate([f'{background_path}:tree' for _ in range(1)])
+    background_meta = uproot.concatenate([f'{background_path}:meta' for _ in range(1)])
+    background_NEvent = background_meta['Meta.NEvent'][0]
+    background_tree['Weight'] = args.exposure / background_NEvent
+    tree = ak.concatenate([tree[tree['MC.IsSignal'] == True], background_tree])
+else:
+    background_path = None
+print(f'NOTE: supplementary background path: {background_path}')
 
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
@@ -89,8 +107,8 @@ dof += np.array(tree['Reco.T2']).shape[1] - 2
 dof *= 2
 
 # Plot Chi2.
-_, bins, _ = plt.hist(signal['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label=f'signal ($\\times {args.xssf}$)')
-_, bins, _ = plt.hist(background['Reco.Chi2'], bins=100, range=(0, 10), histtype='step', label='background')
+_, bins, _ = plt.hist(signal['Reco.Chi2'], weights=np.array(signal['Weight']), bins=100, range=(0, 10), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+_, bins, _ = plt.hist(background['Reco.Chi2'], weights=np.array(background['Weight']), bins=100, range=(0, 10), histtype='step', label='background')
 plt.plot(bins, stats.chi2(dof).pdf(bins), label=r'$\chi^2(' + str(dof) + ')$')
 plt.xlabel(r'$\chi^2$')
 plt.ylabel('Events')
@@ -107,9 +125,9 @@ signal     = tree[tree['MC.IsSignal'] == True ]
 background = tree[tree['MC.IsSignal'] == False]
 signal_A0X = np.concatenate([signal['MC.A01'], signal['MC.A02']])
 
-plt.hist(signal['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
-plt.hist(background['Reco.A01'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A01'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+plt.hist(background['Reco.A01'], weights=np.array(background['Weight']), bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal_A0X, weights=0.5 * np.concatenate([np.array(signal['Weight'])] * 2), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_1$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -119,9 +137,9 @@ plt.tight_layout()
 savefig(args.output + '_A01.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
-plt.hist(background['Reco.A02'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal_A0X, weights=0.5 * np.ones_like(signal_A0X), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A02'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+plt.hist(background['Reco.A02'], weights=np.array(background['Weight']), bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal_A0X, weights=0.5 * np.concatenate([np.array(signal['Weight'])] * 2), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_0$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -131,9 +149,9 @@ plt.tight_layout()
 savefig(args.output + '_A02.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
-plt.hist(background['Reco.A12'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal['MC.A12'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A12'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+plt.hist(background['Reco.A12'], weights=np.array(background['Weight']), bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A12'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'<$\vec{p}_1$, $\vec{p}_2$>')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -143,9 +161,9 @@ plt.tight_layout()
 savefig(args.output + '_A12.pdf')
 plt.close()
 
-plt.hist(signal['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
-plt.hist(background['Reco.A0M'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal['MC.A0M'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.A0M'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+plt.hist(background['Reco.A0M'], weights=np.array(background['Weight']), bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.A0M'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -155,9 +173,9 @@ plt.tight_layout()
 savefig(args.output + '_A0M.pdf')
 plt.close()
 
-plt.hist(signal['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal ($\\times {args.xssf}$)')
-plt.hist(background['Reco.AMM'], bins=100, range=(0, 0.01), histtype='step', label='background')
-plt.hist(signal['MC.AMM'], bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
+plt.hist(signal['Reco.AMM'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label=f'signal ($\\times {args.xssf}$)')
+plt.hist(background['Reco.AMM'], weights=np.array(background['Weight']), bins=100, range=(0, 0.01), histtype='step', label='background')
+plt.hist(signal['MC.AMM'], weights=np.array(signal['Weight']), bins=100, range=(0, 0.01), histtype='step', label='signal-truth')
 plt.xlabel(r'max{<$\vec{p}_0$, $\vec{p}_1$>, <$\vec{p}_0$, $\vec{p}_2$>, <$\vec{p}_1$, $\vec{p}_2$>}')
 plt.ylabel('Events')
 plt.yscale('log')
@@ -207,8 +225,8 @@ if args.nevent is not None:
     from scipy.optimize import fsolve
     chi21_95 = chi2(1).ppf(0.95)
     func = lambda s: chi21_95 - 2 * (s + b * np.log(b / (s + b)))
-    s = len(signal)
-    b = len(background)
+    s = np.sum(signal['Weight'])
+    b = np.sum(background['Weight'])
     print(f's={s} b={b}')
     if b == 0: b = 1
     s *= args.exposure / args.nevent
