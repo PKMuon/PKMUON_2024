@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description='Reconstruct CLFV events.')
 parser.add_argument('input', metavar='INPUT', type=str, nargs='+', help='input root files')
 parser.add_argument('--output', '-o', type=str, nargs='?', help='specify output root file')
 parser.add_argument('--electron-veto-rate', '-e', type=float, default=0.0, help='specify electron veto rate')
+parser.add_argument('--nevent', '-n', type=float, help='specify the original number of event')
 args = parser.parse_args()
 if args.output is None:
     if len(args.input) != 1: raise ValueError('require output name for multiple input names')
@@ -261,6 +262,9 @@ tree = tree[[
 ]]
 file = uproot.recreate(args.output)
 file['tree'] = tree
-file['meta'] = {'Meta.Processes': np.array(['@'.join(Processes)])}
+file['meta'] = {
+    'Meta.Processes': np.array(['@'.join(Processes)]),
+    **({'Meta.NEvent': np.array([args.nevent])} if args.nevent is not None else {}),
+}
 file.close()
 print(f'Output written to: {args.output}')
