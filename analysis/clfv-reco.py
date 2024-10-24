@@ -63,7 +63,7 @@ NProcess = len(Processes)
 # Simulate PID specific detector response.
 electron_veto_rate = args.electron_veto_rate
 @numba.jit
-def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
+def simulate_pid_response(tree):  # [NOTE] Edeps.Id must be sorted.
     Edeps_Id, Edeps_Value = [ ], [ ]
     for ievent, event in enumerate(tree):
         edeps_id, edeps_value = [ ], [ ]
@@ -76,15 +76,22 @@ def simulate_pid_response():  # [NOTE] Edeps.Id must be sorted.
         Edeps_Id.append(edeps_id)
         Edeps_Value.append(edeps_value)
     return Edeps_Id, Edeps_Value
-Edeps_Id, Edeps_Value = simulate_pid_response()
 tree['Edeps.ProcessValue'] = tree['Edeps.Value']
-tree['Edeps.Id'] = Edeps_Id
-tree['Edeps.Value'] = Edeps_Value
+Edeps_Ids = []
+Edeps_Values = []
+for i in range(0, len(tree), 10000):
+    Edeps_Id, Edeps_Value = simulate_pid_response(tree[i : i + 10000])
+    Edeps_Ids.append(ak.Array(Edeps_Id))
+    Edeps_Values.append(ak.Array(Edeps_Value))
+    del Edeps_Id, Edeps_Value
+tree['Edeps.Id'] = ak.concatenate(Edeps_Ids)
+tree['Edeps.Value'] = ak.concatenate(Edeps_Values)
+del Edeps_Ids, Edeps_Values
 
 # Decode energy deposit positions.
 tree['Edeps.Layer'] = tree['Edeps.Id'] // (NCellX * NCellY)
 @numba.jit
-def decode_xyz():
+def decode_xyz(tree):
     X, Y, Z = [ ], [ ], [ ]
     for ievent, event in enumerate(tree):
         x, y, z = [ ], [ ], [ ]
@@ -95,8 +102,20 @@ def decode_xyz():
             y.append(YOffset + (id % NCellY + 0.5) * CellY)
         X.append(x); Y.append(y); Z.append(z)
     return X, Y, Z
-X, Y, Z = decode_xyz()
-tree['Edeps.X'] = X; tree['Edeps.Y'] = Y; tree['Edeps.Z'] = Z
+Xs = []
+Ys = []
+Zs = []
+for i in range(0, len(tree), 10000):
+    subtree = tree[i : i + 10000]
+    X, Y, Z = decode_xyz(subtree)
+    Xs.append(ak.Array(X))
+    Ys.append(ak.Array(Y))
+    Zs.append(ak.Array(Z))
+    del X, Y, Z
+tree['Edeps.X'] = ak.concatenate(Xs)
+tree['Edeps.Y'] = ak.concatenate(Ys)
+tree['Edeps.Z'] = ak.concatenate(Zs)
+del Xs, Ys, Zs
 #for ievent, event in enumerate(tree):
 #    if ievent >= 10: break
 #    print(f'event_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Value'], sep='\n  - ')
@@ -119,6 +138,7 @@ Edeps['Edeps.Value'] = XEdeps['Edeps.Value'] + YEdeps['Edeps.Value']
 tree = tree[mask_0]
 tree = tree[mask_1]
 for field in Edeps.fields: tree[field] = Edeps[field]
+del Edeps, XEdeps, YEdeps, mask_0, mask_1
 #for ievent, event in enumerate(tree):
 #    if ievent >= 10: break
 #    print(f'event_{ievent}:', event['Edeps.Layer'], event['Edeps.X'], event['Edeps.Y'], event['Edeps.Value'], sep='\n  - ')
@@ -189,6 +209,7 @@ tree['Reco.T2'] = T2
 #for ievent, event in enumerate(tree):
 #    if ievent >= 10: break
 #    print(f'event_{ievent}:', event['Reco.T0'], event['Reco.T1'], event['Reco.T2'], sep='\n  - ')
+del r, r0, r1, r2, ra, rb, d0, d1_a, d2_a, d1_b, d2_b, dist_a, dist_b, d1, d2
 
 # 3D line fit.
 def line_fit(t):  # [NEvent, NLayer // 2, 3]
