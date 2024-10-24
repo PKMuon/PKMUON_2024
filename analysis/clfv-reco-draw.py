@@ -37,15 +37,16 @@ Processes = meta['Meta.Processes'][0]
 Processes = Processes.replace('MupTargetEnToLLProcess', r'CLFV-$\mu\mu$')
 Processes = Processes.replace('muIoni', r'$\mu$-Ioni')
 Processes = Processes.replace('eIoni', r'$e$-Ioni')
-Processes = Processes.replace('muPairProd', r'$\mu\mu$-Prod')
+Processes = Processes.replace('muBrems', r'$\mu$-Brem')
+Processes = Processes.replace('hIoni', r'H-Ioni')
 Processes = Processes.replace('eBrem', r'$e$-Brem')
+Processes = Processes.replace('muPairProd', r'$\mu\mu$-Prod')
+Processes = Processes.replace('ePairProd', r'$ee$-Prod')
 Processes = Processes.replace('hadElastic', r'H-Elast')
 Processes = Processes.replace('CoulombScat', r'Coulomb')
-Processes = Processes.replace('hIoni', r'H-Ioni')
 Processes = Processes.replace('pi+Inelastic', r'$\pi^\pm$-Inelast')
 Processes = Processes.replace('neutronInelastic', r'$n$-Inelast')
 Processes = Processes.replace('annihil', r'Annihil')
-Processes = Processes.replace('muBrems', r'$\mu$-Brem')
 Processes = Processes.replace('muonNuclear', r'$\mu$-$N$')
 Processes = Processes.split('@')
 print('processes:', *Processes, sep='\n  - ')
@@ -59,14 +60,16 @@ if len(background_path) > 2:
     raise RuntimeError(f'Ambiguous background path: {", ".join(sorted(background_path))}')
 if background_path:
     background_path = list(background_path)[0]
+    if not os.path.isfile(background_path): background_path = None
+else:
+    background_path = None
+print(f'NOTE: supplementary background path: {background_path}')
+if background_path:
     background_tree = uproot.concatenate([f'{background_path}:tree' for _ in range(1)])
     background_meta = uproot.concatenate([f'{background_path}:meta' for _ in range(1)])
     background_NEvent = background_meta['Meta.NEvent'][0]
     background_tree['Weight'] = args.exposure / background_NEvent
     tree = ak.concatenate([tree[tree['MC.IsSignal'] == True], background_tree])
-else:
-    background_path = None
-print(f'NOTE: supplementary background path: {background_path}')
 
 ## Drop multiple scattering events.
 #tree = tree[ak.num(tree['Scatters.Id'], axis=1) <= 1]
