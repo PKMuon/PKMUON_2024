@@ -25,6 +25,7 @@ for path in args.input:
     except Exception:
         print('WARNING: skipping unrecognized path:', path)
         continue
+    if zp_mass < 0.1: continue
     tree = uproot.concatenate([f'{path}:tree' for path in [path]])
     meta = uproot.concatenate([f'{path}:meta' for path in [path]])
     NEvent = meta['Meta.NEvent'][0]
