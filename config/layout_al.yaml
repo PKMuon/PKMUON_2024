@@ -6,8 +6,8 @@ schema: volume_schema.yaml
 target:
   color: gray
   solid: box
-  x: 120 mm
-  y: 120 mm
+  x: 200 mm
+  y: 200 mm
   z: 30 mm
   material: G4_Al
 
@@ -18,7 +18,6 @@ world_major_gap:
   x: &rpc_x 430 mm
   y: &rpc_y 430 mm
   z: 450 mm
-  offset: [0, 0, 60 mm]
   material: &world_material rpc_air
 
 ---

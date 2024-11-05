@@ -8,8 +8,8 @@ target:
   solid: box
   x: 200 mm
   y: 200 mm
-  z: 80 mm
-  material: G4_Al
+  z: 200 mm
+  material: G4_Pb
 
 world_major_gap:
   hidden: hidden
@@ -24,7 +24,7 @@ world_major_gap:
 
 # Comments
 materials:
-  - G4_Al
+  - G4_Pb
   - rpc_air
 external:
   - rpc
