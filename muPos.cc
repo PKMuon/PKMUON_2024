@@ -25,6 +25,7 @@
 //
 
 #include "ActionInitialization.hh"
+#include "DMPhysics.hh"
 #include "DetectorConstruction.hh"
 #include "FTFP_BERT.hh"
 #include "G4AutoDelete.hh"
@@ -57,6 +58,7 @@ int main(int argc, char **argv)
   G4VModularPhysicsList *physicsList = new FTFP_BERT;
   physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
+  physicsList->RegisterPhysics(DMPhysics::GetInstance());
   runManager->SetUserInitialization(physicsList);
   runManager->SetUserInitialization(new ActionInitialization);
 

@@ -5,6 +5,7 @@
 
 #include <Rtypes.h>
 
+#include <G4ThreeVector.hh>
 #include <map>
 #include <string>
 #include <vector>
@@ -37,6 +38,7 @@ public:
   void AutoSave();
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
+  void AddScatter(const G4Track *track, const G4ThreeVector &momentum);
   Event *GetEvent();
 
 private:

@@ -35,5 +35,6 @@
 #pragma link C++ class Edep + ;
 #pragma link C++ class Process + ;
 #pragma link C++ class Event + ;
+#pragma link C++ class Scatter + ;
 
 #endif

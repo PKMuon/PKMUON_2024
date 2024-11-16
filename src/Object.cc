@@ -77,3 +77,24 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   LayerZ = detectorConstruction.GetScoringZs();
   return *this;
 }
+
+Scatter &Scatter::operator=(std::tuple<const G4Track *, Double_t, Double_t, Double_t> t)
+{
+  auto [track, px, py, pz] = t;
+  Pid = track->GetParticleDefinition()->GetPDGEncoding();
+  auto v = track->GetMomentum();
+  Px = v.getX();
+  Py = v.getY();
+  Pz = v.getZ();
+  E = track->GetTotalEnergy();
+  NewPx = px;
+  NewPy = py;
+  NewPz = pz;
+  NewE = hypot(hypot(hypot(px, py), pz), track->GetParticleDefinition()->GetPDGMass());
+  v = track->GetPosition();
+  X = v.getX();
+  Y = v.getY();
+  Z = v.getZ();
+  T = track->GetGlobalTime();
+  return *this;
+}

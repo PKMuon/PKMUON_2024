@@ -74,6 +74,7 @@ void Run::InitTree()
   //fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
   fTree->Branch("Event", new TClonesArray("Event"));
+  fTree->Branch("Scatters", new TClonesArray("Scatter"));
   (*(TClonesArray **)fTree->GetBranch("Event")->GetAddress())->ConstructedAt(0);
 
   fParams = new TTree("params", "params");
@@ -93,6 +94,7 @@ void Run::SaveTree()
   //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Event")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   fTree = NULL;
 
   Params *params = (Params *)(*(TClonesArray **)fParams->GetBranch("Params")->GetAddress())->At(0);
@@ -114,6 +116,7 @@ void Run::FillAndReset()
 {
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
 
   //// Sort the tracks by ID.
   //std::vector<Track *> tracks;
@@ -132,6 +135,7 @@ void Run::FillAndReset()
 
   //Tracks->Clear();
   fEdep.clear();
+  Scatters->Clear();
   ++fIEvent;
 }
 
@@ -168,6 +172,12 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
   //  << G4endl;
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+}
+
+void Run::AddScatter(const G4Track *track, const G4ThreeVector &momentum)
+{
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
+  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = {track, momentum.x(), momentum.y(), momentum.z()};
 }
 
 void Run::BuildProcessMap()

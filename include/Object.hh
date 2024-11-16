@@ -129,4 +129,25 @@ public:
   ClassDef(Event, 1);
 };
 
+class Scatter : public TObject {
+public:
+  Scatter &operator=(std::tuple<const G4Track *, Double_t, Double_t, Double_t>);
+
+  Int_t Pid;
+  Double_t Px;
+  Double_t Py;
+  Double_t Pz;
+  Double_t E;
+  Double_t NewPx;
+  Double_t NewPy;
+  Double_t NewPz;
+  Double_t NewE;
+  Double_t X;
+  Double_t Y;
+  Double_t Z;
+  Double_t T;
+
+  ClassDef(Scatter, 1);
+};
+
 #endif
