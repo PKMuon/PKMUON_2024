@@ -42,8 +42,9 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   // Input file and tree.
   TFile *file_in = TFile::Open(infile);
   TTree *tree_in = (TTree *)file_in->Get("tree");
-  TClonesArray *Edeps = NULL;
+  TClonesArray *Edeps = NULL, *Scatters = NULL;
   tree_in->SetBranchAddress("Edeps", &Edeps);
+  tree_in->SetBranchAddress("Scatters", &Scatters);
   TTree *params_in = (TTree *)file_in->Get("params");
   TClonesArray *Params = NULL, *Processes = NULL;
   params_in->SetBranchAddress("Params", &Params);
@@ -86,6 +87,14 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
     Y2.assign(Y2.size(), 0);
     Z2.assign(Z2.size(), 0);
     Int_t nedep = Edeps->GetEntries();
+    Int_t nscatter = Scatters->GetEntries();
+    //if(nscatter != 1) continue;  // Skip events without or with more than one DM scattering.
+    cout << "Scatters:";
+    for(Int_t iscatter = 0; iscatter < nscatter; ++iscatter) {
+      Scatter *scatter = (Scatter *)Scatters->UncheckedAt(iscatter);
+      cout << " " << scatter->Pid << "(" << scatter->Z << ")";
+    }
+    cout << endl;
     for(Int_t iedep = 0; iedep < nedep; ++iedep) {
       auto edep = (Edep *)Edeps->UncheckedAt(iedep);
       assert((size_t)edep->Id < E2.size());
