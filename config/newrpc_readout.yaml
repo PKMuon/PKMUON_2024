@@ -14,9 +14,8 @@ newrpc_xy_readout_plate_box:  # This centers the plate.
   solid: bottom_up
   components: [newrpc_xy_readout_plate]
   x: *newrpc_readout_plate_x
-  y: &newrpc_readout_plate_box_y 350 mm
+  y: *newrpc_readout_plate_y
   z: *newrpc_xy_readout_plate_z
-  offset: [0, -12.5 mm, 0]
   material: newrpc_gas
 
 newrpc_t_readout_plate:
@@ -30,16 +29,22 @@ newrpc_t_readout_plate_box:  # This centers the plate.
   solid: bottom_up
   components: [newrpc_t_readout_plate]
   x: *newrpc_readout_plate_x
-  y: *newrpc_readout_plate_box_y
+  y: *newrpc_readout_plate_y
   z: *newrpc_t_readout_plate_z
-  offset: [0, -12.5 mm, 0]
   material: newrpc_gas
 
-newrpc_readout_bar:
+newrpc_x_readout_bar:
   solid: box
-  x: 2.0 mm
-  y: &newrpc_readout_bar_y 200 mm
+  x: 1.333 mm
+  y: 280 mm
   z: &newrpc_readout_bar_z 0.1 mm
+  material: newrpc_readout_bar
+
+newrpc_y_readout_bar:
+  solid: box
+  x: 2.923 mm
+  y: &newrpc_readout_bar_y 2.124 mm
+  z: *newrpc_readout_bar_z
   material: newrpc_readout_bar
 
 newrpc_readout_gas:
@@ -49,18 +54,26 @@ newrpc_readout_gas:
   z: *newrpc_readout_bar_z
   material: newrpc_gas
 
-newrpc_readout_bars:
+newrpc_readout_bars_and_gas:
   solid: left_right
   components:
     - newrpc_readout_gas
-    - newrpc_readout_bar
+    - newrpc_y_readout_bar
     - newrpc_readout_gas
-  duplicate: 80
+  duplicate: 81
   material: newrpc_gas
 
-newrpc_xy_readout_bars:
+newrpc_readout_mix:
   solid: rotation
-  components: [newrpc_readout_bars]
+  components: [newrpc_readout_bars_and_gas, [z, 90 deg]]
+
+newrpc_xy_readout_bars:
+  solid: left_right
+  components: 
+    - newrpc_readout_mix
+    - newrpc_x_readout_bar
+  duplicate: 81
+  material: newrpc_gas
 
 newrpc_xy_readout_board:
   solid: bottom_up
