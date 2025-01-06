@@ -1,0 +1,145 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+newrpc_insulating_film:
+  solid: box
+  x: &newrpc_mainbody_x 300 mm
+  y: &newrpc_mainbody_y 300 mm
+  z: 0.1 mm
+  material: newrpc_insulating_film
+
+newrpc_electrode:
+  solid: box
+  x: 280 mm
+  y: 280 mm
+  z: 0.2 mm
+  material: newrpc_electrode
+
+newrpc_glass:
+  solid: box
+  x: *newrpc_mainbody_x
+  y: *newrpc_mainbody_y
+  z: 2.7 mm
+  material: newrpc_glass
+
+newrpc_gas:
+  solid: box
+  x: &newrpc_content_x 390 mm
+  y: &newrpc_content_y 390 mm
+  z: &newrpc_gas_z 2 mm
+  material: newrpc_gas
+
+newrpc_top_gap:
+  solid: box
+  x: *newrpc_content_x
+  y: *newrpc_content_y
+  z: 4.2 mm
+  material: newrpc_gas
+
+newrpc_xy_readout_board: &newrpc_readout_board
+  alternative: alternative
+  solid: box
+  x: *newrpc_mainbody_x
+  y: *newrpc_mainbody_y
+  z: 1.6 mm
+  material: newrpc_fr4
+
+newrpc_t_readout_board: *newrpc_readout_board
+
+newrpc_electric:
+  solid: bottom_up
+  components:
+    - newrpc_glass
+    - newrpc_gas
+    - newrpc_glass
+  material: newrpc_gas
+
+newrpc_electrode_pair:
+  solid: bottom_up
+  components:
+    - newrpc_electrode
+    - newrpc_electric
+  material: newrpc_gas
+
+newrpc_electrode_pair_0:
+  solid: rotation
+  components: [newrpc_electrode_pair]
+
+newrpc_electrode_pair_1:
+  solid: rotation
+  components: [newrpc_electrode_pair, [x, 180 deg]]
+
+newrpc_mainbody:
+  solid: bottom_up
+  components:
+    - newrpc_xy_readout_board  # external
+    - newrpc_insulating_film
+    - newrpc_electrode_pair_0
+    - newrpc_gas
+    - newrpc_electrode_pair_1
+    - newrpc_insulating_film
+    - newrpc_gas
+    - newrpc_t_readout_board  # external
+  material: newrpc_gas
+
+newrpc_content:
+  solid: bottom_up
+  components:
+    - newrpc_mainbody
+    - newrpc_top_gap
+  material: newrpc_gas
+
+# This box is added for visualization need.
+newrpc_content_box:
+  solid: bottom_up
+  components: [newrpc_content]
+  material: newrpc_shell
+
+newrpc_without_bottom:
+  solid: bottom_up
+  components: [newrpc_content_box]
+  x: 400 mm
+  y: 400 mm
+  z: 40 mm
+  offset: [0, 0, -2.5 mm]
+  material: newrpc_shell
+
+newrpc_bottom_connection_gas:
+  solid: box
+  x: *newrpc_content_x
+  y: *newrpc_content_y
+  z: &newrpc_bottom_connection_z 5 mm
+  material: newrpc_gas
+
+newrpc_cover:
+  solid: box
+  x: 400 mm
+  y: 400 mm
+  z: 3 mm
+  material: newrpc_fr4
+
+newrpc:
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - newrpc_cover
+    - newrpc_content
+    - newrpc_cover
+  material: newrpc_air
+
+---
+
+# Comments
+materials:
+  - newrpc_electrode
+  - newrpc_fr4
+  - newrpc_gas
+  - newrpc_glass
+  - newrpc_insulating_film
+  - newrpc_shell
+external:
+  - newrpc_xy_readout_board
+  - newrpc_t_readout_board
+

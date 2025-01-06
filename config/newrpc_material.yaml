@@ -1,0 +1,104 @@
+# Schema
+schema: material_schema.yaml
+
+---
+
+H: {type: element, from: nist}
+C: {type: element, from: nist}
+O: {type: element, from: nist}
+F: {type: element, from: nist}
+Cl: {type: element, from: nist}
+Br: {type: element, from: nist}
+
+G4_Galactic: {from: nist}
+G4_AIR: {from: nist}
+G4_Pb: {from: nist}
+G4_Fe: {from: nist}
+G4_W: {from: nist}
+G4_Cu: {from: nist}
+G4_Al: {from: nist}
+G4_GRAPHITE: {from: nist}
+G4_Pyrex_Glass: {from: nist}
+G4_FERRIC_OXIDE: {from: nist}
+G4_ALUMINUM_OXIDE: {from: nist}
+G4_MAGNESIUM_OXIDE: {from: nist}
+G4_CALCIUM_OXIDE: {from: nist}
+G4_SODIUM_MONOXIDE: {from: nist}
+G4_POTASSIUM_OXIDE: {from: nist}
+G4_SILICON_DIOXIDE: {from: nist}
+
+newrpc_vacuum:
+  alias: G4_Galactic
+
+newrpc_air:
+  alias: G4_AIR
+
+newrpc_electrode:
+  color: red
+  alias: G4_GRAPHITE
+
+newrpc_gas:  # R-134a, https://en.wikipedia.org/wiki/1,1,1,2-Tetrafluoroethane
+  color: blue
+  alpha: 0.01
+  density: 0.00425 g/cm3
+  components:
+    - [element, C, 2]
+    - [element, H, 2]
+    - [element, F, 4]
+
+newrpc_glass:  # Ultra-thin float glass
+  hidden: hidden
+  density: 2.5 g/cm3
+  components:
+    - [G4_FERRIC_OXIDE,    0.0010]
+    - [G4_ALUMINUM_OXIDE,  0.0100]
+    - [G4_MAGNESIUM_OXIDE, 0.0400]
+    - [G4_CALCIUM_OXIDE,   0.1350]
+    - [G4_SODIUM_MONOXIDE, 0.0405]
+    - [G4_POTASSIUM_OXIDE, 0.0405]
+    - [G4_SILICON_DIOXIDE, 0.7200]
+
+newrpc_insulating_film:  # PET, https://en.wikipedia.org/wiki/Polyethylene_terephthalate
+  hidden: hidden
+  density: 1.38 g/cm3
+  components:
+    - [element, C, 10]
+    - [element, H,  8]
+    - [element, O,  4]
+
+newrpc_shell:
+  alias: G4_Al
+
+newrpc_mfcd03703563:  # https://www.chemicalbook.com/ChemicalProductProperty_EN_CB8477587.htm
+  density: 1.8 g/cm3
+  components:
+    - [element, C, 18]
+    - [element, H, 17]
+    - [element, Br, 4]
+    - [element, Cl, 1]
+    - [element, O,  3]
+
+newrpc_fr4:  # https://en.wikipedia.org/wiki/FR-4
+  hidden: hidden
+  color: green
+  alpha: 0.2
+  density: 1.85 g/cm3
+  components:
+    - [G4_SILICON_DIOXIDE, 0.350]
+    - [G4_Cu,              0.225]
+    - [newrpc_mfcd03703563,   0.500]
+
+newrpc_readout_bar:
+  color: yellow
+  alpha: 0.5
+  alias: G4_Cu
+
+newrpc_readout_cu:
+  hidden: hidden
+  color: yellow
+  alpha: 0.5
+  alias: G4_Cu
+
+---
+
+# Comments
