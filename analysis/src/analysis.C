@@ -50,7 +50,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   params_in->SetBranchAddress("Processes", &Processes);
   params_in->GetEntry(0);
   auto params = (::Params *)Params->At(0);
-  size_t nlayer = params->LayerZ.size() / 2;
+  size_t nlayer = params->LayerZ.size();
+  //cout << "nlayer: " << nlayer <<endl; 
 
   // Output file and tree.
   TFile *file_out = TFile::Open(outfile, "RECREATE");
@@ -68,7 +69,7 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   tree_out->Branch("CosThetaSmeared", &CosThetaSmeared);
 
   // Temporaries.
-  vector<Double_t> X2(nlayer * 2), Y2(nlayer * 2), Z2(nlayer * 2), E2(nlayer * 2);
+  vector<Double_t> X2(nlayer), Y2(nlayer), Z2(nlayer), E2(nlayer);
   Long64_t nvalid = 0;
   struct timeval start, end;
   gettimeofday(&start, NULL);
@@ -98,22 +99,25 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
       Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
     }
     bool valid = true;
-    for(size_t l = 0; l < nlayer * 2; ++l) {
+    for(size_t l = 0; l < nlayer; ++l) {
       if(!(E2[l] > 0)) {
         valid = false;
         break;
       }
-      X2[l] /= E2[l], Y2[l] /= E2[l], Z2[l] /= E2[l];
+      XEdep[l] = X2[l] / E2[l], YEdep[l] = Y2[l] / E2[l], ZEdep[l] = Z2[l] / E2[l];
+      cout << "XEdep[" << l << "]: " << XEdep[l] << endl;
+      cout << "YEdep[" << l << "]: " << YEdep[l] << endl;
+      cout << "ZEdep[" << l << "]: " << ZEdep[l] << endl;
     }
     if(!valid) continue;
     nvalid++;
 
     // Simulate readout system.
-    for(size_t l = 0; l < nlayer; ++l) {
-      XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
-      YEdep[l] = Y2[2 * l];                          // YEdep-readout
-      ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
-    }
+    //for(size_t l = 0; l < nlayer; ++l) {
+      //XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
+      //YEdep[l] = Y2[2 * l];                          // YEdep-readout
+      //ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
+    //}
 
     // Simulate detector resolution.
     for(size_t l = 0; l < nlayer; l++) {
