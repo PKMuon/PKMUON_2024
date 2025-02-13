@@ -93,10 +93,11 @@ def savefig(path):
     plt.savefig(path)
     print(f'Plot saved to {path}')
 
+plt.figure(figsize=(4, 3))
 for muon_energy in data:
     kvp = np.array(sorted(data[muon_energy].items()))
     plt.plot(kvp[:,0], kvp[:,1], label=f'$E_\\mu = {muon_energy:.2f}$ GeV')
-plt.xlabel(r'$m_{Z^\prime}$')
+plt.xlabel(r'$m_{Z^\prime}$ [GeV]')
 plt.ylabel(r'$\lambda_{e\mu}\lambda_{\mu\mu}$ 95% C.L. upper limit')
 plt.yscale('log')
 plt.grid()

@@ -9,6 +9,7 @@ parser.add_argument('input', metavar='INPUT', type=str, nargs='+', help='input r
 parser.add_argument('--output', '-o', type=str, nargs='?', help='specify output root file')
 parser.add_argument('--electron-veto-rate', '-e', type=float, default=0.0, help='specify electron veto rate')
 parser.add_argument('--nevent', '-n', type=float, help='specify the original number of event')
+parser.add_argument('--threshold', '-t', type=float, default=1.0, help='specify the energy deposition threshold')
 args = parser.parse_args()
 if args.output is None:
     if len(args.input) != 1: raise ValueError('require output name for multiple input names')
@@ -124,7 +125,7 @@ del Xs, Ys, Zs
 assert NLayer % 2 == 0
 NLayer //= 2
 Edeps = tree[[field for field in tree.fields if field.startswith('Edeps.')]]
-Edeps = Edeps[Edeps['Edeps.Value'] >= 1]  # Require minimum energy deposition 1 MeV.
+Edeps = Edeps[Edeps['Edeps.Value'] >= args.threshold]  # Require minimum energy deposition.
 XEdeps = Edeps[Edeps['Edeps.Layer'] % 2 == 0]  # Require consistent x-y waveforms.
 YEdeps = Edeps[Edeps['Edeps.Layer'] % 2 == 1]
 mask_0 = ak.num(XEdeps['Edeps.Id'], axis=1) == ak.num(YEdeps['Edeps.Id'], axis=1)
