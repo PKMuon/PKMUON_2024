@@ -39,6 +39,14 @@ include_directories(SYSTEM ${YAML_CPP_INCLUDE_DIR})
 link_directories(${YAML_CPP_LIBRARY_DIR})
 
 #----------------------------------------------------------------------------
+# Compile and link with DMG4
+add_subdirectory(DMG4)
+link_directories(DMG4/src)
+include_directories(SYSTEM DMG4/include)
+include_directories(SYSTEM DMG4/include/DMG4)
+set(DMG4_LIBRARIES DMG4 UtilsDM DarkMatter)
+
+#----------------------------------------------------------------------------
 # General compilation and linkage options
 #
 option(ENABLE_SANITIZER "compile and link with sanitizing flags" OFF)
@@ -87,7 +95,7 @@ file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(muPos muPos.cc ${sources} ${PROJECT_BINARY_DIR}/Object.cxx ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES})
+target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} ${DMG4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

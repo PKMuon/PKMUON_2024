@@ -1,0 +1,3 @@
+[submodule "DMG4"]
+	path = DMG4
+	url = https://gitlab.cern.ch/P348/DMG4.git
