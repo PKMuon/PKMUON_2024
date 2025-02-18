@@ -67,7 +67,7 @@ void Run::InitTree()
 
   fFile = TFile::Open(fRootName, "RECREATE");
   fTree = new TTree("tree", "tree");
-  //fTree->Branch("Tracks", new TClonesArray("Track"));
+  fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
 
   // The params tree is only accessed here.
@@ -93,7 +93,7 @@ void Run::SaveTree()
   if(!fFile) { return; }
   fFile->cd();
   fTree->Write(NULL, TObject::kOverwrite);
-  //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   fFile->Close();
   fTree = NULL;
@@ -102,15 +102,15 @@ void Run::SaveTree()
 
 void Run::FillAndReset()
 {
-  //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
 
   //// Sort the tracks by ID.
-  //std::vector<Track *> tracks;
-  //tracks.resize(Tracks->GetEntries());
-  //for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
-  //sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
-  //for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
+  std::vector<Track *> tracks;
+  tracks.resize(Tracks->GetEntries());
+  for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
+  sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
+  for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
@@ -120,7 +120,7 @@ void Run::FillAndReset()
   }
   fStatus.assign(fStatus.size(), false);
 
-  //Tracks->Clear();
+  Tracks->Clear();
   fEdep.clear();
 }
 
@@ -141,12 +141,13 @@ void Run::AddStep(const G4Step *step)
   Int_t zid = ub - fScoringMaxZs.begin();
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
+  Int_t trackid = step->GetTrack()->GetTrackID();
   if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
     auto it = fProcessMap.find(p->GetProcessName());
     if(it != fProcessMap.end()) process = it->second;
   }
   fStatus[zid] = true;
-  fEdep[{ zid, pid, process }].Add(edep, x, y);
+  fEdep[{ zid, pid, process, trackid }].Add(edep, x, y, trackid);
 }
 
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
@@ -154,8 +155,8 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
   //G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID()
   //  << "(" << track->GetParentID() << ")"
   //  << G4endl;
-  //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
-  //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+  auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+  *(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
 }
 
 void Run::BuildProcessMap()

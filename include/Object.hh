@@ -82,14 +82,15 @@ public:
   Edep &operator=(std::pair<const EdepKey, EdepValue> &p)
   {
     auto &[key, value] = p;
-    std::tie(Id, Pid, Process) = key.Tuple();
-    std::tie(Value, X, Y) = value.Finish().Tuple();
+    std::tie(Id, Pid, Process, trackID) = key.Tuple();
+    std::tie(Value, X, Y, trackID) = value.Finish().Tuple();
     return *this;
   }
 
   Int_t Id;
   Int_t Pid;
   Int_t Process;
+  Int_t trackID;
   Double_t Value;
   Double_t X;
   Double_t Y;

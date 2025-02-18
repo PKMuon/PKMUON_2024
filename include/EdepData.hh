@@ -36,9 +36,10 @@ public:
   Int_t Id;
   Int_t Pid;
   Int_t Process;
+  Int_t trackID;
 
-  auto Tuple() { return std::tie(Id, Pid, Process); }
-  auto Tuple() const { return std::tie(Id, Pid, Process); }
+  auto Tuple() { return std::tie(Id, Pid, Process, trackID); }
+  auto Tuple() const { return std::tie(Id, Pid, Process, trackID); }
 
   // Typically ROOT is not built with C++20, unfortunately.
   //auto operator<=>(const EdepKey &) const = default;
@@ -64,13 +65,14 @@ public:
   Double_t Value;
   Double_t X;
   Double_t Y;
+  Int_t trackID;
 
-  auto Tuple() && { return std::tie(Value, X, Y); }
-  auto Tuple() const && { return std::tie(Value, X, Y); }
+  auto Tuple() && { return std::tie(Value, X, Y, trackID); }
+  auto Tuple() const && { return std::tie(Value, X, Y, trackID); }
 
-  EdepValue &Add(Double_t v, Double_t x, Double_t y)
+  EdepValue &Add(Double_t v, Double_t x, Double_t y, Int_t tid)
   {
-    Value += v, X += v * x, Y += v * y;
+    if(v > 0) Value += 1, X += x, Y += y, trackID = tid;
     return *this;
   }
 

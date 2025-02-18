@@ -3,6 +3,7 @@
 #include <TRandom.h>
 #include <TTree.h>
 #include <sys/time.h>
+#include <TMath.h>
 
 #include <iomanip>
 #include <iostream>
@@ -39,11 +40,13 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
 {
   TRandom *rand = new TRandom();
 
-  // Input file and tree.
   TFile *file_in = TFile::Open(infile);
   TTree *tree_in = (TTree *)file_in->Get("tree");
   TClonesArray *Edeps = NULL;
+  TClonesArray *Tracks = NULL;
   tree_in->SetBranchAddress("Edeps", &Edeps);
+  tree_in->SetBranchAddress("Tracks", &Tracks);
+  tree_in->GetEntry(0);
   TTree *params_in = (TTree *)file_in->Get("params");
   TClonesArray *Params = NULL, *Processes = NULL;
   params_in->SetBranchAddress("Params", &Params);
@@ -51,15 +54,14 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   params_in->GetEntry(0);
   auto params = (::Params *)Params->At(0);
   size_t nlayer = params->LayerZ.size();
-  //cout << "nlayer: " << nlayer <<endl; 
 
-  // Output file and tree.
   TFile *file_out = TFile::Open(outfile, "RECREATE");
   TTree *tree_out = new TTree("tree", "tree");
-  //tree_out = tree_in->CloneTree(0);  // copy 0 entries
   vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer);
   vector<Double_t> XSmeared(nlayer), YSmeared(nlayer);
+  vector<Int_t> Pid(nlayer), TrackID(nlayer);
   Double_t CosThetaEdep, CosThetaSmeared;
+  Double_t Ang, AngSmeared;
   tree_out->Branch("XEdep", &XEdep);
   tree_out->Branch("YEdep", &YEdep);
   tree_out->Branch("ZEdep", &ZEdep);
@@ -67,6 +69,10 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   tree_out->Branch("YSmeared", &YSmeared);
   tree_out->Branch("CosThetaEdep", &CosThetaEdep);
   tree_out->Branch("CosThetaSmeared", &CosThetaSmeared);
+  tree_out->Branch("Pid", &Pid);
+  tree_out->Branch("Ang", &Ang);
+  tree_out->Branch("AngSmeared", &AngSmeared);
+  tree_out->Branch("TrackID", &TrackID);
 
   // Temporaries.
   vector<Double_t> X2(nlayer), Y2(nlayer), Z2(nlayer), E2(nlayer);
@@ -75,6 +81,10 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   gettimeofday(&start, NULL);
 
   Long64_t nentry = tree_in->GetEntries();
+
+  std::map<Int_t, Int_t> trackID_to_pid;
+
+
   for(Long64_t ientry = 0; ientry < nentry; ientry++) {
     if(ientry % 1000 == 0) {
       cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
@@ -86,43 +96,60 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
     X2.assign(X2.size(), 0);
     Y2.assign(Y2.size(), 0);
     Z2.assign(Z2.size(), 0);
+    Pid.assign(Pid.size(), -1);
     Int_t nedep = Edeps->GetEntries();
+    std::map<Int_t, std::set<Int_t>> select;
+    bool valid = false;
+
     for(Int_t iedep = 0; iedep < nedep; ++iedep) {
       auto edep = (Edep *)Edeps->UncheckedAt(iedep);
       assert((size_t)edep->Id < E2.size());
-      assert(edep->Process < Processes->GetEntries());
       string process = edep->Process >= 0 ? ((Process *)Processes->UncheckedAt(edep->Process))->Name : "";
-      cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " process=" << process << endl;
+      //cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " trackid=" << edep->trackID << " process=" << process << endl;
       E2[edep->Id] += edep->Value;
       X2[edep->Id] += edep->Value * edep->X;
       Y2[edep->Id] += edep->Value * edep->Y;
       Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
-    }
-    bool valid = true;
-    for(size_t l = 0; l < nlayer; ++l) {
-      if(!(E2[l] > 0)) {
-        valid = false;
-        break;
+      select[edep->trackID].insert(edep->Id);
+
+      for (Int_t itrack = 0; itrack < Tracks->GetEntries(); itrack++) {
+        auto track = (Track *)Tracks->UncheckedAt(itrack);
+        trackID_to_pid[track->Id] = track->Pid;
+        cout << "trackid=" << track->Id << " pid=" << track->Pid << endl;
       }
-      XEdep[l] = X2[l] / E2[l], YEdep[l] = Y2[l] / E2[l], ZEdep[l] = Z2[l] / E2[l];
-      cout << "XEdep[" << l << "]: " << XEdep[l] << endl;
-      cout << "YEdep[" << l << "]: " << YEdep[l] << endl;
-      cout << "ZEdep[" << l << "]: " << ZEdep[l] << endl;
+
+      for (const auto& entry : select) {
+        if (entry.second.size() >= 0) {
+          valid = true;
+          Int_t trackID = entry.first;
+          for (const auto &edep_id : entry.second) {
+            if (Pid[edep_id] == -1) {
+              if (trackID_to_pid[1] == 0) cout<<"error in trackid="<<trackID<<endl;
+              Pid[edep_id] = trackID_to_pid[1];
+            }
+          }
+          break;
+        } 
+      }
     }
-    if(!valid) continue;
+
+
+    if (!valid) continue;
     nvalid++;
 
-    // Simulate readout system.
-    //for(size_t l = 0; l < nlayer; ++l) {
-      //XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
-      //YEdep[l] = Y2[2 * l];                          // YEdep-readout
-      //ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
-    //}
+    for(size_t l = 0; l < nlayer; ++l) {
+      if(!(E2[l] > 0)) {
+        break;
+      }
+      XEdep[l] = X2[l] / E2[l];
+      YEdep[l] = Y2[l] / E2[l];
+      ZEdep[l] = Z2[l] / E2[l];
+    }
 
     // Simulate detector resolution.
     for(size_t l = 0; l < nlayer; l++) {
       Double_t radius, phi, deltaphi, newphi;
-      Double_t sigma = 0.057;              // mm
+      Double_t sigma = 0.057;  // mm
       radius = hypot(XEdep[l], YEdep[l]);  // mm
       if(radius == 0) {
         XSmeared[l] = XEdep[l];
@@ -136,16 +163,17 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
       }
     }
 
-    // Compute scatter angle.
     CosThetaEdep = GetCosTheta(XEdep, YEdep, ZEdep);
     CosThetaSmeared = GetCosTheta(XSmeared, YSmeared, ZEdep);
+    Ang = TMath::ACos(CosThetaEdep);
+    AngSmeared = TMath::ACos(CosThetaSmeared);
 
     tree_out->Fill();
   }
 
   gettimeofday(&end, NULL);
-  time_t time = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
-  printf("time = %lf s\n", time / 1e6);
+  time_t elapsedTime = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
+  printf("time = %lf s\n", elapsedTime / 1e6);
   cout << "Event count: " << nentry << endl;
   cout << "Event valid: " << nvalid << endl;
   double quotient = static_cast<double>(nvalid) / nentry;
