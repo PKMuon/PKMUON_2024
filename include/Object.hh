@@ -47,6 +47,7 @@ public:
   Int_t Id;
   Int_t Mother;
   Int_t Pid;
+  Int_t Process;
   Double_t Px;
   Double_t Py;
   Double_t Pz;

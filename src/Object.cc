@@ -46,6 +46,7 @@ Track &Track::operator=(const G4Track &track)
   Id = track.GetTrackID();
   Mother = track.GetParentID();
   Pid = track.GetParticleDefinition()->GetPDGEncoding();
+  Process = -1;
   Px = momentum.getX();
   Py = momentum.getY();
   Pz = momentum.getZ();
