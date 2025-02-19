@@ -70,6 +70,7 @@ void Run::InitTree()
   //fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
   fTree->Branch("Scatters", new TClonesArray("Scatter"));
+  fTree->Branch("MidPointEnergy", new Double_t);
 
   // The params tree is only accessed here.
   TTree *params = new TTree("params", "params");
@@ -103,6 +104,7 @@ void Run::SaveTree()
   //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
+  delete(Double_t *)fTree->GetBranch("MidPointEnergy")->GetAddress();
   fFile->Close();
   fTree = NULL;
   fFile = NULL;
@@ -141,6 +143,10 @@ void Run::AddStep(const G4Step *step)
   const G4ThreeVector &r = step->GetTrack()->GetPosition();
   G4double x = r.x(), y = r.y(), z = r.z();
   if(fabs(x) >= fScoringHalfX || fabs(y) >= fScoringHalfY) return;
+  const G4ThreeVector &pr = step->GetPreStepPoint()->GetPosition();
+  if(step->GetTrack()->GetTrackID() == 1 && z * pr.z() <= 0) {
+    *(Double_t *)fTree->GetBranch("MidPointEnergy")->GetAddress() = step->GetTrack()->GetTotalEnergy();
+  }
   auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
   if(ub == fScoringMaxZs.end()) return;
   if(z < *ub - fScoringZ) return;
