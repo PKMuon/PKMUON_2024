@@ -75,5 +75,7 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
   LayerZ = detectorConstruction.GetScoringZs();
+  std::sort(LayerZ.begin(), LayerZ.end(), std::greater<G4double>());
+
   return *this;
 }

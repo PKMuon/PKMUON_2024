@@ -1,4 +1,4 @@
-void list_all_pid(const char *infile = "./poca_CryMu.root") {
+void list_all_pid(const char *infile = "../build/root_file/poca_CryMu.root") {
 
   TFile *file = TFile::Open(infile);
   TTree *tree = (TTree *)file->Get("tree");

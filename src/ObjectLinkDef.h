@@ -34,5 +34,6 @@
 #pragma link C++ class Params + ;
 #pragma link C++ class Edep + ;
 #pragma link C++ class Process + ;
+#pragma link C++ class Event + ;
 
 #endif

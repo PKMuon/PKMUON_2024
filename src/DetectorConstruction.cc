@@ -29,7 +29,7 @@
 #include "G4AutoDelete.hh"
 #include "G4RunManager.hh"
 #include "GeometryConfig.hh"
-#include "GpsPrimaryGeneratorAction.hh"
+#include "PrimaryGeneratorAction.hh"
 
 // geometry
 #include "G4Box.hh"
@@ -64,6 +64,7 @@ DetectorConstruction::DetectorConstruction(int o)
       fElectrodeHalfY(0.0),
       fElectrodeHalfZ(0.0),
       fScoringHalfZ(0.0),
+      fMaxScoringZ(0.0),
       fScoringGasVolume(NULL)
 {
   if(fOptions) { throw std::invalid_argument("options unimplemented"); }
@@ -128,11 +129,7 @@ void DetectorConstruction::DefineVolumes()
         if(volume->GetLogicalVolume() != newrpc_xy_readout_board) { return; }
         fScoringZs.push_back(r.z());
       });
-  //fScoringZs.resize(fElectrodeZs.size());// / 2);
-  //for(size_t i = 0; i < fScoringZs.size(); ++i) {
-    //fScoringZs[i] = fElectrodeZs[i];
-    //fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
-  //}
+  fMaxScoringZ = *std::max_element(fScoringZs.begin(), fScoringZs.end()) + fScoringHalfZ;
   fScoringGasVolume = fLogicalVolumeStore->GetVolume("newrpc_gas");
 }
 
@@ -218,7 +215,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
   DefineFields();
   PrintVolumes(NULL);
 
-  ((GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
+  ((PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
   return fWorld;
 }
 
@@ -367,15 +364,9 @@ G4VPhysicalVolume *DetectorConstruction::PartitionVolume(G4VPhysicalVolume *volu
   return new G4PVPlacement(rotation, translation, logical, name, mother, false, 0, true);
 }
 
-G4double DetectorConstruction::GetDetectorMinZ() const
+G4double DetectorConstruction::GetMaxScoringZ() const
 {
-  G4double z = 1.0 / 0.0;
-  WalkVolume(NULL, [&z](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
-    if(volume->GetLogicalVolume()->GetName() != "newrpc") { return; }
-    auto box = dynamic_cast<G4Box *>(volume->GetLogicalVolume()->GetSolid());
-    z = std::min(z, r.z() - box->GetZHalfLength());
-  });
-  return z;
+  return fMaxScoringZ;
 }
 
 G4double DetectorConstruction::GetDetectorHalfX() const

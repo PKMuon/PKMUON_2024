@@ -8,8 +8,13 @@
 /run/verbose 2
 #
 /run/initialize
-/control/execute CryMuGps.mac
-#
+
+# ----------------------------------------------
+# CRY Settings
+# ----------------------------------------------
+
+/control/execute Cry.mac
+
 # Use this open statement to create an OpenGL view:
 /vis/open OGL 600x600-0+0
 #

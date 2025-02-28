@@ -35,7 +35,7 @@ newrpc_top_gap:
   solid: box
   x: *newrpc_content_x
   y: *newrpc_content_y
-  z: 4.2 mm
+  z: 12 mm
   material: newrpc_gas
 
 newrpc_xy_readout_board: &newrpc_readout_board
@@ -48,20 +48,12 @@ newrpc_xy_readout_board: &newrpc_readout_board
 
 newrpc_t_readout_board: *newrpc_readout_board
 
-newrpc_electric:
-  solid: bottom_up
-  components:
-    - newrpc_glass
-    - newrpc_gas
-    - newrpc_glass
-  material: newrpc_gas
-
 newrpc_electrode_pair:
   solid: bottom_up
   components:
     - newrpc_electrode
-    - newrpc_electric
-  material: newrpc_gas
+    - newrpc_glass
+  material: newrpc_glass
 
 newrpc_electrode_pair_0:
   solid: rotation
@@ -102,16 +94,9 @@ newrpc_without_bottom:
   components: [newrpc_content_box]
   x: 400 mm
   y: 400 mm
-  z: 30 mm
+  z: 24 mm
   offset: [0, 0, 0]
   material: newrpc_shell
-
-newrpc_bottom_connection_gas:
-  solid: box
-  x: *newrpc_content_x
-  y: *newrpc_content_y
-  z: &newrpc_bottom_connection_z 5 mm
-  material: newrpc_gas
 
 newrpc_cover:
   solid: box

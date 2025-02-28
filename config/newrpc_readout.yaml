@@ -7,7 +7,7 @@ newrpc_xy_readout_plate:
   solid: box
   x: &newrpc_readout_plate_x 300 mm
   y: &newrpc_readout_plate_y 300 mm
-  z: &newrpc_xy_readout_plate_z 0.4 mm
+  z: &newrpc_xy_readout_plate_z 0.3 mm
   material: newrpc_fr4
 
 newrpc_xy_readout_plate_box:  # This centers the plate.

@@ -35,12 +35,22 @@ static Double_t GetCosTheta(const vector<Double_t> &X, const vector<Double_t> &Y
   return GetCosTheta(x1, y1, z1, x2, y2, z2);
 }
 
+static Double_t GetDistance(Double_t x1, Double_t y1, Double_t x2, Double_t y2)
+{
+    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
 void analysis(const char *infile = "../../build/root_file/CryMu.root",
     const char *outfile = "../../build/root_file/CryMuAna.root")
 {
   TRandom *rand = new TRandom();
 
   TFile *file_in = TFile::Open(infile);
+  if (!file_in || !file_in->IsOpen()) {
+    std::cerr << "Failed to open input file: " << infile << std::endl;
+    return;
+  }
+
   TTree *tree_in = (TTree *)file_in->Get("tree");
   TClonesArray *Edeps = NULL;
   TClonesArray *Tracks = NULL;
@@ -59,7 +69,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   TTree *tree_out = new TTree("tree", "tree");
   vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer);
   vector<Double_t> XSmeared(nlayer), YSmeared(nlayer);
-  vector<Int_t> Pid(nlayer), TrackID(nlayer);
+  vector<Double_t> MaxDistance(nlayer);
+  vector<Int_t> Pid(nlayer);
   Double_t CosThetaEdep, CosThetaSmeared;
   Double_t Ang, AngSmeared;
   tree_out->Branch("XEdep", &XEdep);
@@ -72,7 +83,7 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   tree_out->Branch("Pid", &Pid);
   tree_out->Branch("Ang", &Ang);
   tree_out->Branch("AngSmeared", &AngSmeared);
-  tree_out->Branch("TrackID", &TrackID);
+  tree_out->Branch("MaxDistance", &MaxDistance);
 
   // Temporaries.
   vector<Double_t> X2(nlayer), Y2(nlayer), Z2(nlayer), E2(nlayer);
@@ -81,9 +92,6 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   gettimeofday(&start, NULL);
 
   Long64_t nentry = tree_in->GetEntries();
-
-  std::map<Int_t, Int_t> trackID_to_pid;
-
 
   for(Long64_t ientry = 0; ientry < nentry; ientry++) {
     if(ientry % 1000 == 0) {
@@ -97,8 +105,11 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
     Y2.assign(Y2.size(), 0);
     Z2.assign(Z2.size(), 0);
     Pid.assign(Pid.size(), -1);
+    MaxDistance.assign(MaxDistance.size(), -1);
     Int_t nedep = Edeps->GetEntries();
+    Int_t ntrack = Tracks->GetEntries();
     std::map<Int_t, std::set<Int_t>> select;
+    std::map<Int_t, vector<pair<Double_t, Double_t>>> trackCoordinates;
     bool valid = false;
 
     for(Int_t iedep = 0; iedep < nedep; ++iedep) {
@@ -112,61 +123,77 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
       Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
       select[edep->trackID].insert(edep->Id);
 
-      for (Int_t itrack = 0; itrack < Tracks->GetEntries(); itrack++) {
-        auto track = (Track *)Tracks->UncheckedAt(itrack);
-        trackID_to_pid[track->Id] = track->Pid;
-        cout << "trackid=" << track->Id << " pid=" << track->Pid << endl;
+      for (const auto& entry : select) {
+        if (entry.second.size() > 0) {
+          valid = true;
+          Int_t trackIndex = entry.first - 1;
+
+          for (const auto &edep_id : entry.second) {
+            auto track = (Track *)Tracks->UncheckedAt(trackIndex);
+            if (!track) {
+              cout << "Invalid track at trackIndex: " << trackIndex << endl;
+              continue;
+            }
+
+            if (Pid[edep_id] == -1 && track->Id == 1) Pid[edep_id] = track->Pid;
+            trackCoordinates[edep_id].push_back({track->X, track->Y});
+          }
+        }
       }
 
-      for (const auto& entry : select) {
-        if (entry.second.size() >= 0) {
-          valid = true;
-          Int_t trackID = entry.first;
-          for (const auto &edep_id : entry.second) {
-            if (Pid[edep_id] == -1) {
-              if (trackID_to_pid[1] == 0) cout<<"error in trackid="<<trackID<<endl;
-              Pid[edep_id] = trackID_to_pid[1];
+      if (!valid) continue;
+      nvalid++;
+
+      for (size_t l = 0; l < nlayer; ++l) {
+        if (trackCoordinates[l].size() > 1) {
+          Double_t maxDist = -1;
+          for (size_t i = 0; i < trackCoordinates[l].size(); i++) {
+            for (size_t j = i + 1; j < trackCoordinates[l].size(); j++) {
+              Double_t dist = GetDistance(trackCoordinates[l][i].first, trackCoordinates[l][i].second,
+                                          trackCoordinates[l][j].first, trackCoordinates[l][j].second);
+              maxDist = max(maxDist, dist);
+              if (maxDist>280*TMath::Sqrt(2))
+              cout << "error in track " << i << " : " << trackCoordinates[l][i].first << " , " << trackCoordinates[l][i].second 
+              << " and track " << j << " : " << trackCoordinates[l][j].first << " , " << trackCoordinates[l][j].second <<endl;
             }
           }
-          break;
+          MaxDistance[l] = maxDist; 
         } 
+        else MaxDistance[l] = 0;
       }
-    }
 
-
-    if (!valid) continue;
-    nvalid++;
-
-    for(size_t l = 0; l < nlayer; ++l) {
-      if(!(E2[l] > 0)) {
-        break;
+      for(size_t l = 0; l < nlayer; ++l) {
+        if(!(E2[l] > 0)) {
+          break;
+        }
+        XEdep[l] = X2[l] / E2[l];
+        YEdep[l] = Y2[l] / E2[l];
+        ZEdep[l] = Z2[l] / E2[l];
       }
-      XEdep[l] = X2[l] / E2[l];
-      YEdep[l] = Y2[l] / E2[l];
-      ZEdep[l] = Z2[l] / E2[l];
-    }
 
-    // Simulate detector resolution.
-    for(size_t l = 0; l < nlayer; l++) {
-      Double_t radius, phi, deltaphi, newphi;
-      Double_t sigma = 0.057;  // mm
-      radius = hypot(XEdep[l], YEdep[l]);  // mm
-      if(radius == 0) {
-        XSmeared[l] = XEdep[l];
-        YSmeared[l] = YEdep[l];
-      } else {
-        phi = atan2(YEdep[l], XEdep[l]);
-        deltaphi = rand->Gaus(0, sigma) / radius;
-        newphi = phi + deltaphi;
-        XSmeared[l] = radius * cos(newphi);
-        YSmeared[l] = radius * sin(newphi);
+      // Simulate detector resolution.
+      for(size_t l = 0; l < nlayer; l++) {
+        Double_t radius, phi, deltaphi, newphi;
+        Double_t sigma = 0.057;  // mm
+        radius = hypot(XEdep[l], YEdep[l]);  // mm
+        if(radius == 0) {
+          XSmeared[l] = XEdep[l];
+          YSmeared[l] = YEdep[l];
+        } else {
+          phi = atan2(YEdep[l], XEdep[l]);
+          deltaphi = rand->Gaus(0, sigma) / radius;
+          newphi = phi + deltaphi;
+          XSmeared[l] = radius * cos(newphi);
+          YSmeared[l] = radius * sin(newphi);
+        }
       }
-    }
 
-    CosThetaEdep = GetCosTheta(XEdep, YEdep, ZEdep);
-    CosThetaSmeared = GetCosTheta(XSmeared, YSmeared, ZEdep);
-    Ang = TMath::ACos(CosThetaEdep);
-    AngSmeared = TMath::ACos(CosThetaSmeared);
+      CosThetaEdep = GetCosTheta(XEdep, YEdep, ZEdep);
+      CosThetaSmeared = GetCosTheta(XSmeared, YSmeared, ZEdep);
+      Ang = TMath::ACos(CosThetaEdep);
+      AngSmeared = TMath::ACos(CosThetaSmeared);
+
+    }
 
     tree_out->Fill();
   }

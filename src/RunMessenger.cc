@@ -8,7 +8,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
-#include "GpsPrimaryGeneratorAction.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "Run.hh"
 
 class RunMessenger::Driver {
@@ -18,7 +18,7 @@ public:
   void SetNewValue(G4UIcommand *, G4String);
 
 private:
-  GpsPrimaryGeneratorAction *fGpsPrimaryGeneratorAction;
+  PrimaryGeneratorAction *fPrimaryGeneratorAction;
 
   G4UIdirectory *fScatterDir;
   G4UIcmdWithADoubleAndUnit *fSetTotalEnergyCmd;
@@ -57,8 +57,8 @@ void RunMessenger::SetNewValue(G4UIcommand *cmd, G4String val)
 
 RunMessenger::Driver::Driver(RunMessenger *messenger)
 {
-  fGpsPrimaryGeneratorAction =
-      (GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
+  fPrimaryGeneratorAction =
+      (PrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
 
   fSetTotalEnergyCmd = new G4UIcmdWithADoubleAndUnit("/gps/totalEnergy", messenger);
   fSetTotalEnergyCmd->SetGuidance("Set total energy.");

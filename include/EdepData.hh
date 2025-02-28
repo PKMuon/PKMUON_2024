@@ -72,7 +72,7 @@ public:
 
   EdepValue &Add(Double_t v, Double_t x, Double_t y, Int_t tid)
   {
-    if(v > 0) Value += 1, X += x, Y += y, trackID = tid;
+    if(v > 0 && tid > 0) Value += v, X += v * x, Y += v * y, trackID = tid;
     return *this;
   }
 
