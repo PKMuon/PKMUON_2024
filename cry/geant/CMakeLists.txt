@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 3.13)
-project(muPos)
+project(cosmic)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -28,23 +28,19 @@ include("${ROOT_DIR}/ROOTUseFile.cmake")   # ROOT6
 include(${Geant4_USE_FILE})
 include(${ROOT_USE_FILE})
 
-#----------------------------------------------------------------------------
-# Find yaml-cpp (required package)
-#  YAML_CPP_INCLUDE_DIR       - include directory
-#  YAML_CPP_LIBRARY_DIR       - directory containing libraries
-#  YAML_CPP_SHARED_LIBS_BUILT - whether we have built shared libraries or not
-#  YAML_CPP_LIBRARIES         - libraries to link against
-find_package(yaml-cpp REQUIRED)
-include_directories(SYSTEM ${YAML_CPP_INCLUDE_DIR})
-link_directories(${YAML_CPP_LIBRARY_DIR})
+##----------------------------------------------------------------------------
+## Find yaml-cpp (required package)
+##
+##set(YAML_CPP_INCLUDE_DIR /opt/homebrew/opt/yaml-cpp/include)
+##set(YAML_CPP_LIBRARY /opt/homebrew/opt/yaml-cpp/lib/libyaml-cpp.dylib)
+#find_package(yaml-cpp REQUIRED)
 
 #----------------------------------------------------------------------------
-# Build and use CRY (required package)
+# Find CRY (required package)
 #
-add_subdirectory(cry)
-include_directories(cry/src)
-link_directories(cry/lib)
-add_compile_definitions(CRY_DATA=\"${CMAKE_SOURCE_DIR}/cry/data\")
+include_directories(../src)
+link_directories(../lib)
+add_compile_definitions(CRY_DATA=\"${CMAKE_SOURCE_DIR}/../data\")
 
 #----------------------------------------------------------------------------
 # General compilation and linkage options
@@ -73,36 +69,28 @@ if(ENABLE_GPROF)
     add_compile_options(${GPROF_OPTIONS})
     add_link_options(${GPROF_OPTIONS})
 endif()
-add_compile_options(-g -Wall -Wshadow -Wextra -Werror -Wno-error=cpp)
-
-#----------------------------------------------------------------------------
-# Process customized TObject derivates
-#
-add_custom_command(OUTPUT Object.cxx Object_rdict.pcm COMMAND rootcint -f
-Object.cxx ${PROJECT_SOURCE_DIR}/include/Object.hh ${PROJECT_SOURCE_DIR}/src/ObjectLinkDef.h
-DEPENDS include/Object.hh src/ObjectLinkDef.h
-IMPLICIT_DEPENDS include/Object.hh)
+add_compile_options(-g -Wall -Wshadow -Wextra -Werror)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(SYSTEM ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
+include_directories(SYSTEM ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIR})
 file(GLOB sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(muPos muPos.cc ${sources} ${PROJECT_BINARY_DIR}/Object.cxx ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} CRY)
+add_executable(cosmic cosmic.cc ${sources} ${headers})
+target_link_libraries(cosmic ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} CRY)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build muPos. This is so that we can run the executable directly because it
+# build cosmic. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-file(GLOB scripts CONFIGURE_DEPENDS *.sh *.mac)
+file(GLOB scripts CONFIGURE_DEPENDS *.sh *.mac *.file)
 foreach(script ${scripts})
     get_filename_component(script ${script} NAME)
     configure_file(${PROJECT_SOURCE_DIR}/${script} ${PROJECT_BINARY_DIR}/${script} COPYONLY)

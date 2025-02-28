@@ -1,0 +1,30 @@
+schema: volume_schema.yaml
+
+---
+
+target:
+  color: gray
+  solid: box
+  x: 60 mm
+  y: 60 mm
+  z: 60 mm
+  material: G4_Al
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &rpc_x 400 mm
+  y: &rpc_y 400 mm
+  z: 470 mm
+  offset: [0, 0, 205 mm]
+  material: &world_material newrpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Al
+  - newrpc_air
+external:
+  - newrpc
