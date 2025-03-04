@@ -39,6 +39,11 @@ include_directories(SYSTEM ${YAML_CPP_INCLUDE_DIR})
 link_directories(${YAML_CPP_LIBRARY_DIR})
 
 #----------------------------------------------------------------------------
+# Setup ExRootAnalysis include directories
+#
+include_directories(SYSTEM clfv/ExRootAnalysis)
+
+#----------------------------------------------------------------------------
 # General compilation and linkage options
 #
 option(ENABLE_SANITIZER "compile and link with sanitizing flags" OFF)

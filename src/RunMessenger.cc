@@ -66,9 +66,8 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
   fScatterDir->SetGuidance("Control scattering processes.");
 
   fSetMupTargetEnToLLCmd = new G4UIcommand("/scatter/mupTargetEnToLL", messenger);
-  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("pid", 'i', false));
-  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("points_file", 's', false));
   fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("xssf", 'd', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("rootfile", 's', false));
   fSetMupTargetEnToLLCmd->SetGuidance("Configure MupTargetEnToLL process.");
   fSetMupTargetEnToLLCmd->AvailableForStates(G4State_Idle);
 
@@ -92,15 +91,14 @@ void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, G4String val)
     fGpsPrimaryGeneratorAction->SetTotalEnergy(fSetTotalEnergyCmd->GetNewDoubleValue(val));
   } else if(cmd == fSetMupTargetEnToLLCmd) {
     G4Tokenizer next(val);
-    G4String pid_s = next();
-    G4String points_file = next();
     G4String xssf_s = next();
-    G4String trailing = next();
-    if(pid_s.empty() || points_file.empty() || xssf_s.empty() || !trailing.empty()) {
-      throw std::runtime_error("expect 3 arguments");
+    std::vector<G4String> rootfiles;
+    for(;;) {
+      G4String rootfile = next();
+      if(rootfile.empty()) break;
+      rootfiles.emplace_back(rootfile);
     }
-    G4int pid = stoi(pid_s);
     G4double xssf = stod(xssf_s);
-    MupTargetEnToLLPhysics::GetInstance()->Configure(pid, points_file, xssf);
+    MupTargetEnToLLPhysics::GetInstance()->Configure(rootfiles, xssf);
   }
 }
