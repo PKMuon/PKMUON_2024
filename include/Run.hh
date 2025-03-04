@@ -19,6 +19,7 @@ class RunMessenger;
 class DetectorConstruction;
 class G4Step;
 class G4Track;
+class DMPInfo;
 
 class Run {
 public:
@@ -35,6 +36,7 @@ public:
   void AutoSave();
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
+  DMPInfo &AddDMPInfo();
 
 private:
   Run();

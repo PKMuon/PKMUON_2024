@@ -112,4 +112,20 @@ public:
   ClassDef(Process, 1);
 };
 
+class DMPInfo : public TObject {
+public:
+  Int_t Pid;
+  Int_t PidMother;
+  Double_t Px;
+  Double_t Py;
+  Double_t Pz;
+  Double_t E;
+  Double_t PxMother;
+  Double_t PyMother;
+  Double_t PzMother;
+  Double_t EMother;
+
+  ClassDef(DMPInfo, 1);
+};
+
 #endif

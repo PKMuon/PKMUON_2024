@@ -69,6 +69,7 @@ void Run::InitTree()
   fTree = new TTree("tree", "tree");
   fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
+  fTree->Branch("DMPInfos", new TClonesArray("DMPInfo"));
 
   // The params tree is only accessed here.
   TTree *params = new TTree("params", "params");
@@ -95,6 +96,7 @@ void Run::SaveTree()
   fTree->Write(NULL, TObject::kOverwrite);
   delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("DMPInfos")->GetAddress();
   fFile->Close();
   fTree = NULL;
   fFile = NULL;
@@ -104,6 +106,7 @@ void Run::FillAndReset()
 {
   auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  auto DMPInfos = *(TClonesArray **)fTree->GetBranch("DMPInfos")->GetAddress();
 
   // Sort the tracks by ID.
   std::vector<Track *> tracks;
@@ -122,6 +125,7 @@ void Run::FillAndReset()
 
   Tracks->Clear();
   fEdep.clear();
+  DMPInfos->Clear();
 }
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
@@ -160,6 +164,12 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
     auto it = fProcessMap.find(p->GetProcessName());
     if(it != fProcessMap.end()) t->Process = it->second;
   }
+}
+
+DMPInfo &Run::AddDMPInfo()
+{
+  auto DMPInfos = *(TClonesArray **)fTree->GetBranch("DMPInfos")->GetAddress();
+  return *(DMPInfo *)DMPInfos->ConstructedAt(DMPInfos->GetEntries());
 }
 
 void Run::BuildProcessMap()
