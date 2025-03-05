@@ -10,6 +10,13 @@
 /tracking/verbose 0
 
 # ----------------------------------------------
+# CLFV Settings
+# ----------------------------------------------
+
+#/scatter/mupTargetEnToLL 1000.0 <name1>.root <name2>.root ...  # [TODO]
+#/run/setCut 0.7 mm
+
+# ----------------------------------------------
 # General Particle Source (GPS) Settings
 # ----------------------------------------------
 
