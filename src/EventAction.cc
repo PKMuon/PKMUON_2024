@@ -26,6 +26,7 @@
 
 #include "EventAction.hh"
 
+#include "DarkMatter.hh"
 #include "G4Event.hh"
 #include "Run.hh"
 
@@ -33,7 +34,7 @@ EventAction::EventAction() { }
 
 EventAction::~EventAction() { }
 
-void EventAction::BeginOfEventAction(const G4Event *) { }
+void EventAction::BeginOfEventAction(const G4Event *) { Run::GetDarkMatter()->ResetNEmissions(); }
 
 void EventAction::EndOfEventAction(const G4Event *evt)
 {

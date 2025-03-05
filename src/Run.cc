@@ -217,3 +217,8 @@ uint64_t Run::GetSeed()
              .count()
       + GetThreadId();
 }
+
+static DarkMatter *sDarkMatter;
+
+DarkMatter *Run::GetDarkMatter() { return sDarkMatter; }
+void Run::SetDarkMatter(DarkMatter *dm) { sDarkMatter = dm; }

@@ -20,10 +20,13 @@ class DetectorConstruction;
 class G4Step;
 class G4Track;
 class DMPInfo;
+class DarkMatter;
 
 class Run {
 public:
   static Run *GetInstance();
+  static DarkMatter *GetDarkMatter();
+  static void SetDarkMatter(DarkMatter *);
   static uint64_t GetThreadId();
   static uint64_t GetSeed();
 

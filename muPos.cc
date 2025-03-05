@@ -55,10 +55,12 @@ int main(int argc, char **argv)
 
   // Set mandatory initialization classes.
   runManager->SetUserInitialization(new DetectorConstruction);
+  auto dmPhysics = new DarkMatterPhysics;
+  Run::SetDarkMatter(dmPhysics->GetDarkMatterPointer());
   G4VModularPhysicsList *physicsList = new FTFP_BERT;
   physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
-  physicsList->RegisterPhysics(new DarkMatterPhysics());
+  physicsList->RegisterPhysics(dmPhysics);
   runManager->SetUserInitialization(physicsList);
   runManager->SetUserInitialization(new ActionInitialization);
 
