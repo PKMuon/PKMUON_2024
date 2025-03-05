@@ -124,6 +124,10 @@ public:
   Double_t PyMother;
   Double_t PzMother;
   Double_t EMother;
+  Double_t X;
+  Double_t Y;
+  Double_t Z;
+  Double_t T;
 
   ClassDef(DMPInfo, 1);
 };
