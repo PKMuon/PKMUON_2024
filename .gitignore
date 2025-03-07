@@ -12,3 +12,4 @@ build/
 *.pdf
 *.log
 lxlogin_run.txt
+.goutputstream-*
