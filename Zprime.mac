@@ -1,33 +1,33 @@
 # ----------------------------------------------
 # Settings
 # ----------------------------------------------
- 
+
 /control/verbose 2
 /gps/verbose 0
 /material/verbose 2
 /run/verbose 2
 /event/verbose 0
 /tracking/verbose 0
- 
+
 # ----------------------------------------------
 # CLFV Settings
 # ----------------------------------------------
- 
+
 /scatter/mupTargetEnToLL 1000.0 /data/pku/home/zijianwang/MG5_aMC_v3_6_0/bin/10GeV_pb/10GeV_9046.829057314199/Events/run_02/10GeV_9046.829057314199.root /data/pku/home/zijianwang/MG5_aMC_v3_6_0/bin/10GeV_pb/10GeV_9833.770654765198/Events/run_02/10GeV_9833.770654765198.root # [TODO]
 #/run/setCut 0.7 mm
- 
+
 # ----------------------------------------------
 # General Particle Source (GPS) Settings
 # ----------------------------------------------
- 
+
 /gps/particle mu+
 /gps/direction 0.0 0.0 1.0
 /gps/totalEnergy 2.0 GeV
- 
+
 # ----------------------------------------------
 # run
 # ----------------------------------------------
- 
+
 /run/initialize
 /rlt/SetFileName root_file/mup_2.0GeV_test.root
 /run/printProgress 10
