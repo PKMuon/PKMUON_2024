@@ -67,7 +67,7 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
 
   fSetMupTargetEnToLLCmd = new G4UIcommand("/scatter/mupTargetEnToLL", messenger);
   fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("xssf", 'd', false));
-  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("rootfile", 's', false));
+  fSetMupTargetEnToLLCmd->SetParameter(new G4UIparameter("txtfile", 's', false));
   fSetMupTargetEnToLLCmd->SetGuidance("Configure MupTargetEnToLL process.");
   fSetMupTargetEnToLLCmd->AvailableForStates(G4State_Idle);
 
@@ -92,12 +92,11 @@ void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, G4String val)
   } else if(cmd == fSetMupTargetEnToLLCmd) {
     G4Tokenizer next(val);
     G4String xssf_s = next();
+    G4String txtpath = next();
+    std::ifstream txtfile(txtpath);
+    std::string rootfile;
     std::vector<G4String> rootfiles;
-    for(;;) {
-      G4String rootfile = next();
-      if(rootfile.empty()) break;
-      rootfiles.emplace_back(rootfile);
-    }
+    while(txtfile >> rootfile) rootfiles.emplace_back(rootfile);
     G4double xssf = stod(xssf_s);
     MupTargetEnToLLPhysics::GetInstance()->Configure(rootfiles, xssf);
   }

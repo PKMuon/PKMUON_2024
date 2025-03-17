@@ -100,7 +100,7 @@ target_link_libraries(muPos ExRootAnalysis ${Geant4_LIBRARIES} ${ROOT_LIBRARIES}
 # build muPos. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-file(GLOB scripts CONFIGURE_DEPENDS *.sh *.mac)
+file(GLOB scripts CONFIGURE_DEPENDS *.sh *.mac *.txt)
 foreach(script ${scripts})
     get_filename_component(script ${script} NAME)
     configure_file(${PROJECT_SOURCE_DIR}/${script} ${PROJECT_BINARY_DIR}/${script} COPYONLY)
