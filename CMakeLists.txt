@@ -42,6 +42,7 @@ link_directories(${YAML_CPP_LIBRARY_DIR})
 # Setup ExRootAnalysis include directories
 #
 include_directories(SYSTEM clfv/ExRootAnalysis)
+link_directories(clfv/ExRootAnalysis)
 
 #----------------------------------------------------------------------------
 # General compilation and linkage options
@@ -92,7 +93,7 @@ file(GLOB headers CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(muPos muPos.cc ${sources} ${PROJECT_BINARY_DIR}/Object.cxx ${headers})
-target_link_libraries(muPos ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES})
+target_link_libraries(muPos ExRootAnalysis ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
