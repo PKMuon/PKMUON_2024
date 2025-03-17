@@ -13,7 +13,7 @@
 # CLFV Settings
 # ----------------------------------------------
 
-/scatter/mupTargetEnToLL 1000.0 10GeV.txt
+/scatter/mupTargetEnToLL 1.0e4 10GeV.txt
 
 #/run/setCut 0.7 mm
 
@@ -31,5 +31,5 @@
 
 /run/initialize
 /rlt/SetFileName root_file/mup_2.0GeV_test.root
-/run/printProgress 10
-/run/beamOn 100
+/run/printProgress 100
+/run/beamOn 1000
