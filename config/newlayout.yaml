@@ -7,18 +7,18 @@ world_major_gap:
   alternative: alternative
   hidden: hidden
   solid: box
-  x: &rpc_x 430 mm
-  y: &rpc_y 430 mm
-  z: 450 mm
-  material: &world_material rpc_air
+  x: &newrpc_x 400 mm
+  y: &newrpc_y 400 mm
+  z: 470 mm
+  material: &world_material newrpc_air
 
 world_minor_gap:
   alternative: alternative
   hidden: hidden
   solid: box
-  x: *rpc_x
-  y: *rpc_y
-  z: 150 mm
+  x: *newrpc_x
+  y: *newrpc_y
+  z: 170 mm
   material: *world_material
 
 world:
@@ -26,17 +26,13 @@ world:
   hidden: hidden
   solid: bottom_up
   components:
-    - rpc
+    - newrpc
     - world_minor_gap
-    - rpc
-    - world_minor_gap
-    - rpc
+    - newrpc
     - world_major_gap
-    - rpc
+    - newrpc
     - world_minor_gap
-    - rpc
-    - world_minor_gap
-    - rpc
+    - newrpc
   padding: 20%
   material: *world_material
 
@@ -44,7 +40,7 @@ world:
 
 # Comments
 materials:
-  - rpc_air
+  - newrpc_air
 external:
-  - rpc
+  - newrpc
   - world_major_gap

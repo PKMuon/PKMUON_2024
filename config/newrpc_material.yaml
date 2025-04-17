@@ -27,17 +27,17 @@ G4_SODIUM_MONOXIDE: {from: nist}
 G4_POTASSIUM_OXIDE: {from: nist}
 G4_SILICON_DIOXIDE: {from: nist}
 
-rpc_vacuum:
+newrpc_vacuum:
   alias: G4_Galactic
 
-rpc_air:
+newrpc_air:
   alias: G4_AIR
 
-rpc_electrode:
-  color: red
+newrpc_electrode:
+  color: yellow
   alias: G4_GRAPHITE
 
-rpc_gas:  # R-134a, https://en.wikipedia.org/wiki/1,1,1,2-Tetrafluoroethane
+newrpc_gas:  # R-134a, https://en.wikipedia.org/wiki/1,1,1,2-Tetrafluoroethane
   color: blue
   alpha: 0.01
   density: 0.00425 g/cm3
@@ -46,7 +46,7 @@ rpc_gas:  # R-134a, https://en.wikipedia.org/wiki/1,1,1,2-Tetrafluoroethane
     - [element, H, 2]
     - [element, F, 4]
 
-rpc_glass:  # Ultra-thin float glass
+newrpc_glass:  # Ultra-thin float glass
   hidden: hidden
   density: 2.5 g/cm3
   components:
@@ -58,7 +58,7 @@ rpc_glass:  # Ultra-thin float glass
     - [G4_POTASSIUM_OXIDE, 0.0405]
     - [G4_SILICON_DIOXIDE, 0.7200]
 
-rpc_insulating_film:  # PET, https://en.wikipedia.org/wiki/Polyethylene_terephthalate
+newrpc_insulating_film:  # PET, https://en.wikipedia.org/wiki/Polyethylene_terephthalate
   hidden: hidden
   density: 1.38 g/cm3
   components:
@@ -66,10 +66,7 @@ rpc_insulating_film:  # PET, https://en.wikipedia.org/wiki/Polyethylene_terephth
     - [element, H,  8]
     - [element, O,  4]
 
-rpc_shell:
-  alias: G4_Al
-
-rpc_mfcd03703563:  # https://www.chemicalbook.com/ChemicalProductProperty_EN_CB8477587.htm
+newrpc_mfcd03703563:  # https://www.chemicalbook.com/ChemicalProductProperty_EN_CB8477587.htm
   density: 1.8 g/cm3
   components:
     - [element, C, 18]
@@ -78,25 +75,28 @@ rpc_mfcd03703563:  # https://www.chemicalbook.com/ChemicalProductProperty_EN_CB8
     - [element, Cl, 1]
     - [element, O,  3]
 
-rpc_fr4:  # https://en.wikipedia.org/wiki/FR-4
+newrpc_fr4:  # https://en.wikipedia.org/wiki/FR-4
   hidden: hidden
   color: green
   alpha: 0.2
   density: 1.85 g/cm3
   components:
-    - [G4_SILICON_DIOXIDE, 0.350]
-    - [G4_Cu,              0.225]
-    - [rpc_mfcd03703563,   0.500]
+    - [G4_SILICON_DIOXIDE,  0.350]
+    - [G4_Cu,               0.225]
+    - [newrpc_mfcd03703563, 0.500]
 
-rpc_readout_bar:
-  color: yellow
+newrpc_readout_bar:
+  color: red
   alpha: 0.5
   alias: G4_Cu
 
-rpc_readout_cu:
+newrpc_readout_cu:
   hidden: hidden
-  color: yellow
+  color: brown
   alpha: 0.5
+  alias: G4_Cu
+
+newrpc_shell:
   alias: G4_Cu
 
 ---
