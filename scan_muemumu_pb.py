@@ -36,7 +36,7 @@ mac_template = '''
 /gps/particle mu+
 /gps/direction 0.0 0.0 1.0
 /gps/totalEnergy {muon_energy} GeV
-/gps/position 0.0 0.0 -700.0 cm
+/gps/position 0.0 0.0 -700.0 mm
 
 # ----------------------------------------------
 # run
