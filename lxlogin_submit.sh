@@ -14,10 +14,9 @@ cmake ..
 make -j
 popd
 
-N=500
+N=10
 echo "${N}" > lxlogin_run.txt
-#./scan_muemumu_"${POSTFIX}".py
-ls build/mup_*_mumu_*.mac | xargs basename -a | sort -V | tee -a lxlogin_run.txt
+ls build/mup_*_mue_*.mac | xargs basename -a | sort -V | tee -a lxlogin_run.txt
 
 hep_sub lxlogin_run.sh -argu %{ProcId} "${POSTFIX}" \
     -n $[($(wc -l lxlogin_run.txt | egrep -o '[0-9]+')-1)*${N}] \
