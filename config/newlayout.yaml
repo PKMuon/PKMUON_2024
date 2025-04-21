@@ -29,7 +29,11 @@ world:
     - newrpc
     - world_minor_gap
     - newrpc
+    - world_minor_gap
+    - newrpc
     - world_major_gap
+    - newrpc
+    - world_minor_gap
     - newrpc
     - world_minor_gap
     - newrpc
