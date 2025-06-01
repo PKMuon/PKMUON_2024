@@ -39,8 +39,10 @@ include_directories(SYSTEM ${YAML_CPP_INCLUDE_DIR})
 link_directories(${YAML_CPP_LIBRARY_DIR})
 
 #----------------------------------------------------------------------------
-# Setup ExRootAnalysis include directories
+# Compile and link with ExRootAnalysis
 #
+include(ExternalProject)
+ExternalProject_Add(ExRootAnalysisProject SOURCE_DIR ${CMAKE_SOURCE_DIR}/clfv/ExRootAnalysis CONFIGURE_COMMAND "" BUILD_COMMAND make -j BUILD_IN_SOURCE TRUE BUILD_ALWAYS TRUE INSTALL_COMMAND "")
 include_directories(SYSTEM clfv/ExRootAnalysis)
 link_directories(clfv/ExRootAnalysis)
 
