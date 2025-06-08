@@ -13,7 +13,7 @@
 # CLFV Settings
 # ----------------------------------------------
 
-/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 100000.0
+#/scatter/mupTargetEnToLL 13 ../clfv/data/muemumu_ki_2.200000000000000011e-01.root 100000.0
 #/run/setCut 0.7 mm
 
 # ----------------------------------------------
