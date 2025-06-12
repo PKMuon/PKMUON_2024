@@ -208,10 +208,6 @@ G4LogicalVolume *ProcessLeftRight(const string &name, YAML::Node node)
 
 void ProcessRotation(const string &name, G4RotationMatrix *rotation, const string &axis, G4double degree)
 {
-  if(degree != (int)degree || (int)degree % 90) {
-    G4cerr << "ERROR: " << name << ": Rotation degree must be multiple of 90: " << degree << G4endl;
-    exit(EXIT_FAILURE);
-  }
   if(axis == "x") {
     rotation->rotateX(degree * CLHEP::deg);
   } else if(axis == "y") {
@@ -238,9 +234,17 @@ G4LogicalVolume *ProcessRotation(const string &name, YAML::Node node)
     G4double degree = ParseAbsolutePhysicsVariable(item[1].as<string>()) / CLHEP::deg;
     ProcessRotation(name, rotation, item[0].as<string>(), degree);
   }
-  G4ThreeVector v(box->GetXHalfLength(), box->GetYHalfLength(), box->GetZHalfLength());
-  v = *rotation * v;
-  auto logical = CreateBoxVolume(name, fabs(v.x()), fabs(v.y()), fabs(v.z()), child->GetMaterial());
+  G4double hx = box->GetXHalfLength(), hy = box->GetYHalfLength(), hz = box->GetZHalfLength();
+  G4ThreeVector grid[8] = { { hx, hy, hz }, { hx, hy, -hz }, { hx, -hy, hz }, { hx, -hy, -hz }, { -hx, hy, hz },
+    { -hx, hy, -hz }, { -hx, -hy, hz }, { -hx, -hy, -hz } };
+  hx = 0, hy = 0, hz = 0;
+  for(int i = 0; i < 8; ++i) {
+    grid[i] = *rotation * grid[i];
+    hx = max(hx, grid[i].x());
+    hy = max(hy, grid[i].y());
+    hz = max(hz, grid[i].z());
+  }
+  auto logical = CreateBoxVolume(name, hx, hy, hz, child->GetMaterial());
   node["material"] = (string)logical->GetMaterial()->GetName();
   string child_name = name + "_0:" + child->GetName();
   new G4PVPlacement(rotation, { 0, 0, 0 }, child, child_name, logical, false, 0, true);  // rotation owned by us

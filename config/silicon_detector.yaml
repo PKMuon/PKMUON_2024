@@ -49,14 +49,12 @@ silicon_module_y:  # 90
 silicon_module_u:  # 45
   hidden: hidden
   solid: rotation
-  #components: [silicon_module, [z, -45 deg]]
-  components: [silicon_module, [z, -90 deg]]  # [FIXME]
+  components: [silicon_module, [z, -45 deg]]
 
 silicon_module_v:  # 135
   hidden: hidden
   solid: rotation
-  #components: [silicon_module, [z, 45 deg]]
-  components: [silicon_module, [z, 0 deg]]  # [FIXME]
+  components: [silicon_module, [z, 45 deg]]
 
 silicon_module_gap:
   hidden: hidden
