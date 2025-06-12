@@ -104,18 +104,33 @@ void DetectorConstruction::DefineVolumes()
   fScoringHalfZ = dynamic_cast<G4Box *>(silicon_plane->GetSolid())->GetZHalfLength();
 
   fScoringZs.assign(0, 0.0);
+  fScoringRotations.assign(0, G4RotationMatrix());
   G4VPhysicalVolume *silicon_plane_physical = NULL;
   WalkVolume(fWorld,
       [silicon_plane, this, &silicon_plane_physical](
-          G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
+          G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &rm) {
         if(volume->GetLogicalVolume() != silicon_plane) { return; }
         fScoringZs.push_back(r.z());
+        fScoringRotations.push_back(rm);
         silicon_plane_physical = volume;
       });
-  sort(fScoringZs.begin(), fScoringZs.end());
-  G4cout << "Scoring Z:";
-  for(size_t i = 0; i < fScoringZs.size(); ++i) { G4cout << " " << fScoringZs[i]; }
-  G4cout << G4endl;
+  {
+    std::vector<size_t> indexes(fScoringZs.size());
+    for(size_t i = 0; i < fScoringZs.size(); ++i) { indexes[i] = i; }
+    sort(indexes.begin(), indexes.end(), [this](size_t i, size_t j) { return fScoringZs[i] < fScoringZs[j]; });
+    std::vector<G4double> zs(fScoringZs.size());
+    std::vector<G4RotationMatrix> rotations(fScoringRotations.size());
+    for(size_t i = 0; i < fScoringZs.size(); ++i) {
+      zs[i] = fScoringZs[indexes[i]];
+      rotations[i] = fScoringRotations[indexes[i]];
+    }
+    fScoringZs = zs;
+    fScoringRotations = rotations;
+  }
+  G4cout << "Scoring volumes:" << G4endl;
+  for(size_t i = 0; i < fScoringZs.size(); ++i) {
+    G4cout << "  * " << fScoringZs[i] << ": " << fScoringRotations[i].delta() / deg << G4endl;
+  }
 
   fNSiliconStrips = 0;
   G4double x0 = -1, x1 = -1;

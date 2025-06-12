@@ -58,6 +58,7 @@ public:
   G4double GetStripInterval() const { return fStripInterval; }
   G4int GetNSiliconStrips() const { return fNSiliconStrips; }
   const std::vector<G4double> &GetScoringZs() const { return fScoringZs; }
+  const std::vector<G4RotationMatrix> &GetScoringRotations() const { return fScoringRotations; }
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
@@ -85,6 +86,7 @@ private:
   G4double fScoringHalfX, fScoringHalfY, fScoringHalfZ, fStripInterval;
   G4int fNSiliconStrips;
   std::vector<G4double> fScoringZs;
+  std::vector<G4RotationMatrix> fScoringRotations;
 };
 
 #endif

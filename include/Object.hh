@@ -73,6 +73,7 @@ public:
   Double_t ProtonThreshold;
 
   std::vector<double> ScoringZs;
+  std::vector<int> ScoringRotations;
   Double_t ScoringHalfX, ScoringHalfY, ScoringHalfZ, StripInterval;
 
   ClassDef(Params, 1);

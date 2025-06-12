@@ -36,6 +36,7 @@
 #include "G4RToEConvForGamma.hh"
 #include "G4RToEConvForPositron.hh"
 #include "G4RToEConvForProton.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
 
 Track &Track::operator=(const G4Track &track)
@@ -75,6 +76,10 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
   ScoringZs = detectorConstruction.GetScoringZs();
+  std::vector<G4RotationMatrix> rotations = detectorConstruction.GetScoringRotations();
+  ScoringRotations.clear();
+  ScoringRotations.reserve(rotations.size());
+  for(const auto &rotation : rotations) ScoringRotations.push_back(rotation.delta() / deg + 0.5);
   ScoringHalfX = detectorConstruction.GetScoringHalfX();
   ScoringHalfY = detectorConstruction.GetScoringHalfY();
   ScoringHalfZ = detectorConstruction.GetScoringHalfZ();
