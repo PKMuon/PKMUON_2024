@@ -72,11 +72,8 @@ public:
   Double_t ProtonCut;
   Double_t ProtonThreshold;
 
-  std::vector<double> LayerZ;
-  Double_t CellX;
-  Double_t CellY;
-  Int_t HalfNCellX;
-  Int_t HalfNCellY;
+  std::vector<double> ScoringZs;
+  Double_t ScoringHalfX, ScoringHalfY, ScoringHalfZ, StripInterval;
 
   ClassDef(Params, 1);
 };

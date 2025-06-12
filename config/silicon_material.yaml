@@ -1,0 +1,23 @@
+# Schema
+schema: material_schema.yaml
+
+---
+
+G4_Galactic: {from: nist}
+G4_AIR: {from: nist}
+G4_Si: {from: nist}
+G4_Pb: {from: nist}        # Reserved for targets.
+G4_GRAPHITE: {from: nist}  # Reserved for targets.
+
+silicon_vacuum:
+  alias: G4_Galactic
+
+silicon_air:
+  alias: G4_AIR
+
+silicon_strip:  # [XXX] To be aligned with MUonE.
+  alias: G4_Si
+
+---
+
+# Comments

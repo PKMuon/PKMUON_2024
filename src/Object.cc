@@ -60,7 +60,7 @@ Track &Track::operator=(const G4Track &track)
 
 Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
-  const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringGasVolume()->GetMaterialCutsCouple();
+  const G4MaterialCutsCouple *couple = detectorConstruction.GetSiliconStrip()->GetMaterialCutsCouple();
   const G4Material *material = couple->GetMaterial();
   G4ProductionCuts *cuts = couple->GetProductionCuts();
 
@@ -74,11 +74,11 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
-  LayerZ = detectorConstruction.GetScoringZs();
-  CellX = detectorConstruction.GetCellX();
-  CellY = detectorConstruction.GetCellY();
-  HalfNCellX = round(detectorConstruction.GetScoringHalfX() / detectorConstruction.GetCellX());
-  HalfNCellY = round(detectorConstruction.GetScoringHalfY() / detectorConstruction.GetCellY());
+  ScoringZs = detectorConstruction.GetScoringZs();
+  ScoringHalfX = detectorConstruction.GetScoringHalfX();
+  ScoringHalfY = detectorConstruction.GetScoringHalfY();
+  ScoringHalfZ = detectorConstruction.GetScoringHalfZ();
+  StripInterval = detectorConstruction.GetStripInterval();
   return *this;
 }
 

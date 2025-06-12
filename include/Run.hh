@@ -47,10 +47,8 @@ private:
   G4String fRootName;
   TTree *fTree;
   TFile *fFile;
-  G4double fScoringHalfX, fScoringHalfY, fScoringZ;
-  G4double fCellX, fCellY;
-  G4int fNCellX, fNCellY;
-  G4double fScoringOffsetX, fScoringOffsetY;
+  G4double fScoringHalfX, fScoringHalfY, fScoringZ, fStripInterval;
+  G4int fNSiliconStrips;
   std::vector<G4double> fScoringMaxZs;
   std::map<std::string, int> fProcessMap;
   std::map<EdepKey, Double_t> fEdep;

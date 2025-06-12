@@ -1,0 +1,89 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+silicon_strip:
+  solid: box
+  x: &silicon_strip_x 0.1 mm  # width
+  y: &silicon_strip_y 100 mm  # length
+  z: &silicon_strip_z 0.032 mm
+  material: silicon_strip
+  color: red
+  alpha: 0.8
+
+silicon_plane:
+  hidden: hidden
+  solid: left_right
+  components: [silicon_strip]
+  duplicate: 1000
+  material: silicon_air
+
+silicon_plane_gap:
+  hidden: hidden
+  solid: box
+  x: *silicon_strip_x
+  y: *silicon_strip_y
+  z: 0.1 mm  # [TODO] Consolidate this value.
+  material: silicon_air
+
+silicon_module:
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - silicon_plane
+    - silicon_plane_gap
+    - silicon_plane
+  material: silicon_air
+
+silicon_module_x:  # 0
+  hidden: hidden
+  solid: rotation
+  components: [silicon_module, [z, -90 deg]]
+
+silicon_module_y:  # 90
+  hidden: hidden
+  solid: rotation
+  components: [silicon_module, [z, 0 deg]]
+
+silicon_module_u:  # 45
+  hidden: hidden
+  solid: rotation
+  #components: [silicon_module, [z, -45 deg]]
+  components: [silicon_module, [z, -90 deg]]  # [FIXME]
+
+silicon_module_v:  # 135
+  hidden: hidden
+  solid: rotation
+  #components: [silicon_module, [z, 45 deg]]
+  components: [silicon_module, [z, 0 deg]]  # [FIXME]
+
+silicon_module_gap:
+  hidden: hidden
+  solid: box
+  x: *silicon_strip_x
+  y: *silicon_strip_y
+  z: 30 mm  # [TODO] Consolidate this value.
+  material: silicon_air
+
+silicon_module_xy:
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - silicon_module_x
+    - silicon_module_gap
+    - silicon_module_y
+  material: silicon_air
+
+silicon_module_uv:
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - silicon_module_u
+    - silicon_module_gap
+    - silicon_module_v
+  material: silicon_air
+
+---
+
+# Comments

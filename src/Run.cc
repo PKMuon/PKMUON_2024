@@ -54,6 +54,8 @@ void Run::InitGeom()
   fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
   fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
   fScoringZ = scoringHalfZ * 2;
+  fStripInterval = fDetectorConstruction->GetStripInterval();
+  fNSiliconStrips = fDetectorConstruction->GetNSiliconStrips();
   fScoringMaxZs = scoringZs;
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
   fStatus.resize(fScoringMaxZs.size());
@@ -78,12 +80,6 @@ void Run::InitTree()
   TClonesArray Params("Params");
   params->Branch("Params", &Params);
   *((::Params *)Params.ConstructedAt(0)) = *fDetectorConstruction;
-  fCellX = ((::Params *)Params.UncheckedAt(0))->CellX;
-  fCellY = ((::Params *)Params.UncheckedAt(0))->CellY;
-  fNCellX = ((::Params *)Params.UncheckedAt(0))->HalfNCellX * 2;
-  fNCellY = ((::Params *)Params.UncheckedAt(0))->HalfNCellY * 2;
-  fScoringOffsetX = -((::Params *)Params.UncheckedAt(0))->HalfNCellX * fCellX;
-  fScoringOffsetY = -((::Params *)Params.UncheckedAt(0))->HalfNCellY * fCellY;
 
   TClonesArray Processes("Process");
   params->Branch("Processes", &Processes);
@@ -155,9 +151,8 @@ void Run::AddStep(const G4Step *step)
   if(edep == 0) return;
 
   Int_t zid = ub - fScoringMaxZs.begin();
-  Int_t xid = (x - fScoringOffsetX) / fCellX;
-  Int_t yid = (y - fScoringOffsetY) / fCellY;
-  Int_t id = zid * (fNCellX * fNCellY) + xid * fNCellY + yid;
+  Int_t xid = 0;  // [TODO]
+  Int_t id = zid * fNSiliconStrips + xid;
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
   if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {

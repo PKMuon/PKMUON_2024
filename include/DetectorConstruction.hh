@@ -51,16 +51,16 @@ public:
   G4VPhysicalVolume *Construct() override;
 
   // Call these methods after Construct().
-  G4double GetScoringHalfX() const { return fElectrodeHalfX; }
-  G4double GetScoringHalfY() const { return fElectrodeHalfY; }
+  G4LogicalVolume *GetSiliconStrip() const { return fSiliconStrip; }
+  G4double GetScoringHalfX() const { return fScoringHalfX; }
+  G4double GetScoringHalfY() const { return fScoringHalfY; }
   G4double GetScoringHalfZ() const { return fScoringHalfZ; }
+  G4double GetStripInterval() const { return fStripInterval; }
+  G4int GetNSiliconStrips() const { return fNSiliconStrips; }
   const std::vector<G4double> &GetScoringZs() const { return fScoringZs; }
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
-  G4LogicalVolume *GetScoringGasVolume() const { return fScoringGasVolume; }
-  G4double GetCellX() const { return fCellX; }
-  G4double GetCellY() const { return fCellY; }
 
   // Hierarchic options.
   void PrintVolumes(G4VPhysicalVolume *) const;
@@ -72,24 +72,19 @@ public:
       const std::function<void(G4VPhysicalVolume *, const G4ThreeVector &, const G4RotationMatrix &)> &enter,
       const std::function<void(G4VPhysicalVolume *, const G4ThreeVector &, const G4RotationMatrix &)> &leave =
           nullptr) const;
-  G4VPhysicalVolume *PartitionVolume(G4VPhysicalVolume *volume,
-      const std::function<std::vector<G4VSolid *>(G4VSolid *, const G4ThreeVector &, const G4RotationMatrix &)>
-          &partition) const;
 
 private:
   void DefineMaterials();
   void DefineVolumes();
-  void DefineFields();
 
   const int fOptions;
   G4LogicalVolumeStore *fLogicalVolumeStore;
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;
-  G4double fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
-  std::vector<G4double> fElectrodeZs;
+  G4LogicalVolume *fSiliconStrip;
+  G4double fScoringHalfX, fScoringHalfY, fScoringHalfZ, fStripInterval;
+  G4int fNSiliconStrips;
   std::vector<G4double> fScoringZs;
-  G4LogicalVolume *fScoringGasVolume;
-  G4double fCellX, fCellY;
 };
 
 #endif
