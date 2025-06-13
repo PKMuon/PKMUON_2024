@@ -5,7 +5,6 @@ schema: volume_schema.yaml
 
 world_major_gap:
   alternative: alternative
-  hidden: hidden
   solid: box
   x: &silicon_x 100 mm
   y: &silicon_y 100 mm
@@ -15,7 +14,6 @@ world_major_gap:
 
 world_minor_gap:
   alternative: alternative
-  hidden: hidden
   solid: box
   x: *silicon_x
   y: *silicon_y
@@ -25,7 +23,6 @@ world_minor_gap:
 
 world:
   alternative: alternative
-  hidden: hidden
   solid: bottom_up
   components:
     - silicon_module_xy

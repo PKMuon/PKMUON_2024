@@ -11,6 +11,7 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4ios.hh"
 
@@ -435,6 +436,11 @@ void GeometryConfig::ProcessVolumes()
     G4VisAttributes attr = fMaterialVisAttributes[node["material"].as<string>()];
     ProcessVisAttributes(node, attr);
     logical->SetVisAttributes(attr);
+    if(node["step_limit"]) {
+      G4double value = ParseAbsolutePhysicsVariable(node["step_limit"].as<string>());
+      logical->SetUserLimits(new G4UserLimits(value));
+      G4AutoDelete::Register(logical->GetUserLimits());  // owned by us
+    }
   }
 }
 
