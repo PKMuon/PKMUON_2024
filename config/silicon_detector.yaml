@@ -7,7 +7,7 @@ silicon_strip:
   solid: box
   x: &silicon_strip_x 0.1 mm  # width
   y: &silicon_strip_y 100 mm  # length
-  z: &silicon_strip_z 0.032 mm
+  z: &silicon_strip_z 320 um  # thickness
   material: silicon_strip
   color: red
   alpha: 0.8
@@ -24,7 +24,7 @@ silicon_plane_gap:
   solid: box
   x: *silicon_strip_x
   y: *silicon_strip_y
-  z: 0.1 mm  # [TODO] Consolidate this value.
+  z: 1.8 mm  # [NOTE] https://cds.cern.ch/record/2896293/files/SPSC-P-370.pdf 4.1.1
   material: silicon_air
 
 silicon_module:
@@ -61,7 +61,7 @@ silicon_module_gap:
   solid: box
   x: *silicon_strip_x
   y: *silicon_strip_y
-  z: 30 mm  # [TODO] Consolidate this value.
+  z: 1.8 mm  # [TODO] Consolidate this value.
   material: silicon_air
 
 silicon_module_xy:
