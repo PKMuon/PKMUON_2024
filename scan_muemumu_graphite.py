@@ -8,7 +8,7 @@ import multiprocessing
 
 N_A = 6.022e23
 mup_txt_pattern = re.compile(r'^mup_energy_(.*)GeV_Zp_(.*)GeV.txt$')
-target_xs = 1e-2 / (11.34 * N_A * 3) * 1e36  # for 3 cm thick Pb, unit pb
+target_xs = 1e-2 / (2.26 * N_A * 2) * 1e36  # for 2 cm thick graphite, unit pb
 
 mac_template = '''
 # ----------------------------------------------
