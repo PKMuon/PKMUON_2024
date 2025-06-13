@@ -27,8 +27,11 @@
 #include "GpsPrimaryGeneratorAction.hh"
 
 #include "DetectorConstruction.hh"
+#include "G4Box.hh"
 #include "G4GeneralParticleSource.hh"
+#include "G4LogicalVolume.hh"
 #include "G4SPSPosDistribution.hh"
+#include "G4VPhysicalVolume.hh"
 
 GpsPrimaryGeneratorAction::GpsPrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGeneralParticleSource(nullptr)
@@ -46,11 +49,13 @@ void GpsPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 void GpsPrimaryGeneratorAction::Initialize(DetectorConstruction *detectorConstruction)
 {
   auto posDist = fGeneralParticleSource->GetCurrentSource()->GetPosDist();
-  posDist->SetPosDisType("Plane");
-  posDist->SetPosDisShape("Square");
-  posDist->SetCentreCoords({ 0, 0, detectorConstruction->GetDetectorMinZ() });
-  posDist->SetHalfX(detectorConstruction->GetDetectorHalfX());
-  posDist->SetHalfY(detectorConstruction->GetDetectorHalfY());
+  //posDist->SetPosDisType("Plane");
+  //posDist->SetPosDisShape("Square");
+  posDist->SetPosDisType("Point");
+  posDist->SetCentreCoords({ 0, 0,
+      -dynamic_cast<G4Box *>(detectorConstruction->GetWorld()->GetLogicalVolume()->GetSolid())->GetZHalfLength() });
+  //posDist->SetHalfX(detectorConstruction->GetDetectorHalfX());
+  //posDist->SetHalfY(detectorConstruction->GetDetectorHalfY());
 }
 
 void GpsPrimaryGeneratorAction::SetTotalEnergy(G4double energy)

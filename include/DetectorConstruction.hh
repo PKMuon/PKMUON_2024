@@ -62,6 +62,7 @@ public:
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
+  G4VPhysicalVolume *GetWorld() const { return fWorld; }
 
   // Hierarchic options.
   void PrintVolumes(G4VPhysicalVolume *) const;
