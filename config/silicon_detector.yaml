@@ -10,8 +10,6 @@ silicon_strip:
   z: &silicon_strip_z 320 um  # thickness
   material: silicon_strip
   step_limit: 32 um           # [NOTE] 0.1 * *silicon_strip_z
-  color: red
-  alpha: 0.8
 
 silicon_plane:
   solid: left_right

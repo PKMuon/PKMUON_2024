@@ -1,0 +1,24 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+target:
+  solid: box
+  x: 100 mm
+  y: 100 mm
+  z: 20 mm
+  material: silicon_graphite
+
+world_major_gap:
+  solid: bottom_up
+  components: [target]
+  x: &silicon_x 100 mm
+  y: &silicon_y 100 mm
+  z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  mid_to_mid: mid_to_mid
+  material: &world_material silicon_air
+
+---
+
+# Comments

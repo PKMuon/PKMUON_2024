@@ -73,15 +73,13 @@ G4Element *ParseElement(const string &name)
   return element;
 }
 
-G4LogicalVolume *ProcessBox(const string &name, YAML::Node node, unordered_map<G4LogicalVolume *, size_t> &compressible)
+G4LogicalVolume *ProcessBox(const string &name, YAML::Node node)
 {
   G4double x = ParseAbsolutePhysicsVariable(node["x"].as<string>());
   G4double y = ParseAbsolutePhysicsVariable(node["y"].as<string>());
   G4double z = ParseAbsolutePhysicsVariable(node["z"].as<string>());
   G4Material *material = ParseMaterial(node["material"].as<string>());
-  G4LogicalVolume *volume = CreateBoxVolume(name, x / 2, y / 2, z / 2, material);
-  if(node["mid_to_mid"]) compressible[volume] = 0;
-  return volume;
+  return CreateBoxVolume(name, x / 2, y / 2, z / 2, material);
 }
 
 vector<G4LogicalVolume *> ProcessStackComponents(YAML::Node node, G4double &hx_s, G4double &hy_s, G4double &hz_s,
@@ -122,9 +120,15 @@ vector<G4LogicalVolume *> ProcessStackComponents(YAML::Node node, G4double &hx_s
     if(it != compressible.end()) {
       string name = child->GetName() + "_" + to_string(it->second++);
       box = new G4Box(name, hx, hy, hz);
-      const G4VisAttributes *attr = child->GetVisAttributes();
+      G4LogicalVolume *child_old = child;
       child = new G4LogicalVolume(box, child->GetMaterial(), name);
-      child->SetVisAttributes(*attr);
+      for(size_t i = 0; i < child_old->GetNoDaughters(); ++i) {
+        G4VPhysicalVolume *daughter = child_old->GetDaughter(i);
+        string daughter_name = name + "_" + to_string(i) + ":" + daughter->GetLogicalVolume()->GetName();
+        new G4PVPlacement(daughter->GetRotation(), daughter->GetTranslation(), daughter->GetLogicalVolume(),
+            daughter_name, child, false, 0, true);
+      }
+      child->SetVisAttributes(child_old->GetVisAttributes());
       box_to_compress = box;
     }
     hx_ll = hx_l, hy_ll = hy_l, hz_ll = hz_l;
@@ -422,7 +426,7 @@ void GeometryConfig::ProcessVolumes()
     G4cout << "Building volume " << name << G4endl;
     G4LogicalVolume *logical;
     if(node["solid"].as<string>() == "box") {
-      logical = ProcessBox(name.as<string>(), node, fCompressibleVolumes);
+      logical = ProcessBox(name.as<string>(), node);
     } else if(node["solid"].as<string>() == "bottom_up") {
       logical = ProcessBottomUp(name.as<string>(), node, fCompressibleVolumes);
     } else if(node["solid"].as<string>() == "left_right") {
@@ -433,6 +437,7 @@ void GeometryConfig::ProcessVolumes()
       G4cerr << "ERROR: unknown solid type: " << node["solid"].as<string>() << G4endl;
       exit(EXIT_FAILURE);
     }
+    if(node["mid_to_mid"]) fCompressibleVolumes[logical] = 0;
     G4VisAttributes attr = fMaterialVisAttributes[node["material"].as<string>()];
     ProcessVisAttributes(node, attr);
     logical->SetVisAttributes(attr);

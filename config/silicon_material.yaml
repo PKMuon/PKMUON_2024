@@ -18,7 +18,12 @@ silicon_air:
   alias: G4_AIR
 
 silicon_strip:  # [XXX] To be aligned with MUonE.
+  color: red
   alias: G4_Si
+
+silicon_graphite:
+  color: gray
+  alias: G4_GRAPHITE
 
 ---
 
