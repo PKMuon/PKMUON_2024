@@ -24,12 +24,17 @@ silicon_plane_gap:
   z: 1.8 mm  # [NOTE] https://cds.cern.ch/record/2896293/files/SPSC-P-370.pdf 4.1.1
   material: silicon_air
 
-silicon_module:
+#silicon_module:  # 2S
+#  solid: bottom_up
+#  components:
+#    - silicon_plane
+#    - silicon_plane_gap
+#    - silicon_plane
+#  material: silicon_air
+
+silicon_module:  # 1S
   solid: bottom_up
-  components:
-    - silicon_plane
-    - silicon_plane_gap
-    - silicon_plane
+  components: [silicon_plane]
   material: silicon_air
 
 silicon_module_x:

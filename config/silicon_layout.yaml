@@ -27,8 +27,6 @@ world:
   components:
     - silicon_module_xy
     - world_minor_gap
-    - silicon_module_uv
-    - world_minor_gap
     - silicon_module_xy
     - world_major_gap
     - silicon_module_xy
