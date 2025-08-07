@@ -15,15 +15,14 @@ world_major_gap:
   hidden: hidden
   solid: bottom_up
   components: [target]
-  x: &rpc_x 430 mm
-  y: &rpc_y 430 mm
+  x: &newrpc_x 430 mm
+  y: &newrpc_y 430 mm
   z: 450 mm
-  offset: [0, 0, 60 mm]
-  material: &world_material rpc_air
+  material: &world_material newrpc_air
 
 ---
 
 # Comments
 materials:
   - G4_Al
-  - rpc_air
+  - newrpc_air
