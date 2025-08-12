@@ -30,6 +30,8 @@
 #include "G4UserTrackingAction.hh"
 #include "globals.hh"
 
+class G4Track;
+
 class TrackingAction : public G4UserTrackingAction {
 public:
   TrackingAction();

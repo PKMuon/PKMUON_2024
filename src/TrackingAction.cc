@@ -26,7 +26,9 @@
 
 #include "TrackingAction.hh"
 
-//#include "G4VProcess.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4Track.hh"
+#include "G4VProcess.hh"
 #include "Run.hh"
 
 TrackingAction::TrackingAction() { }
@@ -36,6 +38,7 @@ TrackingAction::~TrackingAction() { }
 void TrackingAction::PreUserTrackingAction([[maybe_unused]] const G4Track *track)
 {
   Run::GetInstance()->AddTrack(track);
+
   //if(const G4VProcess *process = track->GetCreatorProcess()) {
   //  G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID() << ": "
   //         << track->GetParticleDefinition()->GetParticleName() << ", " << process->GetProcessName() << G4endl;

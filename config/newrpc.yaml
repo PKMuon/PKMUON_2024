@@ -94,7 +94,7 @@ newrpc_content:
 # This box is added for visualization need.
 newrpc_content_box:
   solid: bottom_up
-  components: [newrpc_content]
+  components: [newrpc_content] #包裹住content。bottom_up只是形成一个逻辑上的带有包裹父体，和left_right类似。
   material: newrpc_shell
 
 newrpc_without_bottom:
@@ -104,6 +104,12 @@ newrpc_without_bottom:
   y: 400 mm
   z: 40 mm
   offset: [0, 0, -2.5 mm]
+#父盒子 (400×400×40)
+# ┌─────────────────┐
+# │                 │
+# │  RPC 主体       │  ← 向下移 2.5 mm，靠近底部
+# │                 │
+# └─────────────────┘
   material: newrpc_shell
 
 newrpc_bottom_connection_gas:

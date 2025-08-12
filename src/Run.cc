@@ -14,6 +14,7 @@
 #include <filesystem>
 
 #include "DetectorConstruction.hh"
+#include "G4DynamicParticle.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
@@ -73,6 +74,7 @@ void Run::InitTree()
   fTree = new TTree("tree", "tree");
   //fTree->Branch("Tracks", new TClonesArray("Track"));
   fTree->Branch("Edeps", new TClonesArray("Edep"));
+  fTree->Branch("Scatters", new TClonesArray("Scatter"));
   fTree->Branch("Event", new TClonesArray("Event"));
   (*(TClonesArray **)fTree->GetBranch("Event")->GetAddress())->ConstructedAt(0);
 
@@ -93,6 +95,7 @@ void Run::SaveTree()
   //delete *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
   delete *(TClonesArray **)fTree->GetBranch("Event")->GetAddress();
+  delete *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
   fTree = NULL;
 
   Params *params = (Params *)(*(TClonesArray **)fParams->GetBranch("Params")->GetAddress())->At(0);
@@ -110,10 +113,37 @@ void Run::SaveTree()
   fFile = NULL;
 }
 
+// void Run::FillAndReset()
+// {
+//   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
+//   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+
+//   //// Sort the tracks by ID.
+//   //std::vector<Track *> tracks;
+//   //tracks.resize(Tracks->GetEntries());
+//   //for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
+//   //sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
+//   //for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
+
+//   // Export Edeps.
+//   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
+//     for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
+//     fTree->Fill();
+//     Edeps->Clear();
+//   }
+//   fStatus.assign(fStatus.size(), false);
+
+//   //Tracks->Clear();
+//   fEdep.clear();
+
+//   ++fIEvent;
+// }
+
 void Run::FillAndReset()
 {
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
 
   //// Sort the tracks by ID.
   //std::vector<Track *> tracks;
@@ -124,7 +154,7 @@ void Run::FillAndReset()
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
+    for(auto &p : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = p; }
     fTree->Fill();
     Edeps->Clear();
   }
@@ -132,7 +162,7 @@ void Run::FillAndReset()
 
   //Tracks->Clear();
   fEdep.clear();
-  ++fIEvent;
+  Scatters->Clear();
 }
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
@@ -168,6 +198,14 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
   //  << G4endl;
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
+}
+
+void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *mu_out, const G4DynamicParticle *e_out)
+{
+  auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
+  // *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { muon, mu_out, e_out };
+  auto *rec = (Scatter *)Scatters->ConstructedAt(Scatters->GetEntriesFast());
+  *rec = std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *>{ muon, mu_out, e_out };
 }
 
 void Run::BuildProcessMap()

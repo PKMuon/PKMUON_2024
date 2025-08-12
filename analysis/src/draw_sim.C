@@ -17,10 +17,10 @@ using namespace std;
 
 TCanvas *draw_sim(const char *infile = "../../build/root_file/CryMuPoca.root",
     const char *outfile = "../../build/root_file/CryMuPoca.pdf", const char *selection = NULL,
-    Double_t min_theta = 0.001)
+    Double_t min_theta = 0.000)
 {
-  const Int_t Nx = 40, Ny = 40, Nz = 40;  // 控制像元大小
-  const Double_t Xdown = -200, Xup = 200, Ydown = -200, Yup = 200, Zdown = -360, Zup = 360;
+  const Int_t Nx = 100, Ny = 100, Nz = 100;  // 控制像元大小
+  const Double_t Xdown = -500, Xup = 500, Ydown = -500, Yup = 500, Zdown = -1000, Zup = 1000;
 
   // 输入
   TFile *file_in = TFile::Open(infile);
@@ -33,7 +33,7 @@ TCanvas *draw_sim(const char *infile = "../../build/root_file/CryMuPoca.root",
   tree->SetBranchAddress("ZPoCAEdep", &z);
   tree->SetBranchAddress("CosThetaEdep", &cos_theta);
 
-  Double_t vox = (Xup - Xdown) / Nx, voy = (Yup - Ydown) / Ny, voz = (Zup - Zdown) / Nz;
+  Double_t vox = (Xup - Xdown) / Nx, voy = (Yup - Ydown) / Ny, voz = (Zup - Zdown) / Nz; //像元大小参数
   Double_t sig[Nx][Ny][Nz] = { 0 };
   Int_t count[Nx][Ny][Nz] = { 0 };
 

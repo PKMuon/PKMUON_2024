@@ -1,7 +1,6 @@
 #!/bin/bash
 
-N=2
-#N=$(nproc)
+N=$(nproc)
 NPROC=$(nproc || sysctl -n hw.logicalcpu || getconf _NPROCESSORS_ONLN)
 IPROC=0
 PIDS=()

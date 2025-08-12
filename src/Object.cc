@@ -36,6 +36,7 @@
 #include "G4RToEConvForGamma.hh"
 #include "G4RToEConvForPositron.hh"
 #include "G4RToEConvForProton.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
 
 Track &Track::operator=(const G4Track &track)
@@ -75,5 +76,26 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
 
   LayerZ = detectorConstruction.GetScoringZs();
+  return *this;
+}
+
+Scatter &Scatter::operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t)
+{
+  auto [muon, mu_out, e_out] = t;
+  Id = muon->GetTrackID();
+  const G4DynamicParticle *particles[3] = { muon->GetDynamicParticle(), mu_out, e_out };
+  for(size_t i = 0; i < 3; ++i) {
+    Pid[i] = particles[i]->GetParticleDefinition()->GetPDGEncoding();
+    auto momentum = particles[i]->GetMomentum();
+    Px[i] = momentum.getX();
+    Py[i] = momentum.getY();
+    Pz[i] = momentum.getZ();
+    E[i] = particles[i]->GetTotalEnergy();
+  }
+  auto position = muon->GetPosition();
+  X = position.getX();
+  Y = position.getY();
+  Z = position.getZ();
+  T = muon->GetGlobalTime();
   return *this;
 }
