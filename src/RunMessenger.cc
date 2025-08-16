@@ -65,7 +65,10 @@ RunMessenger::Driver::Driver(RunMessenger *messenger)
   fSetTotalEnergyCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
-RunMessenger::Driver::~Driver() { delete fSetTotalEnergyCmd; }
+RunMessenger::Driver::~Driver()
+{
+  delete fSetTotalEnergyCmd;
+}
 
 void RunMessenger::Driver::SetNewValue(G4UIcommand *cmd, [[maybe_unused]] G4String val)
 {

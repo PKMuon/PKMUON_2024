@@ -173,7 +173,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       ++fNPrimary;
       G4double mass = particleGun->GetParticleDefinition()->GetPDGMass(), e = particleGun->GetParticleEnergy() + mass;
       event->Pid = particleGun->GetParticleDefinition()->GetPDGEncoding();
-      G4ThreeVector v = sqrt(e * e - mass * mass) * particleGun->GetParticleMomentumDirection();
+      G4ThreeVector v = sqrt(e*e - mass*mass) * particleGun->GetParticleMomentumDirection();
       event->Px = v.x();
       event->Py = v.y();
       event->Pz = v.z();

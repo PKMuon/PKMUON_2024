@@ -38,7 +38,6 @@
 
 class DetectorConstruction;
 class G4Track;
-class G4DynamicParticle;
 
 class Track : public TObject {
 public:
@@ -131,7 +130,7 @@ public:
 
 class Scatter : public TObject {
 public:
-  Scatter &operator=(const std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *> &t);
+  Scatter &operator=(const std::tuple<const G4Track *, const G4Track *> &t);
 
   Int_t Id;
   Int_t Pid[3];

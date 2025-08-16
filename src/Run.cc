@@ -14,7 +14,6 @@
 #include <filesystem>
 
 #include "DetectorConstruction.hh"
-#include "G4DynamicParticle.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
@@ -113,32 +112,6 @@ void Run::SaveTree()
   fFile = NULL;
 }
 
-// void Run::FillAndReset()
-// {
-//   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
-//   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
-
-//   //// Sort the tracks by ID.
-//   //std::vector<Track *> tracks;
-//   //tracks.resize(Tracks->GetEntries());
-//   //for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
-//   //sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
-//   //for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
-
-//   // Export Edeps.
-//   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-//     for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
-//     fTree->Fill();
-//     Edeps->Clear();
-//   }
-//   fStatus.assign(fStatus.size(), false);
-
-//   //Tracks->Clear();
-//   fEdep.clear();
-
-//   ++fIEvent;
-// }
-
 void Run::FillAndReset()
 {
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
@@ -154,7 +127,7 @@ void Run::FillAndReset()
 
   // Export Edeps.
   if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &p : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = p; }
+    for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
     fTree->Fill();
     Edeps->Clear();
   }
@@ -163,11 +136,12 @@ void Run::FillAndReset()
   //Tracks->Clear();
   fEdep.clear();
   Scatters->Clear();
+  ++fIEvent;
 }
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
 
-void Run::AddStep(const G4Step *step)
+void Run::ProcessStepEdep(const G4Step *step)
 {
   const G4ThreeVector &r = step->GetTrack()->GetPosition();
   G4double x = r.x(), y = r.y(), z = r.z();
@@ -190,6 +164,38 @@ void Run::AddStep(const G4Step *step)
   fEdep[{ zid, pid, process }].Add(edep, x, y);
 }
 
+void Run::ProcessStepMCTruth(const G4Step *step)
+{
+  const G4Track *track = step->GetTrack();
+
+  // Select primary particle.
+  if(track->GetParentID() != 0) return;
+
+  // Select mu+ and mu-.
+  if(abs(track->GetDefinition()->GetPDGEncoding()) != 13) return;
+
+  const G4Track *mu_out = track;
+  const G4VProcess *process = step->GetPostStepPoint()->GetProcessDefinedStep();
+
+  // Select ionization process.
+  if(process == NULL) return;
+  if(process->GetProcessName() != "muIoni") return;
+
+  // Select the interaction with one secondary electron (e-).
+  const std::vector<const G4Track *> *secs = step->GetSecondaryInCurrentStep();
+  if(!secs || secs->size() != 1) return;
+  const G4Track *e_out = (*secs)[0];
+  if(!e_out || e_out->GetDefinition()->GetPDGEncoding() != 11) return;
+
+  Run::GetInstance()->AddScatter(mu_out, e_out);
+}
+
+void Run::AddStep(const G4Step *step)
+{
+  ProcessStepEdep(step);
+  ProcessStepMCTruth(step);
+}
+
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
 {
   //G4cout << __PRETTY_FUNCTION__ << ": " << track->GetTrackID()
@@ -200,12 +206,10 @@ void Run::AddTrack([[maybe_unused]] const G4Track *track)
   //*(Track *)Tracks->ConstructedAt(Tracks->GetEntries()) = *track;
 }
 
-void Run::AddScatter(const G4Track *muon, const G4DynamicParticle *mu_out, const G4DynamicParticle *e_out)
+void Run::AddScatter(const G4Track *mu_out, const G4Track *e_out)
 {
   auto Scatters = *(TClonesArray **)fTree->GetBranch("Scatters")->GetAddress();
-  // *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { muon, mu_out, e_out };
-  auto *rec = (Scatter *)Scatters->ConstructedAt(Scatters->GetEntriesFast());
-  *rec = std::tuple<const G4Track *, const G4DynamicParticle *, const G4DynamicParticle *>{ muon, mu_out, e_out };
+  *(Scatter *)Scatters->ConstructedAt(Scatters->GetEntries()) = { mu_out, e_out };
 }
 
 void Run::BuildProcessMap()
