@@ -37,6 +37,7 @@ public:
   void AutoSave();
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
+  void AddScatter(const G4Track *mu_out, const G4Track *e_out);
   Event *GetEvent();
 
 private:
@@ -58,6 +59,8 @@ private:
   G4long fIEvent;
 
   void BuildProcessMap();
+  void ProcessStepEdep(const G4Step *step);
+  void ProcessStepMCTruth(const G4Step *step);
 };
 
 #endif  // GEANT4_INTRODUCTION_RUN_H
