@@ -42,7 +42,10 @@
 #include "G4SolidStore.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4SystemOfUnits.hh"
-
+#include <map>//
+#include <algorithm>//
+#include <sstream>
+#include "Run.hh"
 // visualization
 #include "G4Color.hh"
 #include "G4VisAttributes.hh"
@@ -104,6 +107,8 @@ void DetectorConstruction::DefineVolumes()
     "../config/newrpc_readout.yaml",
     "../config/newrpc.yaml",
     "../config/newlayout.yaml",
+    "../config/newpbwo4.yaml",
+    "../config/newlayout_al.yaml"
   };
   char *p = getenv("MUPOS_VOLUME_CONFIG");
   if(p) { paths = split(p, ':'); }
@@ -127,6 +132,47 @@ void DetectorConstruction::DefineVolumes()
     fScoringZs[i] = (fElectrodeZs[2 * i] + fElectrodeZs[2 * i + 1]) * 0.5;
   }
   fScoringGasVolume = fLogicalVolumeStore->GetVolume("newrpc_gas");
+  
+  // 收集PbWO4拼块的XY坐标与尺寸，按网格分配ID
+  std::vector<PbWO4Tile> pbwo4Tiles;
+
+  // 遍历PbWO4拼块物理体积，记录XY范围
+  WalkVolume(fWorld, [&pbwo4Tiles](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
+    if (volume->GetLogicalVolume()->GetName() == "newpbwo4_tile") {
+      G4Box* solid = dynamic_cast<G4Box*>(volume->GetLogicalVolume()->GetSolid());
+      if (!solid) return;
+      G4double dz = solid->GetZHalfLength();
+      G4double dx = solid->GetXHalfLength();  // 拼块X半长
+      G4double dy = solid->GetYHalfLength();  // 拼块Y半长
+      pbwo4Tiles.push_back({
+        r.x() - dx, r.x() + dx,  // xmin, xmax
+        r.y() - dy, r.y() + dy,  // ymin, ymax
+	r.z() - dz, r.z() + dz,  // zmin, zmax
+        -1  // 临时ID，待分配
+      });
+    }
+  });
+
+  // 按XY坐标对拼块排序，分配ID 6-30（假设25块）
+  // 构造 G4ExceptionDescription 对象
+  G4ExceptionDescription msg;
+  if (pbwo4Tiles.size() != 25) {
+    msg << "PbWO4 tiles count mismatch! Expected 25, got " << pbwo4Tiles.size();
+    G4Exception("DefineVolumes()", "Vol005", FatalException,msg);
+  }
+  // 按Y坐标升序，X坐标升序排序（假设网格排列）
+  std::sort(pbwo4Tiles.begin(), pbwo4Tiles.end(), [](const PbWO4Tile& a, const PbWO4Tile& b) {
+    if (a.ymin != b.ymin) return a.ymin < b.ymin;
+    return a.xmin < b.xmin;
+  });
+  // 分配ID 6-30
+  for (size_t i=0; i<pbwo4Tiles.size(); ++i) {
+    pbwo4Tiles[i].id = 6 + i;  // RPC占0-5，PbWO4从6开始
+  }
+
+  // 将PbWO4的ID和XY范围存储到全局可访问的地方
+  fPbWO4Tiles = pbwo4Tiles;
+  Run::GetInstance()->SetPbWO4Tiles(fPbWO4Tiles); // 传递PbWO4几何信息
 }
 
 void DetectorConstruction::DefineFields()

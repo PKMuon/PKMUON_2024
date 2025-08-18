@@ -26,6 +26,11 @@ G4_CALCIUM_OXIDE: {from: nist}
 G4_SODIUM_MONOXIDE: {from: nist}
 G4_POTASSIUM_OXIDE: {from: nist}
 G4_SILICON_DIOXIDE: {from: nist}
+G4_PbWO4: {from: nist}
+
+newrpc_pbwo4:
+  color: blue
+  alias: G4_PbWO4
 
 newrpc_vacuum:
   alias: G4_Galactic

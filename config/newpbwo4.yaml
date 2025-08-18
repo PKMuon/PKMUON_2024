@@ -1,0 +1,60 @@
+# Schema
+schema: volume_schema.yaml  # 复用现有体积定义 schema
+
+---
+
+# 1. 基础拼块单元（G4Box实体）
+newpbwo4_tile:
+  solid: box  # 基础实体类型，支持x/y/z尺寸
+  x: 60 mm    # 拼块x尺寸
+  y: 60 mm    # 拼块y尺寸
+  z: 100 mm   # 拼块z尺寸
+  material: newrpc_pbwo4  # 材料属性
+ 
+ 
+# 2. x方向行组件（left_right组合实体）
+newpbwo4_row:
+  solid: left_right  # x方向排列子组件
+  components: [newpbwo4_tile]  # 引用拼块单元
+  duplicate: 5       # 沿x方向复制5个拼块
+  spacing: 0 mm      # 拼块间距（无间隙）
+  # 尺寸：x=5×60=300mm, y=60mm, z=100mm
+  material: newrpc_pbwo4
+ 
+ 
+# 3. 旋转行组件（rotation组合实体，绕z轴旋转90°）
+newpbwo4_row_rotated:
+  solid: rotation    # 旋转类型实体（Schema指定）
+  components: [newpbwo4_row, [z, 90 deg]]
+ 
+ 
+# 4. y方向列组件（bottom_up组合实体，排列旋转后的行）
+newpbwo4_array:
+  solid: left_right   # y方向排列子组件
+  components: [newpbwo4_row_rotated]  # 引用旋转行组件
+  duplicate: 5       # 沿y方向复制5个旋转行
+  spacing: 0 mm      # 行间距（无间隙）
+  # 总尺寸：x=60mm×5=300mm, y=300mm, z=100mm（xy平面5×5阵列）
+  material: newrpc_pbwo4
+
+#  总装结构（集成读出板与PbWO4阵列）
+newpbwo4_assembly:
+  solid: bottom_up   # 从下到上堆叠组件
+  components:
+    - newrpc_xy_readout_board  # 复用newrpc_readout.yaml中的XY读出板
+    - newpbwo4_array           # PbWO4拼块阵列层
+    - newrpc_t_readout_board   # 复用newrpc_readout.yaml中的T读出板
+  x: 300 mm          # 总尺寸与读出板一致
+  y: 300 mm
+  z: 102.165 mm        # 总厚度=XY读出板厚度(0.4mm) + PbWO4(2mm) + T读出板厚度(1.565mm) + 间隙(0.2mm，可选)
+  material: newrpc_air  # 整体材料继承气体（或单独指定）
+
+
+---
+
+# Comments
+materials:
+  - newrpc_pbwo4  # 注册PbWO4材料（需确保在newrpc_material.yaml中已定义）
+external:
+  - newrpc_xy_readout_board  # 声明依赖外部读出板组件
+  - newrpc_t_readout_board

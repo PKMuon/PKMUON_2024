@@ -24,7 +24,7 @@ static Double_t GetCosTheta(const vector<Double_t> &X, const vector<Double_t> &Y
 {
   size_t n = X.size();
   assert(n >= 4 && n % 2 == 0);
-  size_t i1 = 0, i2 = n / 2 - 1, i3 = n / 2, i4 = n - 1;
+  size_t i1 = n / 2 - 2, i2 = n / 2 - 1, i3 = n / 2, i4 = n / 2 +  1;
   Double_t x1 = X[i2] - X[i1];
   Double_t y1 = Y[i2] - Y[i1];
   Double_t z1 = Z[i2] - Z[i1];
@@ -34,7 +34,7 @@ static Double_t GetCosTheta(const vector<Double_t> &X, const vector<Double_t> &Y
   return GetCosTheta(x1, y1, z1, x2, y2, z2);
 }
 
-void analysis(const char *infile = "../../build/root_file/CryMu.root",
+void analysis(const char *infile = "../../build/root_file/CryMu.root",// ../../build/root_file/CryMu.root
     const char *outfile = "../../build/root_file/CryMuAna.root")
 {
   TRandom *rand = new TRandom();
@@ -50,7 +50,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   params_in->SetBranchAddress("Processes", &Processes);
   params_in->GetEntry(0);
   auto params = (::Params *)Params->At(0);
-  size_t nlayer = params->LayerZ.size() / 2;
+  std::cout << "LayerZ.size() = " << params->LayerZ.size() << std::endl;///////////////////////
+  size_t nlayer = params->LayerZ.size() ;///2
 
   // Output file and tree.
   TFile *file_out = TFile::Open(outfile, "RECREATE");
@@ -76,7 +77,7 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   Long64_t nentry = tree_in->GetEntries();
   for(Long64_t ientry = 0; ientry < nentry; ientry++) {
     if(ientry % 1000 == 0) {
-      cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
+      //cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
     }
     tree_in->GetEntry(ientry);
 
@@ -91,28 +92,28 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
       assert((size_t)edep->Id < E2.size());
       assert(edep->Process < Processes->GetEntries());
       string process = edep->Process >= 0 ? ((Process *)Processes->UncheckedAt(edep->Process))->Name : "";
-      cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " process=" << process << endl;
+      //cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " process=" << process << endl;
       E2[edep->Id] += edep->Value;
       X2[edep->Id] += edep->Value * edep->X;
       Y2[edep->Id] += edep->Value * edep->Y;
       Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
     }
     bool valid = true;
-    for(size_t l = 0; l < nlayer * 2; ++l) {
+    for(size_t l = 0; l < nlayer ; ++l) {//////////////////*2
       if(!(E2[l] > 0)) {
         valid = false;
         break;
       }
-      X2[l] /= E2[l], Y2[l] /= E2[l], Z2[l] /= E2[l];
+      X2[l] /= E2[l], Y2[l] /= E2[l], Z2[l] /= E2[l];//得到加权最后结果
     }
     if(!valid) continue;
     nvalid++;
 
     // Simulate readout system.
     for(size_t l = 0; l < nlayer; ++l) {
-      XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
-      YEdep[l] = Y2[2 * l];                          // YEdep-readout
-      ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
+         XEdep[l] = X2[l]; //  XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
+         YEdep[l] = Y2[l]; //  YEdep[l] = Y2[2 * l];                          // YEdep-readout
+         ZEdep[l] = Z2[l]; //  ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant
     }
 
     // Simulate detector resolution.

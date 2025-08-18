@@ -1,0 +1,28 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+target:
+  color: gray
+  solid: box
+  x: 0 mm
+  y: 0 mm
+  z: 0  mm
+  material: G4_Al
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &newrpc_x 430 mm
+  y: &newrpc_y 430 mm
+  z: 450 mm
+  material: &world_material newrpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Al
+  - newrpc_air

@@ -21,6 +21,15 @@ world_minor_gap:
   z: 150 mm
   material: *world_material
 
+world_minor_gap3:
+  alternative: alternative
+  hidden: hidden
+  solid: box
+  x: *newrpc_x
+  y: *newrpc_y
+  z: 47.5 mm
+  material: *world_material
+
 world:
   alternative: alternative
   hidden: hidden
@@ -33,7 +42,8 @@ world:
     - newrpc
     - world_major_gap
     - newrpc
-    - world_minor_gap
+    - newpbwo4_assembly
+    - world_minor_gap3
     - newrpc
     - world_minor_gap
     - newrpc
@@ -45,6 +55,9 @@ world:
 # Comments
 materials:
   - newrpc_air
+  - G4_Pb
 external:
   - newrpc
+  - newpbwo4_assembly
   - world_major_gap
+

@@ -11,7 +11,7 @@
 
 #include "EdepData.hh"
 #include "globals.hh"
-
+#include "DetectorConstruction.hh"///
 class TFile;
 class TTree;
 
@@ -38,7 +38,12 @@ public:
   void AddTrack(const G4Track *);
   void AddStep(const G4Step *);
   Event *GetEvent();
-
+  //void SetPbWO4Tiles(const std::vector<PbWO4Tile>& tiles) { 
+  //  fPbWO4Tiles = tiles;  // 临时存储PbWO4拼块几何信息（用于AddStep判断）
+  //}
+  void SetPbWO4Tiles(const std::vector<DetectorConstruction::PbWO4Tile>& tiles) {  // 【修改后】
+    fPbWO4Tiles = tiles;  // 现在类型匹配，可以正确赋值
+  }
 private:
   Run();
   ~Run();
@@ -56,7 +61,8 @@ private:
   std::map<EdepKey, EdepValue> fEdep;
   std::vector<bool> fStatus;
   G4long fIEvent;
-
+  std::vector<DetectorConstruction::PbWO4Tile> fPbWO4Tiles;
+  //std::vector<PbWO4Tile> fPbWO4Tiles;  // 仅用于几何判断，不存储能量数据
   void BuildProcessMap();
 };
 

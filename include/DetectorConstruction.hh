@@ -33,7 +33,7 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4VUserDetectorConstruction.hh"
-
+#include <Rtypes.h>  // 新增：引入 ROOT 类型定义（Int_t, Double_t 等）
 class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -73,6 +73,11 @@ public:
   G4VPhysicalVolume *PartitionVolume(G4VPhysicalVolume *volume,
       const std::function<std::vector<G4VSolid *>(G4VSolid *, const G4ThreeVector &, const G4RotationMatrix &)>
           &partition) const;
+  struct PbWO4Tile {
+    G4double xmin, xmax, ymin, ymax, zmin, zmax;  // 拼块XY边界
+    Int_t id;                         // 拼块ID（6-30）
+  };
+  const std::vector<PbWO4Tile>& GetPbWO4Tiles() const { return fPbWO4Tiles; }
 
 private:
   void DefineMaterials();
@@ -87,6 +92,8 @@ private:
   std::vector<G4double> fElectrodeZs;
   std::vector<G4double> fScoringZs;
   G4LogicalVolume *fScoringGasVolume;
+  
+  std::vector<PbWO4Tile> fPbWO4Tiles;  // 存储PbWO4拼块信息
 };
 
 #endif

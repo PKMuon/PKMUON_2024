@@ -59,7 +59,8 @@ void Run::InitGeom()
   fScoringZ = scoringHalfZ * 2;
   fScoringMaxZs = scoringZs;
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
-  fStatus.resize(fScoringMaxZs.size());
+  fStatus.resize(31,false);//扩大fstatus的容积
+  fPbWO4Tiles = fDetectorConstruction->GetPbWO4Tiles();
 }
 
 void Run::InitTree()
@@ -115,20 +116,29 @@ void Run::FillAndReset()
   //auto Tracks = *(TClonesArray **)fTree->GetBranch("Tracks")->GetAddress();
   auto Edeps = *(TClonesArray **)fTree->GetBranch("Edeps")->GetAddress();
 
-  //// Sort the tracks by ID.
-  //std::vector<Track *> tracks;
-  //tracks.resize(Tracks->GetEntries());
-  //for(size_t i = 0; i < tracks.size(); ++i) tracks[i] = (Track *)(*Tracks)[i];
-  //sort(tracks.begin(), tracks.end(), [](Track *a, Track *b) { return a->Id < b->Id; });
-  //for(size_t i = 0; i < tracks.size(); ++i) (*Tracks)[i] = tracks[i];
-
   // Export Edeps.
-  if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
-    for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
+  //if(all_of(fStatus.begin(), fStatus.end(), [](bool b) { return b; })) {
+  //  for(auto &edep : fEdep) { *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep; }
+  //  fTree->Fill();
+  //  Edeps->Clear();
+  //}
+
+  bool rpcAllTriggered = true;
+  for (int zid = 0; zid < 6; ++zid) {  // RPC的ID范围0-5
+    if (!fStatus[zid]) {
+      rpcAllTriggered = false;
+      break;
+    }
+  }
+
+  if (rpcAllTriggered) {  // 仅RPC全部触发时保存
+    for(auto &edep : fEdep) {
+      *(::Edep *)Edeps->ConstructedAt(Edeps->GetEntries()) = edep;
+    }
     fTree->Fill();
     Edeps->Clear();
   }
-  fStatus.assign(fStatus.size(), false);
+  fStatus.assign(31, false);
 
   //Tracks->Clear();
   fEdep.clear();
@@ -137,27 +147,50 @@ void Run::FillAndReset()
 
 void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
 
-void Run::AddStep(const G4Step *step)
-{
-  const G4ThreeVector &r = step->GetTrack()->GetPosition();
-  G4double x = r.x(), y = r.y(), z = r.z();
-  if(fabs(x) >= fScoringHalfX || fabs(y) >= fScoringHalfY) return;
-  auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
-  if(ub == fScoringMaxZs.end()) return;
-  if(z < *ub - fScoringZ) return;
+void Run::AddStep(const G4Step *step) {
+    // --------------------------
+    // 1. 基础信息获取（RPC和PbWO4共用）
+    // --------------------------
+    const G4ThreeVector &r = step->GetTrack()->GetPosition();
+    G4double x = r.x(), y = r.y(), z = r.z();  // 粒子当前位置（XYZ）
+    G4double edep = step->GetTotalEnergyDeposit();  // 能量沉积
+    if (edep == 0) return;  // 无能量沉积则直接返回
 
-  G4double edep = step->GetTotalEnergyDeposit();
-  if(edep == 0) return;
+    // 粒子ID和过程ID（RPC和PbWO4共用）
+    Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+    Int_t process = -1;
+    if (const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
+        auto it = fProcessMap.find(p->GetProcessName());
+        if (it != fProcessMap.end()) process = it->second;
+    }
 
-  Int_t zid = ub - fScoringMaxZs.begin();
-  Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  Int_t process = -1;
-  if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
-    auto it = fProcessMap.find(p->GetProcessName());
-    if(it != fProcessMap.end()) process = it->second;
-  }
-  fStatus[zid] = true;
-  fEdep[{ zid, pid, process }].Add(edep, x, y);
+    // --------------------------
+    // 2. RPC能量沉积记录（原有逻辑不变）
+    // --------------------------
+    if (fabs(x) < fScoringHalfX && fabs(y) < fScoringHalfY) {  // RPC XY范围判断
+        auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
+        if (ub != fScoringMaxZs.end() && z >= *ub - fScoringZ) {  // RPC Z范围判断
+            Int_t zid = ub - fScoringMaxZs.begin();
+            fStatus[zid] = true;
+            fEdep[EdepKey(zid, pid, process)].Add(edep, x, y);  // 按zid、pid、process存储
+        }
+    }
+
+    // --------------------------
+    // 3. PbWO4能量沉积记录（新增逻辑，含Z轴限制）
+    // --------------------------
+    for (const auto &tile : fPbWO4Tiles) {  // 遍历所有PbWO4拼块
+        // 三维坐标判断：XY在拼块平面内 + Z在拼块厚度内
+        if (x >= tile.xmin && x <= tile.xmax && 
+            y >= tile.ymin && y <= tile.ymax && 
+            z >= tile.zmin && z <= tile.zmax) {  // 新增Z轴范围限制
+            Int_t pbwo4_id = tile.id;  // PbWO4的拼块ID（假设范围6~30，与zid无重叠）
+	    
+            fStatus[pbwo4_id] = true;  // 用同一map记录PbWO4状态
+            fEdep[EdepKey(pbwo4_id, pid, process)].Add(edep, x, y);  // 复用fEdep存储
+            break;
+        }
+    }
 }
 
 void Run::AddTrack([[maybe_unused]] const G4Track *track)
