@@ -106,9 +106,9 @@ void DetectorConstruction::DefineVolumes()
   std::vector<std::string> paths = {
     "../config/newrpc_readout.yaml",
     "../config/newrpc.yaml",
-    "../config/newlayout.yaml",
+    "../config/newlayout_al.yaml",
     "../config/newpbwo4.yaml",
-    "../config/newlayout_al.yaml"
+    "../config/newlayout.yaml"
   };
   char *p = getenv("MUPOS_VOLUME_CONFIG");
   if(p) { paths = split(p, ':'); }

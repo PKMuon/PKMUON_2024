@@ -4,20 +4,12 @@ schema: volume_schema.yaml
 ---
 
 target:
-  color: blue  #gray
+  color: blue
   solid: box
   x: 120 mm
   y: 120 mm
   z: 30 mm
-  material: &world_material G4_Al
-
-lead_block:
-  color: gray
-  solid: box
-  x: 300 mm    # 铅块尺寸（示例值，可自定义）
-  y: 300 mm
-  z: 0.05  mm
-  material: &world_material G4_Pb  # 引用铅材料
+  material: G4_Al
 
 world_major_gap:
   hidden: hidden
@@ -28,19 +20,9 @@ world_major_gap:
   z: 450 mm
   material: &world_material newrpc_air
 
-world_minor_gap2:
-  hidden: hidden
-  solid: bottom_up
-  components: [lead_block]
-  x: &newrpc_x 430 mm
-  y: &newrpc_y 430 mm
-  z: 150 mm
-  material: &world_material newrpc_air
-
 ---
 
 # Comments
 materials:
   - G4_Al
   - newrpc_air
-  - G4_Pb

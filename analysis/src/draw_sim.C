@@ -19,7 +19,7 @@ TCanvas *draw_sim(const char *infile = "../../build/root_file/CryMuPoca.root",
     const char *outfile = "../../build/root_file/CryMuPoca.pdf", const char *selection = NULL,
     Double_t min_theta = 0.001)
 {
-  const Int_t Nx = 40, Ny = 40, Nz = 40;  // 控制像元大小
+  const Int_t Nx = 80, Ny = 80, Nz = 80;  // 控制像元大小
   //const Double_t Xdown = -200, Xup = 200, Ydown = -200, Yup = 200, Zdown = -360, Zup = 360;
   const Double_t Xdown = -220, Xup = 220, Ydown = -220, Yup = 220, Zdown = -1000, Zup = 1000;
 

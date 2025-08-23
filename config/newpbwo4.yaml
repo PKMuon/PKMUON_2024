@@ -38,17 +38,24 @@ newpbwo4_array:
   material: newrpc_pbwo4
 
 #  总装结构（集成读出板与PbWO4阵列）
+#newpbwo4_assembly:
+#  solid: bottom_up   # 从下到上堆叠组件
+#  components:
+#    - newrpc_xy_readout_board  # 复用newrpc_readout.yaml中的XY读出板
+#    - newpbwo4_array           # PbWO4拼块阵列层
+#    - newrpc_t_readout_board   # 复用newrpc_readout.yaml中的T读出板
+#  x: 300 mm          # 总尺寸与读出板一致
+#  y: 300 mm
+#  z: 102.165 mm        # 总厚度=XY读出板厚度(0.4mm) + PbWO4(2mm) + T读出板厚度(1.565mm) + 间隙(0.2mm，可选)
+#  material: newrpc_air  # 整体材料继承气体（或单独指定）
 newpbwo4_assembly:
   solid: bottom_up   # 从下到上堆叠组件
   components:
-    - newrpc_xy_readout_board  # 复用newrpc_readout.yaml中的XY读出板
-    - newpbwo4_array           # PbWO4拼块阵列层
-    - newrpc_t_readout_board   # 复用newrpc_readout.yaml中的T读出板
-  x: 300 mm          # 总尺寸与读出板一致
+    - newpbwo4_array           
+  x: 300 mm       
   y: 300 mm
-  z: 102.165 mm        # 总厚度=XY读出板厚度(0.4mm) + PbWO4(2mm) + T读出板厚度(1.565mm) + 间隙(0.2mm，可选)
-  material: newrpc_air  # 整体材料继承气体（或单独指定）
-
+  z: 100 mm        
+  material: newrpc_air  
 
 ---
 

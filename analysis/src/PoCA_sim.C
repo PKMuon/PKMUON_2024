@@ -11,7 +11,7 @@
 
 using namespace std;
 
-Long64_t PoCA_sim(const char *infile = "../../build/root_file/CryMuAna.root",
+Long64_t PoCA_sim(const char *infile = "../../build/root_file/e_trace_output.root",
     const char *outfile = "../../build/root_file/CryMuPoca.root")
 {
   // Input file and tree.
@@ -55,9 +55,9 @@ Long64_t PoCA_sim(const char *infile = "../../build/root_file/CryMuAna.root",
       ROOT::Math::XYZVector vn, uvn;
       ROOT::Math::XYZVector vm;
 
-      size_t n = x.size();
+      size_t n = x.size()-25;////
       assert(n >= 4 && n % 2 == 0);
-      size_t i1 = n / 2 - 1, i2 = n / 2 -2, i3 = n / 2 , i4 = n / 2 + 1;//size_t i1 = 0, i2 = n / 2 - 1, i3 = n / 2, i4 = n - 1;
+      size_t i1 = 1, i2 = 2, i3 = 4 , i4 = 3 ;//size_t i1 = 0, i2 = n / 2 - 1, i3 = n / 2, i4 = n - 1;
 
       a.SetCoordinates(x[i2], y[i2], z[i2]);//a.SetCoordinates(x[i2], y[i2], z[i2]);  // 点 a 定义为打在第二层探测器上的位置
       b.SetCoordinates(x[i3], y[i3], z[i3]);//b.SetCoordinates(x[i3], y[i3], z[i3]);  // 点 b 定义为打在第三层探测器上的位置

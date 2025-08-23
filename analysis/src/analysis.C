@@ -22,7 +22,7 @@ static Double_t GetCosTheta(Double_t x1, Double_t y1, double_t z1, Double_t x2, 
 
 static Double_t GetCosTheta(const vector<Double_t> &X, const vector<Double_t> &Y, const vector<Double_t> &Z)
 {
-  size_t n = X.size();
+  size_t n = X.size()-25;/////
   assert(n >= 4 && n % 2 == 0);
   size_t i1 = n / 2 - 2, i2 = n / 2 - 1, i3 = n / 2, i4 = n / 2 +  1;
   Double_t x1 = X[i2] - X[i1];
@@ -51,25 +51,26 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",// ../../b
   params_in->GetEntry(0);
   auto params = (::Params *)Params->At(0);
   std::cout << "LayerZ.size() = " << params->LayerZ.size() << std::endl;///////////////////////
-  size_t nlayer = params->LayerZ.size() ;///2
+  size_t nlayer = 31;///params->LayerZ.size() ;///2
 
   // Output file and tree.
   TFile *file_out = TFile::Open(outfile, "RECREATE");
   TTree *tree_out = new TTree("tree", "tree");
   //tree_out = tree_in->CloneTree(0);  // copy 0 entries
-  vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer);
+  vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer), TotalEdep(nlayer);
   vector<Double_t> XSmeared(nlayer), YSmeared(nlayer);
   Double_t CosThetaEdep, CosThetaSmeared;
   tree_out->Branch("XEdep", &XEdep);
   tree_out->Branch("YEdep", &YEdep);
   tree_out->Branch("ZEdep", &ZEdep);
+  tree_out->Branch("TotalEdep", &TotalEdep);
   tree_out->Branch("XSmeared", &XSmeared);
   tree_out->Branch("YSmeared", &YSmeared);
   tree_out->Branch("CosThetaEdep", &CosThetaEdep);
   tree_out->Branch("CosThetaSmeared", &CosThetaSmeared);
 
   // Temporaries.
-  vector<Double_t> X2(nlayer * 2), Y2(nlayer * 2), Z2(nlayer * 2), E2(nlayer * 2);
+  vector<Double_t> X2(nlayer), Y2(nlayer), Z2(nlayer), E2(nlayer);
   Long64_t nvalid = 0;
   struct timeval start, end;
   gettimeofday(&start, NULL);
@@ -96,21 +97,28 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",// ../../b
       E2[edep->Id] += edep->Value;
       X2[edep->Id] += edep->Value * edep->X;
       Y2[edep->Id] += edep->Value * edep->Y;
+      if(edep->Id>=nlayer-25){
+         Z2[edep->Id] += 0;
+         continue;
+      }
       Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
     }
     bool valid = true;
     for(size_t l = 0; l < nlayer ; ++l) {//////////////////*2
       if(!(E2[l] > 0)) {
-        valid = false;
-        break;
+        if(l < nlayer-25){
+	        valid = false;
+          break;
+	      }
       }
       X2[l] /= E2[l], Y2[l] /= E2[l], Z2[l] /= E2[l];//得到加权最后结果
     }
     if(!valid) continue;
     nvalid++;
+    TotalEdep.assign(E2.begin(), E2.end());
 
     // Simulate readout system.
-    for(size_t l = 0; l < nlayer; ++l) {
+    for(size_t l = 0; l < nlayer; l++) {
          XEdep[l] = X2[l]; //  XEdep[l] = X2[2 * l + 1];                      // XEdep-readout
          YEdep[l] = Y2[l]; //  YEdep[l] = Y2[2 * l];                          // YEdep-readout
          ZEdep[l] = Z2[l]; //  ZEdep[l] = (Z2[2 * l] + Z2[2 * l + 1]) / 2.0;  // ZEdep-constant

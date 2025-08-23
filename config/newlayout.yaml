@@ -42,10 +42,10 @@ world:
     - newrpc
     - world_major_gap
     - newrpc
+    - world_minor_gap
+    - newrpc
     - newpbwo4_assembly
     - world_minor_gap3
-    - newrpc
-    - world_minor_gap
     - newrpc
   padding: 20%
   material: *world_material
@@ -55,7 +55,6 @@ world:
 # Comments
 materials:
   - newrpc_air
-  - G4_Pb
 external:
   - newrpc
   - newpbwo4_assembly
