@@ -33,6 +33,7 @@ Run::Run()
   fDetectorConstruction = (DetectorConstruction *)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
   fRootName = "CryMu.root";
   fTree = NULL;
+  fParams = NULL;
   fFile = NULL;
   fIEvent = 0;
 }
@@ -51,14 +52,13 @@ Run *Run::GetInstance()
 
 void Run::InitGeom()
 {
-  G4double scoringHalfZ = fDetectorConstruction->GetScoringHalfZ();
-  const std::vector<G4double> &scoringZs = fDetectorConstruction->GetScoringZs();
-
   fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
   fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
-  fScoringZ = scoringHalfZ * 2;
-  fScoringMaxZs = scoringZs;
-  for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
+  fScoringHalfZ = fDetectorConstruction->GetScoringHalfZ();
+  fScoringTypes = fDetectorConstruction->GetScoringTypes();
+  fScoringMaxZs = fDetectorConstruction->GetScoringZs();
+  for(size_t i = 0; i < fScoringMaxZs.size(); ++i) fScoringMaxZs[i] += fScoringHalfZ[fScoringTypes[i]];
+  fScoringRotations = fDetectorConstruction->GetScoringRotations();
   fStatus.resize(fScoringMaxZs.size());
 }
 
@@ -144,16 +144,21 @@ void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
 void Run::ProcessStepEdep(const G4Step *step)
 {
   const G4ThreeVector &r = step->GetTrack()->GetPosition();
-  G4double x = r.x(), y = r.y(), z = r.z();
-  if(fabs(x) >= fScoringHalfX || fabs(y) >= fScoringHalfY) return;
+  const G4double x = r.x(), y = r.y(), z = r.z();
+
   auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
   if(ub == fScoringMaxZs.end()) return;
-  if(z < *ub - fScoringZ) return;
+  const int zid = static_cast<int>(ub - fScoringMaxZs.begin());
+
+  const G4double hx = fScoringHalfX[fScoringTypes[zid]];
+  const G4double hy = fScoringHalfY[fScoringTypes[zid]];
+  const G4double hz = fScoringHalfZ[fScoringTypes[zid]];
+  if(std::fabs(x) >= hx || std::fabs(y) >= hy) return;
+  if(z < *ub - 2 * hz) return;
 
   G4double edep = step->GetTotalEnergyDeposit();
   if(edep == 0) return;
 
-  Int_t zid = ub - fScoringMaxZs.begin();
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
   if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
@@ -161,6 +166,7 @@ void Run::ProcessStepEdep(const G4Step *step)
     if(it != fProcessMap.end()) process = it->second;
   }
   fStatus[zid] = true;
+
   fEdep[{ zid, pid, process }].Add(edep, x, y);
 }
 

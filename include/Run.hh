@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "EdepData.hh"
+#include "G4RotationMatrix.hh"
 #include "globals.hh"
 
 class TFile;
@@ -50,9 +51,10 @@ private:
   G4String fRootName;
   TTree *fTree, *fParams;
   TFile *fFile;
-  G4double fScoringHalfX, fScoringHalfY, fScoringZ;
-  G4double fScoringOffsetX, fScoringOffsetY;
+  std::vector<G4double> fScoringHalfX, fScoringHalfY, fScoringHalfZ;
+  std::vector<G4int> fScoringTypes;
   std::vector<G4double> fScoringMaxZs;
+  std::vector<G4RotationMatrix> fScoringRotations;
   std::map<std::string, int> fProcessMap;
   std::map<EdepKey, EdepValue> fEdep;
   std::vector<bool> fStatus;
