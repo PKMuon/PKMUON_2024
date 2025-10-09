@@ -142,7 +142,7 @@ void DetectorConstruction::DefineVolumes()
     std::vector<G4double> zs(fScoringZs.size());
     std::vector<G4RotationMatrix> rotations(fScoringRotations.size());
     for(size_t i = 0; i < fScoringZs.size(); ++i) {
-      types[i] = fScoringTypes[i];
+      types[i] = fScoringTypes[indexes[i]];
       zs[i] = fScoringZs[indexes[i]];
       rotations[i] = fScoringRotations[indexes[i]];
     }
