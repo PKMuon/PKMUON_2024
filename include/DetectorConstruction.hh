@@ -34,7 +34,6 @@
 #include "G4ThreeVector.hh"
 #include "G4VUserDetectorConstruction.hh"
 
-class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4LogicalVolumeStore;
@@ -42,6 +41,12 @@ class G4PhysicalVolumeStore;
 
 #define DETECTOR_OPTION_SCORING_ONLY 0b00000001
 #define DETECTOR_OPTION_VACUUM_ENV   0b00000010
+
+enum {
+  DETECTOR_TYPE_NEWRPC,
+  DETECTOR_TYPE_SILICON,
+  DETECTOR_TYPE_COUNT,
+};
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
@@ -51,14 +56,16 @@ public:
   G4VPhysicalVolume *Construct() override;
 
   // Call these methods after Construct().
-  G4double GetScoringHalfX() const { return fElectrodeHalfX; }
-  G4double GetScoringHalfY() const { return fElectrodeHalfY; }
-  G4double GetScoringHalfZ() const { return fScoringHalfZ; }
-  const std::vector<G4double> &GetScoringZs() const { return fScoringZs; }
+  const auto &GetScoringVolume() const { return fScoringVolume; }
+  const auto &GetScoringHalfX() const { return fScoringHalfX; }
+  const auto &GetScoringHalfY() const { return fScoringHalfY; }
+  const auto &GetScoringHalfZ() const { return fScoringHalfZ; }
+  const auto &GetScoringTypes() const { return fScoringTypes; }
+  const auto &GetScoringZs() const { return fScoringZs; }
+  const auto &GetScoringRotations() const { return fScoringRotations; }
   G4double GetDetectorMinZ() const;
   G4double GetDetectorHalfX() const;
   G4double GetDetectorHalfY() const;
-  G4LogicalVolume *GetScoringGasVolume() const { return fScoringGasVolume; }
 
   // Hierarchic options.
   void PrintVolumes(G4VPhysicalVolume *) const;
@@ -70,23 +77,26 @@ public:
       const std::function<void(G4VPhysicalVolume *, const G4ThreeVector &, const G4RotationMatrix &)> &enter,
       const std::function<void(G4VPhysicalVolume *, const G4ThreeVector &, const G4RotationMatrix &)> &leave =
           nullptr) const;
-  G4VPhysicalVolume *PartitionVolume(G4VPhysicalVolume *volume,
-      const std::function<std::vector<G4VSolid *>(G4VSolid *, const G4ThreeVector &, const G4RotationMatrix &)>
-          &partition) const;
 
 private:
   void DefineMaterials();
   void DefineVolumes();
-  void DefineFields();
 
   const int fOptions;
   G4LogicalVolumeStore *fLogicalVolumeStore;
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;
-  G4double fElectrodeHalfX, fElectrodeHalfY, fElectrodeHalfZ, fScoringHalfZ;
-  std::vector<G4double> fElectrodeZs;
+
+  // Indexed by detector type.
+  std::vector<G4LogicalVolume *> fScoringVolume;
+  std::vector<G4double> fScoringHalfX;
+  std::vector<G4double> fScoringHalfY;
+  std::vector<G4double> fScoringHalfZ;
+
+  // Sorted by Z ascendantly.
+  std::vector<G4int> fScoringTypes;
   std::vector<G4double> fScoringZs;
-  G4LogicalVolume *fScoringGasVolume;
+  std::vector<G4RotationMatrix> fScoringRotations;
 };
 
 #endif

@@ -63,14 +63,14 @@ public:
   Params &operator=(const DetectorConstruction &);
 
   Long64_t NEvent;
-  Double_t GammaCut;
-  Double_t GammaThreshold;
-  Double_t ElectronCut;
-  Double_t ElectronThreshold;
-  Double_t PositronCut;
-  Double_t PositronThreshold;
-  Double_t ProtonCut;
-  Double_t ProtonThreshold;
+  std::vector<Double_t> GammaCut;
+  std::vector<Double_t> GammaThreshold;
+  std::vector<Double_t> ElectronCut;
+  std::vector<Double_t> ElectronThreshold;
+  std::vector<Double_t> PositronCut;
+  std::vector<Double_t> PositronThreshold;
+  std::vector<Double_t> ProtonCut;
+  std::vector<Double_t> ProtonThreshold;
 
   std::vector<double> LayerZ;
 

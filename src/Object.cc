@@ -61,20 +61,21 @@ Track &Track::operator=(const G4Track &track)
 
 Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
-  const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringGasVolume()->GetMaterialCutsCouple();
-  const G4Material *material = couple->GetMaterial();
-  G4ProductionCuts *cuts = couple->GetProductionCuts();
+  for(G4LogicalVolume *volume : detectorConstruction.GetScoringVolume()) {
+    const G4MaterialCutsCouple *couple = volume->GetMaterialCutsCouple();
+    const G4Material *material = couple->GetMaterial();
+    G4ProductionCuts *cuts = couple->GetProductionCuts();
 
-  GammaCut = cuts->GetProductionCut("gamma");
-  ElectronCut = cuts->GetProductionCut("e-");
-  PositronCut = cuts->GetProductionCut("e+");
-  ProtonCut = cuts->GetProductionCut("proton");
+    GammaCut.push_back(cuts->GetProductionCut("gamma"));
+    ElectronCut.push_back(cuts->GetProductionCut("e-"));
+    PositronCut.push_back(cuts->GetProductionCut("e+"));
+    ProtonCut.push_back(cuts->GetProductionCut("proton"));
 
-  GammaThreshold = G4RToEConvForGamma().Convert(GammaCut, material);
-  ElectronThreshold = G4RToEConvForElectron().Convert(ElectronCut, material);
-  PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
-  ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
-
+    GammaThreshold.push_back(G4RToEConvForGamma().Convert(GammaCut.back(), material));
+    ElectronThreshold.push_back(G4RToEConvForElectron().Convert(ElectronCut.back(), material));
+    PositronThreshold.push_back(G4RToEConvForPositron().Convert(PositronCut.back(), material));
+    ProtonThreshold.push_back(G4RToEConvForProton().Convert(ProtonCut.back(), material));
+  }
   LayerZ = detectorConstruction.GetScoringZs();
   return *this;
 }
