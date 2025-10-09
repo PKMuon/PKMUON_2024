@@ -61,6 +61,16 @@ Track &Track::operator=(const G4Track &track)
 
 Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
+  GammaCut.clear();
+  ElectronCut.clear();
+  PositronCut.clear();
+  ProtonCut.clear();
+
+  GammaThreshold.clear();
+  ElectronThreshold.clear();
+  PositronThreshold.clear();
+  ProtonThreshold.clear();
+
   for(G4LogicalVolume *volume : detectorConstruction.GetScoringVolume()) {
     const G4MaterialCutsCouple *couple = volume->GetMaterialCutsCouple();
     const G4Material *material = couple->GetMaterial();
