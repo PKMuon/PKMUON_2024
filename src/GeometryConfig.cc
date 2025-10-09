@@ -11,6 +11,7 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4ios.hh"
 
@@ -81,11 +82,13 @@ G4LogicalVolume *ProcessBox(const string &name, YAML::Node node)
   return CreateBoxVolume(name, x / 2, y / 2, z / 2, material);
 }
 
-vector<G4LogicalVolume *> ProcessStackComponents(
-    YAML::Node node, G4double &hx_s, G4double &hy_s, G4double &hz_s, G4double &hx_m, G4double &hy_m, G4double &hz_m)
+vector<G4LogicalVolume *> ProcessStackComponents(YAML::Node node, G4double &hx_s, G4double &hy_s, G4double &hz_s,
+    G4double &hx_m, G4double &hy_m, G4double &hz_m, char axis, unordered_map<G4LogicalVolume *, size_t> &compressible)
 {
   hx_s = hy_s = hz_s = 0.0;
   hx_m = hy_m = hz_m = 0.0;
+  G4double hx_ll = -1, hy_ll = -1, hz_ll = -1, hx_l = -1, hy_l = -1, hz_l = -1, hx = -1, hy = -1, hz = -1;
+  G4Box *box_to_compress = NULL;
   vector<G4LogicalVolume *> children;
   children.reserve(node["components"].size());
   for(YAML::Node child_name : node["components"]) {
@@ -99,13 +102,46 @@ vector<G4LogicalVolume *> ProcessStackComponents(
       G4cerr << "ERROR: expect box component" << G4endl;
       exit(EXIT_FAILURE);
     }
+    hx = box->GetXHalfLength(), hy = box->GetYHalfLength(), hz = box->GetZHalfLength();
+    if(hx_ll >= 0) {
+      hx_s += hx_ll, hy_s += hy_ll, hz_s += hz_ll;
+      hx_m = max(hx_m, hx_ll), hy_m = max(hy_m, hy_ll), hz_m = max(hz_m, hz_ll);
+    }
+    if(box_to_compress && hx_ll >= 0) {
+      G4double dhx = (hx_ll + hx) / 2, dhy = (hy_ll + hy) / 2, dhz = (hz_ll + hz) / 2;
+      switch(axis) {
+      case 'x': hx_l -= dhx, box_to_compress->SetXHalfLength(hx_l); break;
+      case 'y': hy_l -= dhy, box_to_compress->SetYHalfLength(hy_l); break;
+      case 'z': hz_l -= dhz, box_to_compress->SetZHalfLength(hz_l); break;
+      }
+      box_to_compress = NULL;
+    }
+    auto it = compressible.find(child);
+    if(it != compressible.end()) {
+      string name = child->GetName() + "_" + to_string(it->second++);
+      box = new G4Box(name, hx, hy, hz);
+      G4LogicalVolume *child_old = child;
+      child = new G4LogicalVolume(box, child->GetMaterial(), name);
+      for(size_t i = 0; i < child_old->GetNoDaughters(); ++i) {
+        G4VPhysicalVolume *daughter = child_old->GetDaughter(i);
+        string daughter_name = name + "_" + to_string(i) + ":" + daughter->GetLogicalVolume()->GetName();
+        new G4PVPlacement(daughter->GetRotation(), daughter->GetTranslation(), daughter->GetLogicalVolume(),
+            daughter_name, child, false, 0, true);
+      }
+      child->SetVisAttributes(child_old->GetVisAttributes());
+      box_to_compress = box;
+    }
+    hx_ll = hx_l, hy_ll = hy_l, hz_ll = hz_l;
+    hx_l = hx, hy_l = hy, hz_l = hz;
     children.push_back(child);
-    hx_s += box->GetXHalfLength();
-    hy_s += box->GetYHalfLength();
-    hz_s += box->GetZHalfLength();
-    hx_m = max(hx_m, box->GetXHalfLength());
-    hy_m = max(hy_m, box->GetYHalfLength());
-    hz_m = max(hz_m, box->GetZHalfLength());
+  }
+  if(hx_ll >= 0) {
+    hx_s += hx_ll, hy_s += hy_ll, hz_s += hz_ll;
+    hx_m = max(hx_m, hx_ll), hy_m = max(hy_m, hy_ll), hz_m = max(hz_m, hz_ll);
+  }
+  if(hx_l >= 0) {
+    hx_s += hx_l, hy_s += hy_l, hz_s += hz_l;
+    hx_m = max(hx_m, hx_l), hy_m = max(hy_m, hy_l), hz_m = max(hz_m, hz_l);
   }
   return children;
 }
@@ -156,10 +192,11 @@ void ProcessOffset(
   }
 }
 
-G4LogicalVolume *ProcessBottomUp(const string &name, YAML::Node node)
+G4LogicalVolume *ProcessBottomUp(
+    const string &name, YAML::Node node, unordered_map<G4LogicalVolume *, size_t> &compressible)
 {
   G4double hx_s, hy_s, hz_s, hx_m, hy_m, hz_m;
-  auto children = ProcessStackComponents(node, hx_s, hy_s, hz_s, hx_m, hy_m, hz_m);
+  auto children = ProcessStackComponents(node, hx_s, hy_s, hz_s, hx_m, hy_m, hz_m, 'z', compressible);
   G4double hx = hx_m, hy = hy_m, hz = hz_s;
   size_t duplicate = 1;
   if(node["duplicate"]) { duplicate = node["duplicate"].as<size_t>(); }
@@ -181,10 +218,11 @@ G4LogicalVolume *ProcessBottomUp(const string &name, YAML::Node node)
   return logical;
 }
 
-G4LogicalVolume *ProcessLeftRight(const string &name, YAML::Node node)
+G4LogicalVolume *ProcessLeftRight(
+    const string &name, YAML::Node node, unordered_map<G4LogicalVolume *, size_t> &compressible)
 {
   G4double hx_s, hy_s, hz_s, hx_m, hy_m, hz_m;
-  auto children = ProcessStackComponents(node, hx_s, hy_s, hz_s, hx_m, hy_m, hz_m);
+  auto children = ProcessStackComponents(node, hx_s, hy_s, hz_s, hx_m, hy_m, hz_m, 'x', compressible);
   G4double hx = hx_s, hy = hy_m, hz = hz_m;
   size_t duplicate = 1;
   if(node["duplicate"]) { duplicate = node["duplicate"].as<size_t>(); }
@@ -208,10 +246,6 @@ G4LogicalVolume *ProcessLeftRight(const string &name, YAML::Node node)
 
 void ProcessRotation(const string &name, G4RotationMatrix *rotation, const string &axis, G4double degree)
 {
-  if(degree != (int)degree || (int)degree % 90) {
-    G4cerr << "ERROR: " << name << ": Rotation degree must be multiple of 90: " << degree << G4endl;
-    exit(EXIT_FAILURE);
-  }
   if(axis == "x") {
     rotation->rotateX(degree * CLHEP::deg);
   } else if(axis == "y") {
@@ -238,9 +272,17 @@ G4LogicalVolume *ProcessRotation(const string &name, YAML::Node node)
     G4double degree = ParseAbsolutePhysicsVariable(item[1].as<string>()) / CLHEP::deg;
     ProcessRotation(name, rotation, item[0].as<string>(), degree);
   }
-  G4ThreeVector v(box->GetXHalfLength(), box->GetYHalfLength(), box->GetZHalfLength());
-  v = *rotation * v;
-  auto logical = CreateBoxVolume(name, fabs(v.x()), fabs(v.y()), fabs(v.z()), child->GetMaterial());
+  G4double hx = box->GetXHalfLength(), hy = box->GetYHalfLength(), hz = box->GetZHalfLength();
+  G4ThreeVector grid[8] = { { hx, hy, hz }, { hx, hy, -hz }, { hx, -hy, hz }, { hx, -hy, -hz }, { -hx, hy, hz },
+    { -hx, hy, -hz }, { -hx, -hy, hz }, { -hx, -hy, -hz } };
+  hx = 0, hy = 0, hz = 0;
+  for(int i = 0; i < 8; ++i) {
+    grid[i] = *rotation * grid[i];
+    hx = max(hx, grid[i].x());
+    hy = max(hy, grid[i].y());
+    hz = max(hz, grid[i].z());
+  }
+  auto logical = CreateBoxVolume(name, hx, hy, hz, child->GetMaterial());
   node["material"] = (string)logical->GetMaterial()->GetName();
   string child_name = name + "_0:" + child->GetName();
   new G4PVPlacement(rotation, { 0, 0, 0 }, child, child_name, logical, false, 0, true);  // rotation owned by us
@@ -354,6 +396,7 @@ G4Element *ProcessElement(const string &name, YAML::Node)
 }  // namespace
 
 unordered_map<string, G4VisAttributes> GeometryConfig::fMaterialVisAttributes;
+unordered_map<G4LogicalVolume *, size_t> GeometryConfig::fCompressibleVolumes;
 
 GeometryConfig::GeometryConfig(const char *path)
 {
@@ -385,18 +428,24 @@ void GeometryConfig::ProcessVolumes()
     if(node["solid"].as<string>() == "box") {
       logical = ProcessBox(name.as<string>(), node);
     } else if(node["solid"].as<string>() == "bottom_up") {
-      logical = ProcessBottomUp(name.as<string>(), node);
+      logical = ProcessBottomUp(name.as<string>(), node, fCompressibleVolumes);
     } else if(node["solid"].as<string>() == "left_right") {
-      logical = ProcessLeftRight(name.as<string>(), node);
+      logical = ProcessLeftRight(name.as<string>(), node, fCompressibleVolumes);
     } else if(node["solid"].as<string>() == "rotation") {
       logical = ProcessRotation(name.as<string>(), node);
     } else {
       G4cerr << "ERROR: unknown solid type: " << node["solid"].as<string>() << G4endl;
       exit(EXIT_FAILURE);
     }
+    if(node["mid_to_mid"]) fCompressibleVolumes[logical] = 0;
     G4VisAttributes attr = fMaterialVisAttributes[node["material"].as<string>()];
     ProcessVisAttributes(node, attr);
     logical->SetVisAttributes(attr);
+    if(node["step_limit"]) {
+      G4double value = ParseAbsolutePhysicsVariable(node["step_limit"].as<string>());
+      logical->SetUserLimits(new G4UserLimits(value));
+      G4AutoDelete::Register(logical->GetUserLimits());  // owned by us
+    }
   }
 }
 
