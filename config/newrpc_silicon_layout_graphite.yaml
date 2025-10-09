@@ -4,12 +4,11 @@ schema: volume_schema.yaml
 ---
 
 target:
-  color: gray
   solid: box
-  x: 120 mm
-  y: 120 mm
-  z: 30 mm
-  material: G4_Al
+  x: 300 mm
+  y: 300 mm
+  z: 20 mm
+  material: silicon_graphite
 
 world_major_gap:
   hidden: hidden
@@ -17,12 +16,10 @@ world_major_gap:
   components: [target]
   x: &newrpc_x 430 mm
   y: &newrpc_y 430 mm
-  z: 450 mm
-  material: &world_material newrpc_air
+  z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  mid_to_mid: mid_to_mid
+  material: &world_material silicon_air
 
 ---
 
 # Comments
-materials:
-  - G4_Al
-  - newrpc_air

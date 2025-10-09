@@ -9,21 +9,22 @@ world_major_gap:
   solid: box
   x: &newrpc_x 430 mm
   y: &newrpc_y 430 mm
-  z: 450 mm
-  material: &world_material newrpc_air
+  z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  mid_to_mid: mid_to_mid
+  material: &world_material silicon_air
 
 world_minor_gap:
   alternative: alternative
   hidden: hidden
   solid: box
-  x: *newrpc_x
-  y: *newrpc_y
-  z: 150 mm
+  x: *silicon_x
+  y: *silicon_y
+  z: 200 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  mid_to_mid: mid_to_mid
   material: *world_material
 
 world:
   alternative: alternative
-  hidden: hidden
   solid: bottom_up
   components:
     - newrpc
@@ -32,11 +33,11 @@ world:
     - world_minor_gap
     - newrpc
     - world_major_gap
-    - newrpc
+    - silicon_module_xy
     - world_minor_gap
-    - newrpc
+    - silicon_module_uv
     - world_minor_gap
-    - newrpc
+    - silicon_module_xy
   padding: 20%
   material: *world_material
 
