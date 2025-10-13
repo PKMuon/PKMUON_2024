@@ -17,8 +17,8 @@ world_minor_gap:
   alternative: alternative
   hidden: hidden
   solid: box
-  x: *silicon_x
-  y: *silicon_y
+  x: *newrpc_x
+  y: *newrpc_y
   z: 200 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
   mid_to_mid: mid_to_mid
   material: *world_material

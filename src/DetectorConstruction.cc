@@ -43,6 +43,7 @@
 DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
       fWorld(NULL),
+      fScoringVolume(DETECTOR_TYPE_COUNT, NULL),
       fScoringHalfX(DETECTOR_TYPE_COUNT, 0.0),
       fScoringHalfY(DETECTOR_TYPE_COUNT, 0.0),
       fScoringHalfZ(DETECTOR_TYPE_COUNT, 0.0)
