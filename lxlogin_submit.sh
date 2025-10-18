@@ -14,7 +14,7 @@ cmake ..
 make -j
 popd
 
-N=500
+N=100
 echo "${N}" > lxlogin_run.txt
 #./scan_muemumu_"${POSTFIX}".py
 ls build/mup_*_mumu_*.mac | xargs basename -a | sort -V | tee -a lxlogin_run.txt

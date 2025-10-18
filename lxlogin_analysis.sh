@@ -14,7 +14,7 @@ set -ve
 
 mkdir -p build
 pushd build
-NEVENT=0
+NEVENT=10000000
 for I in $(seq 0 $[${N}-1]); do
     ROOTI="root_file/$(basename "${MAC/.mac/_${POSTFIX}_${I}.root}")"
     [ -f "${ROOTI}" ]
@@ -29,6 +29,6 @@ pushd analysis
 ROOT="root_file/$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.root}")"
 RECO="root_file/reco_$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.root}")"
 RENE="root_file/rene_$(basename "${MAC/.mac/_${POSTFIX}_${IRUN}.root}")"
-&> ../build/"${RECO}".log ./clfv-reco.py -n "${NEVENT}" ../build/"${ROOT}" -o ../build/"${RECO}"
-&> ../build/"${RENE}".log ./clfv-reco.py -n "${NEVENT}" ../build/"${ROOT}" -o ../build/"${RENE}" -e 1.0
+&> /dev/null ./clfv-reco.py -n "${NEVENT}" ../build/"${ROOT}" -o ../build/"${RECO}"
+&> /dev/null ./clfv-reco.py -n "${NEVENT}" ../build/"${ROOT}" -o ../build/"${RENE}" -e 1.0
 popd

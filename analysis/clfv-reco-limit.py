@@ -93,15 +93,23 @@ def savefig(path):
     plt.savefig(path)
     print(f'Plot saved to {path}')
 
-plt.figure(figsize=(4, 3))
+def meg(x):
+    return (3.6*0.00001*x*x) / (91.2*91.2)
+
+def megii(x):
+    return (1.17*0.00001*x*x) / (91.2*91.2)
+
+plt.figure(figsize=(6, 4.5))
 for muon_energy in data:
     kvp = np.array(sorted(data[muon_energy].items()))
     plt.plot(kvp[:,0], kvp[:,1], label=f'$E_\\mu = {muon_energy:.2f}$ GeV')
+plt.plot(kvp[:,0], meg(kvp[:,0]), label='MEG')
+plt.plot(kvp[:,0], megii(kvp[:,0]), label='MEG-II', linestyle='--')
 plt.xlabel(r'$m_{Z^\prime}$ [GeV]')
 plt.ylabel(r'$\lambda_{e\mu}\lambda_{\mu\mu}$ 95% C.L. upper limit')
 plt.yscale('log')
 plt.grid()
-plt.legend()
+plt.legend(loc='center right')
 plt.tight_layout()
 savefig(args.output)
 plt.close()

@@ -9,7 +9,7 @@ from scipy.interpolate import make_interp_spline
 
 ki_points = glob.glob('clfv/data/muemumu_ki_*.root')
 ki_point_pattern = re.compile(r'muemumu_ki_([^_/]*)\.root$')
-muon_energies = np.array([33.6, 50.2, 77.2])  # unit GeV
+muon_energies = np.array([40, 60, 80])  # unit GeV
 target_xs = 1e-3 / (2.7 * N_A * 3) * 1e36  # for 3 cm thick Al, unit pb
 
 mac_template = '''

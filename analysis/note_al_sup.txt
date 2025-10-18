@@ -1,0 +1,6 @@
+./clfv-reco-merge.py --output ../build/root_file/reco_mup_40.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/reco_mup_40.0GeV_Zp_*.root &
+./clfv-reco-merge.py --output ../build/root_file/reco_mup_60.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/reco_mup_60.0GeV_Zp_*.root &
+./clfv-reco-merge.py --output ../build/root_file/reco_mup_80.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/reco_mup_80.0GeV_Zp_*.root &
+./clfv-reco-merge.py --output ../build/root_file/rene_mup_40.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/rene_mup_40.0GeV_Zp_*.root &
+./clfv-reco-merge.py --output ../build/root_file/rene_mup_80.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/rene_mup_80.0GeV_Zp_*.root &
+./clfv-reco-merge.py --output ../build/root_file/rene_mup_60.0GeV_background_mumu_al.root --nevent 1e8 ../build/root_file/rene_mup_60.0GeV_Zp_*.root &
