@@ -38,6 +38,8 @@
 
 int main(int argc, char **argv)
 {
+  setenv("XDG_SESSION_TYPE", "x11", 1);  // Avoid incompatibilities to wayland.
+
   // Detect interactive mode (if no arguments) and define UI session.
   G4UIExecutive *ui = NULL;
   if(argc == 1) ui = new G4UIExecutive(argc, argv);
