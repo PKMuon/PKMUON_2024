@@ -1,0 +1,141 @@
+schema: volume_schema.yaml
+
+---
+
+Air:
+  color: blue
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_AIR
+
+Carbon:
+  color: black
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_GRAPHITE
+
+Glass:
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: newrpc_glass
+
+Row1:
+  solid: left_right
+  components:
+    - Air
+    - Carbon
+    - Glass
+  material: newrpc_air
+
+Al:
+  color: blue
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_Al
+
+Ti:
+  color: yellow
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_Ti
+
+Fe:
+  color: red
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_Fe
+
+Row2:
+  solid: left_right
+  components:
+    - Al
+    - Ti
+    - Fe
+  material: newrpc_air
+
+Cu:
+  color: red
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_Cu
+
+Pb:
+  color: gray
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_Pb
+
+Wo:
+  color: green
+  solid: box
+  x: 40 mm
+  y: 40 mm
+  z: 40 mm
+  material: G4_W
+
+Row3:
+  solid: left_right
+  components:
+    - Cu
+    - Pb
+    - Wo
+  material: newrpc_air
+
+Row1_r90:
+  solid: rotation
+  components: [Row1, [z, 270 deg]]
+
+Row2_r90:
+  solid: rotation
+  components: [Row2, [z, 270 deg]]
+
+Row3_r90:
+  solid: rotation
+  components: [Row3, [z, 270 deg]]
+
+target_r90:
+  solid: left_right
+  components: 
+    - Row1_r90
+    - Row2_r90
+    - Row3_r90
+  material: newrpc_air
+
+target:
+  solid: rotation
+  components: [target_r90, [z, 90 deg]]
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &rpc_x 400 mm
+  y: &rpc_y 400 mm
+  z: 470 mm
+  offset: [0, 0, -49.3 mm]
+  material: &world_material newrpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Pb
+  - newrpc_air
+external:
+  - newrpc

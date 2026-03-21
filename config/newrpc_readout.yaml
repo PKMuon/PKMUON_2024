@@ -1,0 +1,108 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+# [NOTE] The board thickness equal the sum of the readout plate and the readout bars.
+newrpc_xy_readout_plate:
+  solid: box
+  x: &newrpc_readout_plate_x 300 mm
+  y: &newrpc_readout_plate_y 300 mm
+  z: &newrpc_xy_readout_plate_z 0.3 mm
+  material: newrpc_fr4
+
+# [NOTE] The board thickness equal the sum of the readout plate and the readout bars.
+newrpc_t_readout_plate:
+  solid: box
+  x: *newrpc_readout_plate_x
+  y: *newrpc_readout_plate_y
+  z: &newrpc_t_readout_plate_z 1.565 mm
+  material: newrpc_fr4
+
+newrpc_x_readout_bar:
+  solid: box
+  x: 1.333 mm
+  y: 280 mm
+  z: &newrpc_readout_bar_z 0.1 mm
+  material: newrpc_readout_bar
+  color: red
+  alpha: 0.5
+
+
+# [NOTE] This object is defined as having been rorated 90 degrees around the z-axis.
+newrpc_y_readout_cell_rz90:
+  solid: box
+  x: 2.923 mm
+  y: &newrpc_readout_cell_y 2.124 mm
+  z: *newrpc_readout_bar_z
+  material: newrpc_readout_bar
+  color: blue
+  alpha: 0.5
+
+# [NOTE] This object is defined as having been rorated 90 degrees around the z-axis.
+newrpc_y_readout_gas_rz90:
+  solid: box
+  x: 0.27 mm
+  y: *newrpc_readout_cell_y
+  z: *newrpc_readout_bar_z
+  material: newrpc_gas
+
+# [NOTE] This object is defined as having been rorated 90 degrees around the z-axis.
+newrpc_y_readout_bar_rz90:
+  solid: left_right
+  components:
+    - newrpc_y_readout_gas_rz90
+    - newrpc_y_readout_cell_rz90
+    - newrpc_y_readout_gas_rz90
+  duplicate: 81
+  material: newrpc_gas
+
+newrpc_y_readout_bar:
+  solid: rotation
+  components: [newrpc_y_readout_bar_rz90, [z, 270 deg]]
+
+newrpc_xy_readout_bars:
+  solid: left_right
+  components: 
+    - newrpc_y_readout_bar
+    - newrpc_x_readout_bar
+  duplicate: 81
+  material: newrpc_gas
+
+newrpc_xy_readout_board:
+  solid: bottom_up
+  components:
+    - newrpc_xy_readout_plate
+    - newrpc_xy_readout_bars
+  material: newrpc_gas
+
+newrpc_t_readout_cu:
+  solid: box
+  x: 280 mm
+  y: 280 mm
+  z: 35 um
+  material: newrpc_readout_cu
+
+newrpc_t_readout_board:
+  solid: bottom_up
+  components:
+    - newrpc_t_readout_plate
+    - newrpc_t_readout_cu
+  material: newrpc_gas
+
+# Specifies resolution, not a part of construct.
+newrpc_cell:
+  solid: box
+  x: 0.5 mm
+  y: 0.5 mm
+  z: *newrpc_readout_bar_z
+  material: newrpc_gas
+
+---
+
+# Comments
+materials:
+  - newrpc_fr4
+  - newrpc_gas
+  - newrpc_readout_bar
+  - newrpc_readout_cu

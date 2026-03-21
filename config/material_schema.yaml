@@ -1,0 +1,17 @@
+# Schema
+name:  # unique material name to create
+  alternative:  # optional, disabling override
+  hidden:  # optional, disabling visualization, excluding other visualization attributes
+  color:  # optional
+  alpha:  # optional, significant with color specified
+  line_style:  # optional, unsigned integer
+  line_width:  # optional
+  type: element  # optional, G4Element
+  type: material  # optional, G4Material (default)
+  from: nist  # optional, excluding density, components
+  alias:  # optional, excluding density, components
+  density:
+  components: [[name, count], ...]  # type -> type
+  components: [[type, name, count], ...]
+  components: [[name, fraction], ...]  # type -> type
+  components: [[type, name, fraction], ...]

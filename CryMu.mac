@@ -1,0 +1,21 @@
+# ----------------------------------------------
+# Settings
+# ----------------------------------------------
+
+/control/verbose 2
+/material/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gun/setMinEnergy 1000 GeV
+/gun/setMaxEnergy 10000 GeV
+
+# ----------------------------------------------
+# run
+# ----------------------------------------------
+
+/run/initialize
+/rlt/SetFileName root_file/CryMu.root
+/run/printProgress 1000
+/run/beamOn 1000000

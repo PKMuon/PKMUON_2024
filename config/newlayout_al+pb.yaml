@@ -1,0 +1,74 @@
+schema: volume_schema.yaml
+
+---
+
+Al:
+  color: blue
+  solid: box
+  x: 120 mm
+  y: 120 mm
+  z: 30 mm
+  material: G4_Al
+
+Pb:
+  color: gray
+  solid: box
+  x: 120 mm
+  y: 210 mm
+  z: 30 mm
+  material: G4_Pb
+
+air1:
+  hidden: hidden
+  solid: box
+  x: 15 mm
+  y: 210 mm
+  z: 30 mm
+  material: &world_material newrpc_air
+
+air2:
+  hidden: hidden
+  solid: box
+  x: 120 mm
+  y: 120 mm
+  z: 30 mm
+  material: *world_material
+
+target_half1:
+  solid: left_right
+  components: [Pb, air1]
+  material: *world_material
+
+Al_air:
+  solid: left_right
+  components: [Al, air2]
+  material: *world_material
+
+target_half2:
+  solid: rotation
+  components: [Al_air, [z, 90 deg]]
+
+target:
+  solid: left_right
+  components: [target_half1, target_half2]
+  material: newrpc_air
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &rpc_x 400 mm
+  y: &rpc_y 400 mm
+  z: 470 mm
+  offset: [7.5 mm, 0, -49.3 mm]
+  material: &world_material newrpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Al
+  - G4_Pb
+  - newrpc_air
+external:
+  - newrpc

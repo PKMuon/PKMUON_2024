@@ -1,0 +1,46 @@
+# Schema
+schema: volume_schema.yaml
+
+---
+
+world_major_gap: &world_major_gap
+  alternative: alternative
+  hidden: hidden
+  solid: box
+  x: &newrpc_x 400 mm
+  y: &newrpc_y 400 mm
+  z: 220 mm
+  material: &world_material newrpc_air
+
+world_minor_gap:
+  alternative: alternative
+  hidden: hidden
+  solid: box
+  x: *newrpc_x
+  y: *newrpc_y
+  z: 170 mm
+  material: *world_material
+
+world:
+  alternative: alternative
+  hidden: hidden
+  solid: bottom_up
+  components:
+    - newrpc
+    - world_minor_gap
+    - newrpc
+    - world_major_gap
+    - newrpc
+    - world_minor_gap
+    - newrpc
+  padding: 200%
+  material: *world_material
+
+---
+
+# Comments
+materials:
+  - newrpc_air
+external:
+  - newrpc
+  - world_major_gap

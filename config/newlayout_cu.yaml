@@ -1,0 +1,73 @@
+schema: volume_schema.yaml
+
+---
+
+cu_cell_rz90:
+  color: gray
+  solid: box
+  x: 2 mm
+  y: 10 mm
+  z: &high 40 mm 
+  material: G4_Cu
+
+air_cell_rz90:
+  solid: box
+  x: 30 mm
+  y: 10 mm
+  z: *high
+  material: newrpc_air
+
+sample_bar_rz90:
+  solid: left_right
+  components:
+    - air_cell_rz90
+    - cu_cell_rz90
+  duplicate: 7
+  material: newrpc_air
+
+sample_bar_1:
+  solid: rotation
+  components: [sample_bar_rz90, [z, 270 deg]]
+
+sample_bar_2:
+  color: gray
+  solid: box
+  x: 1 mm
+  y: 200 mm
+  z: *high
+  material: G4_Cu
+
+air_bar:
+  solid: box
+  x: 30 mm
+  y: 200 mm
+  z: *high
+  material: newrpc_air
+
+target:
+  solid: left_right
+  components:
+    #- air_bar
+    - sample_bar_2
+    - air_bar
+  duplicate: 7
+  material: newrpc_air
+
+world_major_gap:
+  hidden: hidden
+  solid: bottom_up
+  components: [target]
+  x: &rpc_x 400 mm
+  y: &rpc_y 400 mm
+  z: 470 mm
+  offset: [0, 0, -49.3 mm]
+  material: &world_material newrpc_air
+
+---
+
+# Comments
+materials:
+  - G4_Cu
+  - newrpc_air
+external:
+  - newrpc
