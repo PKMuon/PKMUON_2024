@@ -105,7 +105,7 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   Long64_t nvalid = 0;
   struct timeval start, end;
   gettimeofday(&start, NULL);
-  double dz = 425 - params->LayerZ[0];
+  double dz = 325 - params->LayerZ[0];
 
   Long64_t nentry = tree_in->GetEntries();
 
@@ -130,7 +130,7 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
       assert((size_t)edep->Id < E2.size());
       string process = edep->Process >= 0 ? ((Process *)Processes->UncheckedAt(edep->Process))->Name : "";
       //cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " trackid=" << edep->trackID << " process=" << process << endl;
-      //if (edep->Value < 0.5) continue; 
+
       E2[edep->Id] += edep->Value;
       X2[edep->Id] += edep->Value * edep->X;
       Y2[edep->Id] += edep->Value * edep->Y;
