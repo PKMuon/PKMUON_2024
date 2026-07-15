@@ -25,6 +25,14 @@ mwdc_down_gas_wires_to_film:
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
+mwdc_down_gas_wires:
+  solid: box
+  x: *mwdc_down_film_x
+  y: *mwdc_down_film_y
+  z: 5 * mm
+  mid_to_mid: mid_to_mid
+  material: mwdc_gas
+
 mwdc_down_field_wires:
   solid: box
   x: &mwdc_down_sensitive_x 16 * cm

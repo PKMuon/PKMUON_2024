@@ -25,6 +25,14 @@ mwdc_up_gas_wires_to_film:
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
+mwdc_up_gas_wires:
+  solid: box
+  x: *mwdc_up_film_x
+  y: *mwdc_up_film_y
+  z: 2.5 * mm
+  mid_to_mid: mid_to_mid
+  material: mwdc_gas
+
 mwdc_up_field_wires:
   solid: box
   x: &mwdc_up_sensitive_x 8 * cm
