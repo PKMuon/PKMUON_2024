@@ -20,41 +20,41 @@ mwdc_gas:
   # density = 0.8 * 1.662e-03 [argon] + 0.2 * 1.842e-03 [carbon dioxide] = 1.698e-03 g/cm3
   color: blue
   alpha: 0.1
-  density: 1.698e-03 * g/cm3
+  density: 1.698e-03 g/cm3
   components:
     - [G4_Ar, 0.8]
     - [G4_CARBON_DIOXIDE, 0.2]
 
 mwdc_raw_field_wires:
-  density: 8.864 * g/cm3
+  density: 8.864 g/cm3
   components:
-    - [G4_Cu, 0.99]  # 8.935 * g/cm3
-    - [G4_Be, 0.01]  # 1.845 * g/cm3
+    - [G4_Cu, 0.99]  # 8.935 g/cm3
+    - [G4_Be, 0.01]  # 1.845 g/cm3
 
 mwdc_raw_signal_wires:
-  density: 19.254 * g/cm3
+  density: 19.254 g/cm3
   components:
-    - [G4_W, 0.99]   # 19.254 * g/cm3
-    - [G4_Au, 0.01]  # 19.283 * g/cm3
+    - [G4_W, 0.99]   # 19.254 g/cm3
+    - [G4_Au, 0.01]  # 19.283 g/cm3
 
 mwdc_up_field_wires:
   color: gray
-  density: 8.864 * ... * g/cm3
+  density: 8.864 * ... g/cm3
   components: [mwdc_raw_field_wires]
 
 mwdc_down_field_wires:
   color: gray
-  density: 8.864 * ... * g/cm3
+  density: 8.864 * ... g/cm3
   components: [mwdc_raw_field_wires]
 
 mwdc_up_signal_wires:
   color: yellow
-  density: 19.254 * ... * g/cm3
+  density: 19.254 * ... g/cm3
   components: [mwdc_raw_signal_wires]
 
 mwdc_down_signal_wires:
   color: yellow
-  density: 19.254 * ... * g/cm3
+  density: 19.254 * ... g/cm3
   components: [mwdc_raw_signal_wires]
 
 mwdc_film:
