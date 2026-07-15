@@ -26,36 +26,43 @@ mwdc_gas:
     - [G4_CARBON_DIOXIDE, 0.2]
 
 mwdc_raw_field_wires:
-  density: 8.864 g/cm3
+  density: 8.889 g/cm3
   components:
     - [G4_Cu, 0.99]  # 8.935 g/cm3
     - [G4_Be, 0.01]  # 1.845 g/cm3
 
-mwdc_raw_signal_wires:
+mwdc_raw_anode_wires:
   density: 19.300 * g/cm3
   components:
     - [G4_W, 0.99]   # 19.3 * g/cm3
     - [G4_Au, 0.01]  # 19.32 * g/cm3
 
-mwdc_up_field_wires:
-  color: gray
-  density: 8.864 * 16 * 8 * 3.14 * 37.5e-4 * 37.5e-4 / 0.48 * g/cm3
-  components: [mwdc_raw_field_wires]
+mwdc_raw_cathode_wires:
+  alias: mwdc_raw_field_wires
 
-mwdc_down_field_wires:
+mwdc_up_cathode_wires:
   color: gray
-  density: 8.864 * 16 * 16 * 3.14 * 37.5e-4 * 37.5e-4 / 1.92 * g/cm3
-  components: [mwdc_raw_field_wires]
+  density: 0.0523060 * g/cm3
+  components: [mwdc_raw_cathode_wires]
+
+mwdc_down_cathode_wires:
+  color: gray
+  density: 0.0261799 * g/cm3
+  components: [mwdc_raw_cathode_wires]
 
 mwdc_up_signal_wires:
   color: yellow
-  density: 19.300 * 16 * 8 * 3.14 * 10e-4 * 10e-4 / 0.48 * g/cm3
-  components: [mwdc_raw_signal_wires]
+  density: 0.0604443 * g/cm3
+  components: 
+    - [material, mwdc_raw_field_wires, 0.86625]
+    - [material, mwdc_raw_anode_wires, 0.13375]
 
 mwdc_down_signal_wires:
   color: yellow
-  density: 19.300 * 16 * 16 * 3.14 * 10e-4 * 10e-4 / 1.92 * g/cm3
-  components: [mwdc_raw_signal_wires]
+  density: 0.0302221 * g/cm3
+  components: 
+    - [material, mwdc_raw_field_wires, 0.86625]
+    - [material, mwdc_raw_anode_wires, 0.13375]
 
 mwdc_film:
   color: green
@@ -66,4 +73,5 @@ mwdc_film:
 
 # Comments
 # all wire are average density with [up 8cmx8cmx75um, down 16cmx16cmx75um] in MWDC
-# density = wire_density * num * wire_volume / total_volume
+# cathode layer: 8 cathode wires[Be-Cu], phi=75um
+# signal layer: 8 anode wires[W-Au], phi=20um + 8 field wires[Be-Cu], phi=75um 
