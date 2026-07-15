@@ -32,29 +32,29 @@ mwdc_raw_field_wires:
     - [G4_Be, 0.01]  # 1.845 g/cm3
 
 mwdc_raw_signal_wires:
-  density: 19.254 g/cm3
+  density: 19.300 * g/cm3
   components:
-    - [G4_W, 0.99]   # 19.254 g/cm3
-    - [G4_Au, 0.01]  # 19.283 g/cm3
+    - [G4_W, 0.99]   # 19.3 * g/cm3
+    - [G4_Au, 0.01]  # 19.32 * g/cm3
 
 mwdc_up_field_wires:
   color: gray
-  density: 8.864 * ... g/cm3
+  density: 8.864 * 16 * 8 * 3.14 * 37.5e-4 * 37.5e-4 / 0.48 * g/cm3
   components: [mwdc_raw_field_wires]
 
 mwdc_down_field_wires:
   color: gray
-  density: 8.864 * ... g/cm3
+  density: 8.864 * 16 * 16 * 3.14 * 37.5e-4 * 37.5e-4 / 1.92 * g/cm3
   components: [mwdc_raw_field_wires]
 
 mwdc_up_signal_wires:
   color: yellow
-  density: 19.254 * ... g/cm3
+  density: 19.300 * 16 * 8 * 3.14 * 10e-4 * 10e-4 / 0.48 * g/cm3
   components: [mwdc_raw_signal_wires]
 
 mwdc_down_signal_wires:
   color: yellow
-  density: 19.254 * ... g/cm3
+  density: 19.300 * 16 * 16 * 3.14 * 10e-4 * 10e-4 / 1.92 * g/cm3
   components: [mwdc_raw_signal_wires]
 
 mwdc_film:
@@ -65,3 +65,5 @@ mwdc_film:
 ---
 
 # Comments
+# all wire are average density with [up 8cmx8cmx75um, down 16cmx16cmx75um] in MWDC
+# density = wire_density * num * wire_volume / total_volume
