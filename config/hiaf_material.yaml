@@ -1,0 +1,69 @@
+# Schema
+schema: hiaf_material_schema.yaml
+
+---
+
+G4_Galactic: {from: nist}
+G4_AIR: {from: nist}
+G4_Pb: {from: nist}        # Reserved for targets.
+G4_GRAPHITE: {from: nist}  # Reserved for targets.
+G4_Ar: {from: nist}        # drift chamber gas #1
+G4_CARBON_DIOXIDE: {from: nist}  # drift chamber gas #2
+G4_Au: {from: nist}
+G4_W: {from: nist}
+G4_Be: {from: nist}
+G4_Cu: {from: nist}
+
+G4_KAPTON: {from: nist}    # drift chamber film
+
+drift_wire_field:  # drift chamber field wire
+  color: gray
+  
+  components:
+    - [G4_Cu, 0.99]
+    - [G4_Be, 0.01]
+
+
+drift_wire_posi:  # drift chamber position wire
+  color: yellow
+  components:
+    - [G4_W, 0.99]
+    - [G4_Au, 0.01]
+
+MWDC_gas:                  # Muiti-Wire Drift Chamber gas mixture
+  density: 1.698e-03
+  components:
+    - [G4_Ar, 0.8]
+    - [G4_CARBON_DIOXIDE, 0.2]
+# 80% Ar + 20% CO2
+# density = 0.8 * 1.662e-03 [argon] +  0.2 * 1.842e-03 [carbon dioxide] = 1.698e-03 g/cm3
+
+field_wire:   # Cu 99% + Be 1%
+  density: 8.8889
+  components:
+    - [element, G4_Cu, 0.99]
+    - [element, G4_Be, 0.01]
+
+signal_wire:    # W 99% + Au 1%
+  density: 19.3002
+  components:
+    - [element, G4_W, 0.99]
+    - [element, G4_Au, 0.01]
+
+
+MWDC_wire_up:
+  color: yellow
+  density: 0.0604
+  components:
+    - [material, field_wire, 0.866]   # mass_field_wires/ mass_total 
+    - [material, signal_wire, 0.134]    # mass_signal_wires/ mass_total
+# geo: 8[cm]x8[cm]x75[um]
+
+
+MWDC_wire_down:
+  color: gray
+  density: 0.0302
+  components:
+    - [material, field_wire, 0.866]
+    - [material, signal_wire, 0.134]
+# geo: 16[cm]x16[cm]x75[um]
