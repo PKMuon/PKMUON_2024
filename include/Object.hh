@@ -74,7 +74,7 @@ public:
 
   std::vector<double> ScoringZs;
   std::vector<int> ScoringRotations;
-  Double_t ScoringHalfX, ScoringHalfY, ScoringHalfZ, StripInterval;
+  Double_t ScoringHalfX, ScoringHalfY, ScoringHalfZ;
 
   ClassDef(Params, 1);
 };

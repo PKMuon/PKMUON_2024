@@ -61,7 +61,7 @@ Track &Track::operator=(const G4Track &track)
 
 Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
-  const G4MaterialCutsCouple *couple = detectorConstruction.GetSiliconStrip()->GetMaterialCutsCouple();
+  const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringVolume()->GetMaterialCutsCouple();
   const G4Material *material = couple->GetMaterial();
   G4ProductionCuts *cuts = couple->GetProductionCuts();
 
@@ -83,7 +83,6 @@ Params &Params::operator=(const DetectorConstruction &detectorConstruction)
   ScoringHalfX = detectorConstruction.GetScoringHalfX();
   ScoringHalfY = detectorConstruction.GetScoringHalfY();
   ScoringHalfZ = detectorConstruction.GetScoringHalfZ();
-  StripInterval = detectorConstruction.GetStripInterval();
   return *this;
 }
 

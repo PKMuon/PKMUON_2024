@@ -48,8 +48,7 @@ private:
   G4String fRootName;
   TTree *fTree;
   TFile *fFile;
-  G4double fScoringHalfX, fScoringHalfY, fScoringZ, fStripInterval;
-  G4int fNSiliconStrips;
+  G4double fScoringHalfX, fScoringHalfY, fScoringZ;
   std::vector<G4double> fScoringMaxZs;
   std::vector<G4RotationMatrix> fScoringRotations;
   std::map<std::string, int> fProcessMap;

@@ -47,12 +47,10 @@
 DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
       fWorld(NULL),
-      fSiliconStrip(NULL),
+      fScoringVolume(NULL),
       fScoringHalfX(0.0),
       fScoringHalfY(0.0),
-      fScoringHalfZ(0.0),
-      fStripInterval(0.0),
-      fNSiliconStrips(0)
+      fScoringHalfZ(0.0)
 {
   if(fOptions) { throw std::invalid_argument("options unimplemented"); }
   fLogicalVolumeStore = G4LogicalVolumeStore::GetInstance();
@@ -79,7 +77,7 @@ static std::vector<std::string> split(const std::string &str, char c)
 void DetectorConstruction::DefineMaterials()
 {
   std::vector<std::string> paths = {
-    "../config/silicon_material.yaml",
+    "../config/hiaf_material.yaml",
   };
   char *p = getenv("MUPOS_MATERIAL_CONFIG");
   if(p) { paths = split(p, ':'); }
@@ -89,30 +87,27 @@ void DetectorConstruction::DefineMaterials()
 void DetectorConstruction::DefineVolumes()
 {
   std::vector<std::string> paths = {
-    "../config/silicon_detector.yaml",
-    "../config/silicon_layout.yaml",
+    "../config/hiaf_detector.yaml",
+    "../config/hiaf_layout.yaml",
   };
   char *p = getenv("MUPOS_VOLUME_CONFIG");
   if(p) { paths = split(p, ':'); }
   for(const std::string &path : paths) { GeometryConfig::LoadVolumes(path.c_str()); }
 
   fWorld = new G4PVPlacement(0, { 0, 0, 0 }, fLogicalVolumeStore->GetVolume("world"), "world", 0, false, 0, true);
-  fSiliconStrip = fLogicalVolumeStore->GetVolume("silicon_strip");
-  G4LogicalVolume *silicon_plane = fLogicalVolumeStore->GetVolume("silicon_plane");
-  fScoringHalfX = dynamic_cast<G4Box *>(silicon_plane->GetSolid())->GetXHalfLength();
-  fScoringHalfY = dynamic_cast<G4Box *>(silicon_plane->GetSolid())->GetYHalfLength();
-  fScoringHalfZ = dynamic_cast<G4Box *>(silicon_plane->GetSolid())->GetZHalfLength();
+  fScoringVolume = nullptr;  // [TODO]
+  fScoringHalfX = 0.0;  // [TODO]
+  fScoringHalfY = 0.0;  // [TODO]
+  fScoringHalfZ = 0.0;  // [TODO]
 
   fScoringZs.assign(0, 0.0);
   fScoringRotations.assign(0, G4RotationMatrix());
-  G4VPhysicalVolume *silicon_plane_physical = NULL;
   WalkVolume(fWorld,
-      [silicon_plane, this, &silicon_plane_physical](
+      [this](
           G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &rm) {
-        if(volume->GetLogicalVolume() != silicon_plane) { return; }
+        if(volume->GetLogicalVolume() != fScoringVolume) { return; }  // [XXX]
         fScoringZs.push_back(r.z());
         fScoringRotations.push_back(rm);
-        silicon_plane_physical = volume;
       });
   {
     std::vector<size_t> indexes(fScoringZs.size());
@@ -131,22 +126,6 @@ void DetectorConstruction::DefineVolumes()
   for(size_t i = 0; i < fScoringZs.size(); ++i) {
     G4cout << "  * " << fScoringZs[i] << ": " << fScoringRotations[i].delta() / deg << G4endl;
   }
-
-  fNSiliconStrips = 0;
-  G4double x0 = -1, x1 = -1;
-  WalkVolume(silicon_plane_physical,
-      [this, &x0, &x1](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
-        if(volume->GetLogicalVolume() != fSiliconStrip) { return; }
-        ++fNSiliconStrips;
-        if(x0 < 0) {
-          x0 = r.x();
-        } else if(x1 < 0) {
-          x1 = r.x();
-        }
-      });
-  assert(x0 >= 0 && x1 >= 0);
-  fStripInterval = x1 - x0;
-  assert(fStripInterval > 0);
 }
 
 G4VPhysicalVolume *DetectorConstruction::Construct()
@@ -236,9 +215,10 @@ G4double DetectorConstruction::GetDetectorMinZ() const
 {
   G4double z = 1.0 / 0.0;
   WalkVolume(NULL, [&z](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
-    if(volume->GetLogicalVolume()->GetName() != "silicon_module_xy") { return; }
-    auto box = dynamic_cast<G4Box *>(volume->GetLogicalVolume()->GetSolid());
-    z = std::min(z, r.z() - box->GetZHalfLength());
+    //if(volume->GetLogicalVolume()->GetName() != "hiaf_module_xy") { return; }  // [TODO]
+    if(auto box = dynamic_cast<G4Box *>(volume->GetLogicalVolume()->GetSolid())) {
+      z = std::min(z, r.z() - box->GetZHalfLength());
+    }
   });
   return z;
 }

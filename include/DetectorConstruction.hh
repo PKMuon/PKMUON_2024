@@ -51,12 +51,10 @@ public:
   G4VPhysicalVolume *Construct() override;
 
   // Call these methods after Construct().
-  G4LogicalVolume *GetSiliconStrip() const { return fSiliconStrip; }
+  G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
   G4double GetScoringHalfX() const { return fScoringHalfX; }
   G4double GetScoringHalfY() const { return fScoringHalfY; }
   G4double GetScoringHalfZ() const { return fScoringHalfZ; }
-  G4double GetStripInterval() const { return fStripInterval; }
-  G4int GetNSiliconStrips() const { return fNSiliconStrips; }
   const std::vector<G4double> &GetScoringZs() const { return fScoringZs; }
   const std::vector<G4RotationMatrix> &GetScoringRotations() const { return fScoringRotations; }
   G4double GetDetectorMinZ() const;
@@ -83,9 +81,8 @@ private:
   G4LogicalVolumeStore *fLogicalVolumeStore;
   G4PhysicalVolumeStore *fPhysicalVolumeStore;
   G4VPhysicalVolume *fWorld;
-  G4LogicalVolume *fSiliconStrip;
-  G4double fScoringHalfX, fScoringHalfY, fScoringHalfZ, fStripInterval;
-  G4int fNSiliconStrips;
+  G4LogicalVolume *fScoringVolume;
+  G4double fScoringHalfX, fScoringHalfY, fScoringHalfZ;
   std::vector<G4double> fScoringZs;
   std::vector<G4RotationMatrix> fScoringRotations;
 };

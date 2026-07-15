@@ -54,8 +54,6 @@ void Run::InitGeom()
   fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
   fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
   fScoringZ = scoringHalfZ * 2;
-  fStripInterval = fDetectorConstruction->GetStripInterval();
-  fNSiliconStrips = fDetectorConstruction->GetNSiliconStrips();
   fScoringMaxZs = scoringZs;
   fScoringRotations = fDetectorConstruction->GetScoringRotations();
   for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
@@ -152,8 +150,7 @@ void Run::AddStep(const G4Step *step)
   if(edep == 0) return;
 
   Int_t zid = ub - fScoringMaxZs.begin();
-  Int_t xid = ((fScoringRotations[zid].inverse() * r).x() + fScoringHalfX) / fStripInterval;
-  Int_t id = zid * fNSiliconStrips + xid;
+  Int_t id = zid;  // [TODO]
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
   if(const G4VProcess *p = step->GetTrack()->GetCreatorProcess()) {
