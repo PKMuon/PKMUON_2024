@@ -1,5 +1,5 @@
 # Schema
-schema: hiaf_material_schema.yaml
+schema: material_schema.yaml
 
 ---
 
