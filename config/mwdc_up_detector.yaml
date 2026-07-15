@@ -44,7 +44,7 @@ mwdc_up_signal_wires:
   solid: box
   x: *mwdc_up_sensitive_x
   y: *mwdc_up_sensitive_y
-  z: 20 um
+  z: 75 um
   material: mwdc_up_signal_wires
 
 mwdc_up_detector:
@@ -75,6 +75,7 @@ mwdc_up_detector:
 
     - mwdc_up_gas_wires_to_film
     - mwdc_up_film
+  material: mwdc_gas
 
 ---
 

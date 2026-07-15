@@ -4,16 +4,16 @@ schema: volume_schema.yaml
 
 mwdc_down_film:
   solid: box
-  x: &mwdc_down_film_x 20 * cm
-  y: &mwdc_down_film_y 20 * cm
-  z: 13 * um
+  x: &mwdc_down_film_x 20 cm
+  y: &mwdc_down_film_y 20 cm
+  z: 13 um
   material: mwdc_film
 
 mwdc_down_gas_film_to_wires:
   solid: box
   x: *mwdc_down_film_x
   y: *mwdc_down_film_y
-  z: 22 * mm
+  z: 22 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
@@ -21,7 +21,7 @@ mwdc_down_gas_wires_to_film:
   solid: box
   x: *mwdc_down_film_x
   y: *mwdc_down_film_y
-  z: 21 * mm
+  z: 21 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
@@ -29,22 +29,22 @@ mwdc_down_gas_wires:
   solid: box
   x: *mwdc_down_film_x
   y: *mwdc_down_film_y
-  z: 5 * mm
+  z: 5 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
 mwdc_down_cathode_wires:
   solid: box
-  x: &mwdc_down_sensitive_x 16 * cm
-  y: &mwdc_down_sensitive_y 16 * cm
-  z: 75 * um
+  x: &mwdc_down_sensitive_x 16 cm
+  y: &mwdc_down_sensitive_y 16 cm
+  z: 75 um
   material: mwdc_down_cathode_wires
 
 mwdc_down_signal_wires:
   solid: box
   x: *mwdc_down_sensitive_x
   y: *mwdc_down_sensitive_y
-  z: 20 * um
+  z: 20 um
   material: mwdc_down_signal_wires
 
 mwdc_down_detector:
@@ -75,6 +75,7 @@ mwdc_down_detector:
 
     - mwdc_down_gas_wires_to_film
     - mwdc_down_film
+  material: mwdc_gas
 
 ---
 
