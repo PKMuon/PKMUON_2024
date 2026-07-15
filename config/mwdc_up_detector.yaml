@@ -4,16 +4,16 @@ schema: volume_schema.yaml
 
 mwdc_up_film:
   solid: box
-  x: &mwdc_up_film_x 10 * cm
-  y: &mwdc_up_film_y 10 * cm
-  z: 13 * um
+  x: &mwdc_up_film_x 10 cm
+  y: &mwdc_up_film_y 10 cm
+  z: 13 um
   material: mwdc_film
 
 mwdc_up_gas_film_to_wires:
   solid: box
   x: *mwdc_up_film_x
   y: *mwdc_up_film_y
-  z: 26 * mm
+  z: 26 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
@@ -21,7 +21,7 @@ mwdc_up_gas_wires_to_film:
   solid: box
   x: *mwdc_up_film_x
   y: *mwdc_up_film_y
-  z: 19.5 * mm
+  z: 19.5 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
@@ -29,22 +29,22 @@ mwdc_up_gas_wires:
   solid: box
   x: *mwdc_up_film_x
   y: *mwdc_up_film_y
-  z: 2.5 * mm
+  z: 2.5 mm
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
-mwdc_up_field_wires:
+mwdc_up_cathode_wires:
   solid: box
-  x: &mwdc_up_sensitive_x 8 * cm
-  y: &mwdc_up_sensitive_y 8 * cm
-  z: 75 * um
-  material: mwdc_up_field_wires
+  x: &mwdc_up_sensitive_x 8 cm
+  y: &mwdc_up_sensitive_y 8 cm
+  z: 75 um
+  material: mwdc_up_cathode_wires
 
 mwdc_up_signal_wires:
   solid: box
   x: *mwdc_up_sensitive_x
   y: *mwdc_up_sensitive_y
-  z: 20 * um
+  z: 20 um
   material: mwdc_up_signal_wires
 
 mwdc_up_detector:
@@ -53,25 +53,25 @@ mwdc_up_detector:
     - mwdc_up_film
     - mwdc_up_gas_film_to_wires
 
-    - mwdc_up_field_wires   # 0
+    - mwdc_up_cathode_wires   # 0
     - mwdc_up_gas_wires
     - mwdc_up_signal_wires  # 1
     - mwdc_up_gas_wires
-    - mwdc_up_field_wires   # 2
+    - mwdc_up_cathode_wires   # 2
     - mwdc_up_gas_wires
     - mwdc_up_signal_wires  # 3
     - mwdc_up_gas_wires
-    - mwdc_up_field_wires   # 4
+    - mwdc_up_cathode_wires   # 4
     - mwdc_up_gas_wires
-    - mwdc_up_field_wires   # 5
+    - mwdc_up_cathode_wires   # 5
     - mwdc_up_gas_wires
     - mwdc_up_signal_wires  # 6
     - mwdc_up_gas_wires
-    - mwdc_up_field_wires   # 7
+    - mwdc_up_cathode_wires   # 7
     - mwdc_up_gas_wires
     - mwdc_up_signal_wires  # 8
     - mwdc_up_gas_wires
-    - mwdc_up_field_wires   # 9
+    - mwdc_up_cathode_wires   # 9
 
     - mwdc_up_gas_wires_to_film
     - mwdc_up_film

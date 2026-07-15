@@ -32,7 +32,7 @@ mwdc_raw_field_wires:
     - [G4_Be, 0.01]  # 1.845 g/cm3
 
 mwdc_raw_anode_wires:
-  density: 19.300 * g/cm3
+  density: 19.300 g/cm3
   components:
     - [G4_W, 0.99]   # 19.3 * g/cm3
     - [G4_Au, 0.01]  # 19.32 * g/cm3
@@ -42,24 +42,24 @@ mwdc_raw_cathode_wires:
 
 mwdc_up_cathode_wires:
   color: gray
-  density: 0.0523060 * g/cm3
-  components: [mwdc_raw_cathode_wires]
+  density: 0.0523060 g/cm3
+  components: [[mwdc_raw_cathode_wires, 1.0]]
 
 mwdc_down_cathode_wires:
   color: gray
-  density: 0.0261799 * g/cm3
-  components: [mwdc_raw_cathode_wires]
+  density: 0.0261799 g/cm3
+  components: [[mwdc_raw_cathode_wires, 1.0]]
 
 mwdc_up_signal_wires:
   color: yellow
-  density: 0.0604443 * g/cm3
+  density: 0.0604443 g/cm3
   components: 
     - [material, mwdc_raw_field_wires, 0.86625]
     - [material, mwdc_raw_anode_wires, 0.13375]
 
 mwdc_down_signal_wires:
   color: yellow
-  density: 0.0302221 * g/cm3
+  density: 0.0302221 g/cm3
   components: 
     - [material, mwdc_raw_field_wires, 0.86625]
     - [material, mwdc_raw_anode_wires, 0.13375]

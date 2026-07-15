@@ -33,12 +33,12 @@ mwdc_down_gas_wires:
   mid_to_mid: mid_to_mid
   material: mwdc_gas
 
-mwdc_down_field_wires:
+mwdc_down_cathode_wires:
   solid: box
   x: &mwdc_down_sensitive_x 16 * cm
   y: &mwdc_down_sensitive_y 16 * cm
   z: 75 * um
-  material: mwdc_down_field_wires
+  material: mwdc_down_cathode_wires
 
 mwdc_down_signal_wires:
   solid: box
@@ -53,25 +53,25 @@ mwdc_down_detector:
     - mwdc_down_film
     - mwdc_down_gas_film_to_wires
 
-    - mwdc_down_field_wires   # 0
+    - mwdc_down_cathode_wires   # 0
     - mwdc_down_gas_wires
     - mwdc_down_signal_wires  # 1
     - mwdc_down_gas_wires
-    - mwdc_down_field_wires   # 2
+    - mwdc_down_cathode_wires   # 2
     - mwdc_down_gas_wires
     - mwdc_down_signal_wires  # 3
     - mwdc_down_gas_wires
-    - mwdc_down_field_wires   # 4
+    - mwdc_down_cathode_wires   # 4
     - mwdc_down_gas_wires
-    - mwdc_down_field_wires   # 5
+    - mwdc_down_cathode_wires   # 5
     - mwdc_down_gas_wires
     - mwdc_down_signal_wires  # 6
     - mwdc_down_gas_wires
-    - mwdc_down_field_wires   # 7
+    - mwdc_down_cathode_wires   # 7
     - mwdc_down_gas_wires
     - mwdc_down_signal_wires  # 8
     - mwdc_down_gas_wires
-    - mwdc_down_field_wires   # 9
+    - mwdc_down_cathode_wires   # 9
 
     - mwdc_down_gas_wires_to_film
     - mwdc_down_film
