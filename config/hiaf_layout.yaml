@@ -6,17 +6,17 @@ schema: volume_schema.yaml
 world_major_gap:
   alternative: alternative
   solid: box
-  x: &silicon_x 100 mm
-  y: &silicon_y 100 mm
+  x: &world_x 100 mm
+  y: &world_y 100 mm
   z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
   mid_to_mid: mid_to_mid
-  material: &world_material silicon_air
+  material: &world_material G4_AIR
 
 world_minor_gap:
   alternative: alternative
   solid: box
-  x: *silicon_x
-  y: *silicon_y
+  x: *world_x
+  y: *world_y
   z: 200 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
   mid_to_mid: mid_to_mid
   material: *world_material
@@ -25,15 +25,13 @@ world:
   alternative: alternative
   solid: bottom_up
   components:
-    - silicon_module_xy
+    - mwdc_up_detector
     - world_minor_gap
-    - silicon_module_xy
+    - mwdc_up_detector
     - world_major_gap
-    - silicon_module_xy
+    - mwdc_down_detector
     - world_minor_gap
-    - silicon_module_uv
-    - world_minor_gap
-    - silicon_module_xy
+    - mwdc_down_detector
   padding: 20%
   material: *world_material
 

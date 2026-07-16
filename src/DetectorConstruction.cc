@@ -89,6 +89,7 @@ void DetectorConstruction::DefineVolumes()
   std::vector<std::string> paths = {
     "../config/mwdc_up_detector.yaml",
     "../config/mwdc_down_detector.yaml",
+    "../config/hiaf_layout.yaml",
   };
   char *p = getenv("MUPOS_VOLUME_CONFIG");
   if(p) { paths = split(p, ':'); }
