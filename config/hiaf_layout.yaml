@@ -9,7 +9,7 @@ world_major_gap:
   solid: box
   x: &world_x 200 mm
   y: &world_y 200 mm
-  z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  z: 500 mm  # [NOTE] mid-to-mid
   mid_to_mid: mid_to_mid
   material: &world_material G4_AIR
 
@@ -19,7 +19,7 @@ world_minor_gap:
   solid: box
   x: *world_x
   y: *world_y
-  z: 200 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
+  z: 250 mm  # [NOTE] mid-to-mid
   mid_to_mid: mid_to_mid
   material: *world_material
 
