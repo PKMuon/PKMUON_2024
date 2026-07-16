@@ -59,6 +59,17 @@ public:
   ClassDef(Track, 1);
 };
 
+class BoxVolume : public TObject {
+public:
+  BoxVolume &operator=(const std::tuple<const void *, const void *, const void *> &t);
+
+  Double_t HalfX, HalfY, HalfZ;
+  Double_t CenterX, CenterY, CenterZ;
+  Double_t Theta, Phi, Alpha;
+
+  Bool_t Test(const G4Track *) const;
+};
+
 class Params : public TObject {
 public:
   Params &operator=(const DetectorConstruction &);
@@ -72,9 +83,7 @@ public:
   Double_t ProtonCut;
   Double_t ProtonThreshold;
 
-  std::vector<double> ScoringZs;
-  std::vector<int> ScoringRotations;
-  Double_t ScoringHalfX, ScoringHalfY, ScoringHalfZ;
+  std::vector<BoxVolume> ScoringVolumes;
 
   ClassDef(Params, 1);
 };

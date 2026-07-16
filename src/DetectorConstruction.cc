@@ -44,13 +44,11 @@
 #include "G4Color.hh"
 #include "G4VisAttributes.hh"
 
+#include <unordered_set>
+
 DetectorConstruction::DetectorConstruction(int o)
     : fOptions(o),
-      fWorld(NULL),
-      fScoringVolume(NULL),
-      fScoringHalfX(0.0),
-      fScoringHalfY(0.0),
-      fScoringHalfZ(0.0)
+      fWorld(NULL)
 {
   if(fOptions) { throw std::invalid_argument("options unimplemented"); }
   fLogicalVolumeStore = G4LogicalVolumeStore::GetInstance();
@@ -96,36 +94,39 @@ void DetectorConstruction::DefineVolumes()
   for(const std::string &path : paths) { GeometryConfig::LoadVolumes(path.c_str()); }
 
   fWorld = new G4PVPlacement(0, { 0, 0, 0 }, fLogicalVolumeStore->GetVolume("world"), "world", 0, false, 0, true);
-  fScoringVolume = nullptr;  // [TODO]
-  fScoringHalfX = 0.0;  // [TODO]
-  fScoringHalfY = 0.0;  // [TODO]
-  fScoringHalfZ = 0.0;  // [TODO]
 
-  fScoringZs.assign(0, 0.0);
-  fScoringRotations.assign(0, G4RotationMatrix());
-  WalkVolume(fWorld,
-      [this](
-          G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &rm) {
-        if(volume->GetLogicalVolume() != fScoringVolume) { return; }  // [XXX]
-        fScoringZs.push_back(r.z());
-        fScoringRotations.push_back(rm);
-      });
-  {
-    std::vector<size_t> indexes(fScoringZs.size());
-    for(size_t i = 0; i < fScoringZs.size(); ++i) { indexes[i] = i; }
-    sort(indexes.begin(), indexes.end(), [this](size_t i, size_t j) { return fScoringZs[i] < fScoringZs[j]; });
-    std::vector<G4double> zs(fScoringZs.size());
-    std::vector<G4RotationMatrix> rotations(fScoringRotations.size());
-    for(size_t i = 0; i < fScoringZs.size(); ++i) {
-      zs[i] = fScoringZs[indexes[i]];
-      rotations[i] = fScoringRotations[indexes[i]];
-    }
-    fScoringZs = zs;
-    fScoringRotations = rotations;
-  }
+  std::unordered_set<std::string> scoringNames {
+    "mwdc_up_gas_wires_0",
+    "mwdc_up_gas_wires_1",
+    "mwdc_up_gas_wires_2",
+    "mwdc_up_gas_wires_3",
+    "mwdc_up_gas_wires_5",
+    "mwdc_up_gas_wires_6",
+    "mwdc_up_gas_wires_7",
+    "mwdc_up_gas_wires_8",
+    "mwdc_down_gas_wires_0",
+    "mwdc_down_gas_wires_1",
+    "mwdc_down_gas_wires_2",
+    "mwdc_down_gas_wires_3",
+    "mwdc_down_gas_wires_5",
+    "mwdc_down_gas_wires_6",
+    "mwdc_down_gas_wires_7",
+    "mwdc_down_gas_wires_8",
+  };
+  WalkVolume(fWorld, [this, &scoringNames](G4VPhysicalVolume *volume,
+        const G4ThreeVector &r, const G4RotationMatrix &rm) {
+    if(scoringNames.count(volume->GetLogicalVolume()->GetName()) == 0) return;
+    auto box = dynamic_cast<G4Box *>(volume->GetLogicalVolume()->GetSolid());
+    G4ThreeVector hr { box->GetXHalfLength(), box->GetYHalfLength(), box->GetZHalfLength() };
+    fScoringVolumes.emplace_back();
+    fScoringVolumes.back() = { &hr, &r, &rm };
+  });
+  sort(fScoringVolumes.begin(), fScoringVolumes.end(), [](const BoxVolume &x, const BoxVolume &y) {
+    return x.CenterZ < y.CenterZ;  // [XXX] Rotation not considered; OK for HIAF.
+  });
   G4cout << "Scoring volumes:" << G4endl;
-  for(size_t i = 0; i < fScoringZs.size(); ++i) {
-    G4cout << "  * " << fScoringZs[i] << ": " << fScoringRotations[i].delta() / deg << G4endl;
+  for(size_t i = 0; i < fScoringVolumes.size(); ++i) {
+    G4cout << "  * " << fScoringVolumes[i].CenterZ << ": " << fScoringVolumes[i].Alpha / deg << G4endl;
   }
 }
 
@@ -138,7 +139,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
   DefineMaterials();
   DefineVolumes();
-  //PrintVolumes(NULL);
+  PrintVolumes(NULL);
 
   ((GpsPrimaryGeneratorAction *)G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->Initialize(this);
   return fWorld;
@@ -211,18 +212,3 @@ void DetectorConstruction::WalkVolume(G4VPhysicalVolume *volume,
         r -= rm * v->GetObjectTranslation();
       });
 }
-
-G4double DetectorConstruction::GetDetectorMinZ() const
-{
-  G4double z = 1.0 / 0.0;
-  WalkVolume(NULL, [&z](G4VPhysicalVolume *volume, const G4ThreeVector &r, const G4RotationMatrix &) {
-    //if(volume->GetLogicalVolume()->GetName() != "hiaf_module_xy") { return; }  // [TODO]
-    if(auto box = dynamic_cast<G4Box *>(volume->GetLogicalVolume()->GetSolid())) {
-      z = std::min(z, r.z() - box->GetZHalfLength());
-    }
-  });
-  return z;
-}
-
-G4double DetectorConstruction::GetDetectorHalfX() const { return GetScoringHalfX(); }
-G4double DetectorConstruction::GetDetectorHalfY() const { return GetScoringHalfY(); }

@@ -59,30 +59,60 @@ Track &Track::operator=(const G4Track &track)
   return *this;
 }
 
+BoxVolume &BoxVolume::operator=(const std::tuple<const void *, const void *, const void *> &t)
+{
+  auto &hr = *(G4ThreeVector *)std::get<0>(t);
+  auto &r = *(G4ThreeVector *)std::get<1>(t);
+  auto rot = (G4RotationMatrix *)std::get<2>(t);
+  HalfX = hr.x(), HalfY = hr.y(), HalfZ = hr.z();
+  CenterX = r.x(), CenterY = r.y(), CenterZ = r.z();
+  if(rot) {
+    G4ThreeVector axis = rot->axis();
+    Theta = axis.theta(), Phi = axis.phi(), Alpha = rot->delta();
+  } else {
+    Theta = Phi = Alpha = 0.0;
+  }
+  return *this;
+}
+
+Bool_t BoxVolume::Test(const G4Track *track) const
+{
+  G4ThreeVector axis;
+  axis.setRThetaPhi(1.0, Theta, Phi);
+  G4RotationMatrix rotation;
+  rotation.rotate(Alpha, axis);
+  auto r = rotation.inverse() * track->GetPosition();
+  if(r.x() < CenterX - HalfX || r.x() > CenterX + HalfX) return kFALSE;
+  if(r.y() < CenterY - HalfY || r.y() > CenterY + HalfY) return kFALSE;
+  if(r.z() < CenterZ - HalfZ || r.z() > CenterZ + HalfZ) return kFALSE;
+  return kTRUE;
+}
+
 Params &Params::operator=(const DetectorConstruction &detectorConstruction)
 {
-  const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringVolume()->GetMaterialCutsCouple();
-  const G4Material *material = couple->GetMaterial();
-  G4ProductionCuts *cuts = couple->GetProductionCuts();
+  //const G4MaterialCutsCouple *couple = detectorConstruction.GetScoringVolume()->GetMaterialCutsCouple();
+  //const G4Material *material = couple->GetMaterial();
+  //G4ProductionCuts *cuts = couple->GetProductionCuts();
 
-  GammaCut = cuts->GetProductionCut("gamma");
-  ElectronCut = cuts->GetProductionCut("e-");
-  PositronCut = cuts->GetProductionCut("e+");
-  ProtonCut = cuts->GetProductionCut("proton");
+  //GammaCut = cuts->GetProductionCut("gamma");
+  //ElectronCut = cuts->GetProductionCut("e-");
+  //PositronCut = cuts->GetProductionCut("e+");
+  //ProtonCut = cuts->GetProductionCut("proton");
+  GammaCut = 0.0;
+  ElectronCut = 0.0;
+  PositronCut = 0.0;
+  ProtonCut = 0.0;
 
-  GammaThreshold = G4RToEConvForGamma().Convert(GammaCut, material);
-  ElectronThreshold = G4RToEConvForElectron().Convert(ElectronCut, material);
-  PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
-  ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
+  //GammaThreshold = G4RToEConvForGamma().Convert(GammaCut, material);
+  //ElectronThreshold = G4RToEConvForElectron().Convert(ElectronCut, material);
+  //PositronThreshold = G4RToEConvForPositron().Convert(PositronCut, material);
+  //ProtonThreshold = G4RToEConvForProton().Convert(ProtonCut, material);
+  GammaThreshold = 0.0;
+  ElectronThreshold = 0.0;
+  PositronThreshold = 0.0;
+  ProtonThreshold = 0.0;
 
-  ScoringZs = detectorConstruction.GetScoringZs();
-  std::vector<G4RotationMatrix> rotations = detectorConstruction.GetScoringRotations();
-  ScoringRotations.clear();
-  ScoringRotations.reserve(rotations.size());
-  for(const auto &rotation : rotations) ScoringRotations.push_back(rotation.delta() / deg + 0.5);
-  ScoringHalfX = detectorConstruction.GetScoringHalfX();
-  ScoringHalfY = detectorConstruction.GetScoringHalfY();
-  ScoringHalfZ = detectorConstruction.GetScoringHalfZ();
+  ScoringVolumes = detectorConstruction.GetScoringVolumes();
   return *this;
 }
 

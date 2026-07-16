@@ -48,16 +48,8 @@ Run *Run::GetInstance()
 
 void Run::InitGeom()
 {
-  G4double scoringHalfZ = fDetectorConstruction->GetScoringHalfZ();
-  const std::vector<G4double> &scoringZs = fDetectorConstruction->GetScoringZs();
-
-  fScoringHalfX = fDetectorConstruction->GetScoringHalfX();
-  fScoringHalfY = fDetectorConstruction->GetScoringHalfY();
-  fScoringZ = scoringHalfZ * 2;
-  fScoringMaxZs = scoringZs;
-  fScoringRotations = fDetectorConstruction->GetScoringRotations();
-  for(G4double &z : fScoringMaxZs) z += scoringHalfZ;
-  fStatus.resize(fScoringMaxZs.size());
+  fScoringVolumes = fDetectorConstruction->GetScoringVolumes();
+  fStatus.resize(fScoringVolumes.size());
 }
 
 void Run::InitTree()
@@ -136,20 +128,18 @@ void Run::AutoSave() { fTree->AutoSave("SaveSelf Overwrite"); }
 void Run::AddStep(const G4Step *step)
 {
   const G4ThreeVector &r = step->GetTrack()->GetPosition();
-  G4double x = r.x(), y = r.y(), z = r.z();
-  if(fabs(x) >= fScoringHalfX || fabs(y) >= fScoringHalfY) return;
   const G4ThreeVector &pr = step->GetPreStepPoint()->GetPosition();
-  if(step->GetTrack()->GetTrackID() == 1 && z * pr.z() <= 0) {
+  if(step->GetTrack()->GetTrackID() == 1 && r.z() * pr.z() <= 0) {
     *(Double_t *)fTree->GetBranch("MidPointEnergy")->GetAddress() = step->GetTrack()->GetTotalEnergy();
   }
-  auto ub = std::upper_bound(fScoringMaxZs.begin(), fScoringMaxZs.end(), z);
-  if(ub == fScoringMaxZs.end()) return;
-  if(z < *ub - fScoringZ) return;
+  auto ub = std::upper_bound(fScoringVolumes.begin(), fScoringVolumes.end(), r.z(), [](double trackZ, const BoxVolume &volume) { return trackZ < volume.CenterZ + volume.HalfZ; });
+  if(ub == fScoringVolumes.end()) return;
+  if(ub->Test(step->GetTrack())) return;
 
   G4double edep = step->GetTotalEnergyDeposit();
   if(edep == 0) return;
 
-  Int_t zid = ub - fScoringMaxZs.begin();
+  Int_t zid = ub - fScoringVolumes.begin();
   Int_t id = zid;  // [TODO]
   Int_t pid = (uint32_t)step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
   Int_t process = -1;
