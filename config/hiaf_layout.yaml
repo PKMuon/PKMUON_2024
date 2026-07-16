@@ -4,15 +4,17 @@ schema: volume_schema.yaml
 ---
 
 world_major_gap:
+  hidden: hidden
   alternative: alternative
   solid: box
-  x: &world_x 100 mm
-  y: &world_y 100 mm
+  x: &world_x 200 mm
+  y: &world_y 200 mm
   z: 500 mm  # [NOTE] mid-to-mid [TODO] Optimize this value.
   mid_to_mid: mid_to_mid
   material: &world_material G4_AIR
 
 world_minor_gap:
+  hidden: hidden
   alternative: alternative
   solid: box
   x: *world_x
