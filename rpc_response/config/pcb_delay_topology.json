@@ -1,0 +1,2431 @@
+{
+  "source_sha256": "747face89543342d6c7909598229997cafc5f36b14c002c8f727ce75e207cea8",
+  "status": "pin netlist decoded; 4 ns uses previously specified 1507-40A; copper routing propagation, impedances and transfer functions not calculated",
+  "edges": [
+    {
+      "component_id": 6,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y71",
+      "net1": "Y72",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y72",
+      "net1": "Y73",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y73",
+      "net1": "Y74",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y74",
+      "net1": "Y75",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y75",
+      "net1": "Y76",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y76",
+      "net1": "Y77",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y77",
+      "net1": "Y78",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y78",
+      "net1": "Y79",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y79",
+      "net1": "Y80",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 6,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y80",
+      "net1": "Y81",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y61",
+      "net1": "Y62",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y62",
+      "net1": "Y63",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y63",
+      "net1": "Y64",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y64",
+      "net1": "Y65",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y65",
+      "net1": "Y66",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y66",
+      "net1": "Y67",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y67",
+      "net1": "Y68",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y68",
+      "net1": "Y69",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y69",
+      "net1": "Y70",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 7,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y70",
+      "net1": "Y71",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y51",
+      "net1": "Y52",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y52",
+      "net1": "Y53",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y53",
+      "net1": "Y54",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y54",
+      "net1": "Y55",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y55",
+      "net1": "Y56",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y56",
+      "net1": "Y57",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y57",
+      "net1": "Y58",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y58",
+      "net1": "Y59",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y59",
+      "net1": "Y60",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 8,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y60",
+      "net1": "Y61",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y41",
+      "net1": "Y42",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y42",
+      "net1": "Y43",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y43",
+      "net1": "Y44",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y44",
+      "net1": "Y45",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y45",
+      "net1": "Y46",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y46",
+      "net1": "Y47",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y47",
+      "net1": "Y48",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y48",
+      "net1": "Y49",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y49",
+      "net1": "Y50",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 9,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y50",
+      "net1": "Y51",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y31",
+      "net1": "Y32",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y32",
+      "net1": "Y33",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y33",
+      "net1": "Y34",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y34",
+      "net1": "Y35",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y35",
+      "net1": "Y36",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y36",
+      "net1": "Y37",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y37",
+      "net1": "Y38",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y38",
+      "net1": "Y39",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y39",
+      "net1": "Y40",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 10,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y40",
+      "net1": "Y41",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y21",
+      "net1": "Y22",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y22",
+      "net1": "Y23",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y23",
+      "net1": "Y24",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y24",
+      "net1": "Y25",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y25",
+      "net1": "Y26",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y26",
+      "net1": "Y27",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y27",
+      "net1": "Y28",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y28",
+      "net1": "Y29",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y29",
+      "net1": "Y30",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 11,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y30",
+      "net1": "Y31",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y11",
+      "net1": "Y12",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y12",
+      "net1": "Y13",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y13",
+      "net1": "Y14",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y14",
+      "net1": "Y15",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y15",
+      "net1": "Y16",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y16",
+      "net1": "Y17",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y17",
+      "net1": "Y18",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y18",
+      "net1": "Y19",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y19",
+      "net1": "Y20",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 12,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y20",
+      "net1": "Y21",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "Y1",
+      "net1": "Y2",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "Y2",
+      "net1": "Y3",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "Y3",
+      "net1": "Y4",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "Y4",
+      "net1": "Y5",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "Y5",
+      "net1": "Y6",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "Y6",
+      "net1": "Y7",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "Y7",
+      "net1": "Y8",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "Y8",
+      "net1": "Y9",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "Y9",
+      "net1": "Y10",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 13,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "Y10",
+      "net1": "Y11",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "71",
+      "net1": "72",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "72",
+      "net1": "73",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "73",
+      "net1": "74",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "74",
+      "net1": "75",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "75",
+      "net1": "76",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "76",
+      "net1": "77",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "77",
+      "net1": "78",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "78",
+      "net1": "79",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "79",
+      "net1": "80",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 16,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "80",
+      "net1": "81",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "61",
+      "net1": "62",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "62",
+      "net1": "63",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "63",
+      "net1": "64",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "64",
+      "net1": "65",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "65",
+      "net1": "66",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "66",
+      "net1": "67",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "67",
+      "net1": "68",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "68",
+      "net1": "69",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "69",
+      "net1": "70",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 17,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "70",
+      "net1": "71",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "51",
+      "net1": "52",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "52",
+      "net1": "53",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "53",
+      "net1": "54",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "54",
+      "net1": "55",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "55",
+      "net1": "56",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "56",
+      "net1": "57",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "57",
+      "net1": "58",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "58",
+      "net1": "59",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "59",
+      "net1": "60",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 18,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "60",
+      "net1": "61",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "41",
+      "net1": "42",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "42",
+      "net1": "43",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "43",
+      "net1": "44",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "44",
+      "net1": "45",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "45",
+      "net1": "46",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "46",
+      "net1": "47",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "47",
+      "net1": "48",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "48",
+      "net1": "49",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "49",
+      "net1": "50",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 19,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "50",
+      "net1": "51",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "31",
+      "net1": "32",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "32",
+      "net1": "33",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "33",
+      "net1": "34",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "34",
+      "net1": "35",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "35",
+      "net1": "36",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "36",
+      "net1": "37",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "37",
+      "net1": "38",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "38",
+      "net1": "39",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "39",
+      "net1": "40",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 20,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "40",
+      "net1": "41",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "21",
+      "net1": "22",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "22",
+      "net1": "23",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "23",
+      "net1": "24",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "24",
+      "net1": "25",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "25",
+      "net1": "26",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "26",
+      "net1": "27",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "27",
+      "net1": "28",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "28",
+      "net1": "29",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "29",
+      "net1": "30",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 21,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "30",
+      "net1": "31",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "11",
+      "net1": "12",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "12",
+      "net1": "13",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "13",
+      "net1": "14",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "14",
+      "net1": "15",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "15",
+      "net1": "16",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "16",
+      "net1": "17",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "17",
+      "net1": "18",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "18",
+      "net1": "19",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "19",
+      "net1": "20",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 22,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "20",
+      "net1": "21",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 3,
+      "pin1": 4,
+      "net0": "1",
+      "net1": "2",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 4,
+      "pin1": 5,
+      "net0": "2",
+      "net1": "3",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 5,
+      "pin1": 6,
+      "net0": "3",
+      "net1": "4",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 6,
+      "pin1": 7,
+      "net0": "4",
+      "net1": "5",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 7,
+      "pin1": 8,
+      "net0": "5",
+      "net1": "6",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 8,
+      "pin1": 9,
+      "net0": "6",
+      "net1": "7",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 9,
+      "pin1": 10,
+      "net0": "7",
+      "net1": "8",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 10,
+      "pin1": 11,
+      "net0": "8",
+      "net1": "9",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 11,
+      "pin1": 12,
+      "net0": "9",
+      "net1": "10",
+      "nominal_delay_ns": 4
+    },
+    {
+      "component_id": 26,
+      "pin0": 12,
+      "pin1": 13,
+      "net0": "10",
+      "net1": "11",
+      "nominal_delay_ns": 4
+    }
+  ],
+  "signal_routes": {
+    "1": {
+      "axis": "X",
+      "tap_index": 0,
+      "delay_to_net1_ns": 0,
+      "delay_to_net81_ns": 320,
+      "split_fraction": null
+    },
+    "2": {
+      "axis": "X",
+      "tap_index": 1,
+      "delay_to_net1_ns": 4,
+      "delay_to_net81_ns": 316,
+      "split_fraction": null
+    },
+    "3": {
+      "axis": "X",
+      "tap_index": 2,
+      "delay_to_net1_ns": 8,
+      "delay_to_net81_ns": 312,
+      "split_fraction": null
+    },
+    "4": {
+      "axis": "X",
+      "tap_index": 3,
+      "delay_to_net1_ns": 12,
+      "delay_to_net81_ns": 308,
+      "split_fraction": null
+    },
+    "5": {
+      "axis": "X",
+      "tap_index": 4,
+      "delay_to_net1_ns": 16,
+      "delay_to_net81_ns": 304,
+      "split_fraction": null
+    },
+    "6": {
+      "axis": "X",
+      "tap_index": 5,
+      "delay_to_net1_ns": 20,
+      "delay_to_net81_ns": 300,
+      "split_fraction": null
+    },
+    "7": {
+      "axis": "X",
+      "tap_index": 6,
+      "delay_to_net1_ns": 24,
+      "delay_to_net81_ns": 296,
+      "split_fraction": null
+    },
+    "8": {
+      "axis": "X",
+      "tap_index": 7,
+      "delay_to_net1_ns": 28,
+      "delay_to_net81_ns": 292,
+      "split_fraction": null
+    },
+    "9": {
+      "axis": "X",
+      "tap_index": 8,
+      "delay_to_net1_ns": 32,
+      "delay_to_net81_ns": 288,
+      "split_fraction": null
+    },
+    "10": {
+      "axis": "X",
+      "tap_index": 9,
+      "delay_to_net1_ns": 36,
+      "delay_to_net81_ns": 284,
+      "split_fraction": null
+    },
+    "11": {
+      "axis": "X",
+      "tap_index": 10,
+      "delay_to_net1_ns": 40,
+      "delay_to_net81_ns": 280,
+      "split_fraction": null
+    },
+    "12": {
+      "axis": "X",
+      "tap_index": 11,
+      "delay_to_net1_ns": 44,
+      "delay_to_net81_ns": 276,
+      "split_fraction": null
+    },
+    "13": {
+      "axis": "X",
+      "tap_index": 12,
+      "delay_to_net1_ns": 48,
+      "delay_to_net81_ns": 272,
+      "split_fraction": null
+    },
+    "14": {
+      "axis": "X",
+      "tap_index": 13,
+      "delay_to_net1_ns": 52,
+      "delay_to_net81_ns": 268,
+      "split_fraction": null
+    },
+    "15": {
+      "axis": "X",
+      "tap_index": 14,
+      "delay_to_net1_ns": 56,
+      "delay_to_net81_ns": 264,
+      "split_fraction": null
+    },
+    "16": {
+      "axis": "X",
+      "tap_index": 15,
+      "delay_to_net1_ns": 60,
+      "delay_to_net81_ns": 260,
+      "split_fraction": null
+    },
+    "17": {
+      "axis": "X",
+      "tap_index": 16,
+      "delay_to_net1_ns": 64,
+      "delay_to_net81_ns": 256,
+      "split_fraction": null
+    },
+    "18": {
+      "axis": "X",
+      "tap_index": 17,
+      "delay_to_net1_ns": 68,
+      "delay_to_net81_ns": 252,
+      "split_fraction": null
+    },
+    "19": {
+      "axis": "X",
+      "tap_index": 18,
+      "delay_to_net1_ns": 72,
+      "delay_to_net81_ns": 248,
+      "split_fraction": null
+    },
+    "20": {
+      "axis": "X",
+      "tap_index": 19,
+      "delay_to_net1_ns": 76,
+      "delay_to_net81_ns": 244,
+      "split_fraction": null
+    },
+    "21": {
+      "axis": "X",
+      "tap_index": 20,
+      "delay_to_net1_ns": 80,
+      "delay_to_net81_ns": 240,
+      "split_fraction": null
+    },
+    "22": {
+      "axis": "X",
+      "tap_index": 21,
+      "delay_to_net1_ns": 84,
+      "delay_to_net81_ns": 236,
+      "split_fraction": null
+    },
+    "23": {
+      "axis": "X",
+      "tap_index": 22,
+      "delay_to_net1_ns": 88,
+      "delay_to_net81_ns": 232,
+      "split_fraction": null
+    },
+    "24": {
+      "axis": "X",
+      "tap_index": 23,
+      "delay_to_net1_ns": 92,
+      "delay_to_net81_ns": 228,
+      "split_fraction": null
+    },
+    "25": {
+      "axis": "X",
+      "tap_index": 24,
+      "delay_to_net1_ns": 96,
+      "delay_to_net81_ns": 224,
+      "split_fraction": null
+    },
+    "26": {
+      "axis": "X",
+      "tap_index": 25,
+      "delay_to_net1_ns": 100,
+      "delay_to_net81_ns": 220,
+      "split_fraction": null
+    },
+    "27": {
+      "axis": "X",
+      "tap_index": 26,
+      "delay_to_net1_ns": 104,
+      "delay_to_net81_ns": 216,
+      "split_fraction": null
+    },
+    "28": {
+      "axis": "X",
+      "tap_index": 27,
+      "delay_to_net1_ns": 108,
+      "delay_to_net81_ns": 212,
+      "split_fraction": null
+    },
+    "29": {
+      "axis": "X",
+      "tap_index": 28,
+      "delay_to_net1_ns": 112,
+      "delay_to_net81_ns": 208,
+      "split_fraction": null
+    },
+    "30": {
+      "axis": "X",
+      "tap_index": 29,
+      "delay_to_net1_ns": 116,
+      "delay_to_net81_ns": 204,
+      "split_fraction": null
+    },
+    "31": {
+      "axis": "X",
+      "tap_index": 30,
+      "delay_to_net1_ns": 120,
+      "delay_to_net81_ns": 200,
+      "split_fraction": null
+    },
+    "32": {
+      "axis": "X",
+      "tap_index": 31,
+      "delay_to_net1_ns": 124,
+      "delay_to_net81_ns": 196,
+      "split_fraction": null
+    },
+    "33": {
+      "axis": "X",
+      "tap_index": 32,
+      "delay_to_net1_ns": 128,
+      "delay_to_net81_ns": 192,
+      "split_fraction": null
+    },
+    "34": {
+      "axis": "X",
+      "tap_index": 33,
+      "delay_to_net1_ns": 132,
+      "delay_to_net81_ns": 188,
+      "split_fraction": null
+    },
+    "35": {
+      "axis": "X",
+      "tap_index": 34,
+      "delay_to_net1_ns": 136,
+      "delay_to_net81_ns": 184,
+      "split_fraction": null
+    },
+    "36": {
+      "axis": "X",
+      "tap_index": 35,
+      "delay_to_net1_ns": 140,
+      "delay_to_net81_ns": 180,
+      "split_fraction": null
+    },
+    "37": {
+      "axis": "X",
+      "tap_index": 36,
+      "delay_to_net1_ns": 144,
+      "delay_to_net81_ns": 176,
+      "split_fraction": null
+    },
+    "38": {
+      "axis": "X",
+      "tap_index": 37,
+      "delay_to_net1_ns": 148,
+      "delay_to_net81_ns": 172,
+      "split_fraction": null
+    },
+    "39": {
+      "axis": "X",
+      "tap_index": 38,
+      "delay_to_net1_ns": 152,
+      "delay_to_net81_ns": 168,
+      "split_fraction": null
+    },
+    "40": {
+      "axis": "X",
+      "tap_index": 39,
+      "delay_to_net1_ns": 156,
+      "delay_to_net81_ns": 164,
+      "split_fraction": null
+    },
+    "41": {
+      "axis": "X",
+      "tap_index": 40,
+      "delay_to_net1_ns": 160,
+      "delay_to_net81_ns": 160,
+      "split_fraction": null
+    },
+    "42": {
+      "axis": "X",
+      "tap_index": 41,
+      "delay_to_net1_ns": 164,
+      "delay_to_net81_ns": 156,
+      "split_fraction": null
+    },
+    "43": {
+      "axis": "X",
+      "tap_index": 42,
+      "delay_to_net1_ns": 168,
+      "delay_to_net81_ns": 152,
+      "split_fraction": null
+    },
+    "44": {
+      "axis": "X",
+      "tap_index": 43,
+      "delay_to_net1_ns": 172,
+      "delay_to_net81_ns": 148,
+      "split_fraction": null
+    },
+    "45": {
+      "axis": "X",
+      "tap_index": 44,
+      "delay_to_net1_ns": 176,
+      "delay_to_net81_ns": 144,
+      "split_fraction": null
+    },
+    "46": {
+      "axis": "X",
+      "tap_index": 45,
+      "delay_to_net1_ns": 180,
+      "delay_to_net81_ns": 140,
+      "split_fraction": null
+    },
+    "47": {
+      "axis": "X",
+      "tap_index": 46,
+      "delay_to_net1_ns": 184,
+      "delay_to_net81_ns": 136,
+      "split_fraction": null
+    },
+    "48": {
+      "axis": "X",
+      "tap_index": 47,
+      "delay_to_net1_ns": 188,
+      "delay_to_net81_ns": 132,
+      "split_fraction": null
+    },
+    "49": {
+      "axis": "X",
+      "tap_index": 48,
+      "delay_to_net1_ns": 192,
+      "delay_to_net81_ns": 128,
+      "split_fraction": null
+    },
+    "50": {
+      "axis": "X",
+      "tap_index": 49,
+      "delay_to_net1_ns": 196,
+      "delay_to_net81_ns": 124,
+      "split_fraction": null
+    },
+    "51": {
+      "axis": "X",
+      "tap_index": 50,
+      "delay_to_net1_ns": 200,
+      "delay_to_net81_ns": 120,
+      "split_fraction": null
+    },
+    "52": {
+      "axis": "X",
+      "tap_index": 51,
+      "delay_to_net1_ns": 204,
+      "delay_to_net81_ns": 116,
+      "split_fraction": null
+    },
+    "53": {
+      "axis": "X",
+      "tap_index": 52,
+      "delay_to_net1_ns": 208,
+      "delay_to_net81_ns": 112,
+      "split_fraction": null
+    },
+    "54": {
+      "axis": "X",
+      "tap_index": 53,
+      "delay_to_net1_ns": 212,
+      "delay_to_net81_ns": 108,
+      "split_fraction": null
+    },
+    "55": {
+      "axis": "X",
+      "tap_index": 54,
+      "delay_to_net1_ns": 216,
+      "delay_to_net81_ns": 104,
+      "split_fraction": null
+    },
+    "56": {
+      "axis": "X",
+      "tap_index": 55,
+      "delay_to_net1_ns": 220,
+      "delay_to_net81_ns": 100,
+      "split_fraction": null
+    },
+    "57": {
+      "axis": "X",
+      "tap_index": 56,
+      "delay_to_net1_ns": 224,
+      "delay_to_net81_ns": 96,
+      "split_fraction": null
+    },
+    "58": {
+      "axis": "X",
+      "tap_index": 57,
+      "delay_to_net1_ns": 228,
+      "delay_to_net81_ns": 92,
+      "split_fraction": null
+    },
+    "59": {
+      "axis": "X",
+      "tap_index": 58,
+      "delay_to_net1_ns": 232,
+      "delay_to_net81_ns": 88,
+      "split_fraction": null
+    },
+    "60": {
+      "axis": "X",
+      "tap_index": 59,
+      "delay_to_net1_ns": 236,
+      "delay_to_net81_ns": 84,
+      "split_fraction": null
+    },
+    "61": {
+      "axis": "X",
+      "tap_index": 60,
+      "delay_to_net1_ns": 240,
+      "delay_to_net81_ns": 80,
+      "split_fraction": null
+    },
+    "62": {
+      "axis": "X",
+      "tap_index": 61,
+      "delay_to_net1_ns": 244,
+      "delay_to_net81_ns": 76,
+      "split_fraction": null
+    },
+    "63": {
+      "axis": "X",
+      "tap_index": 62,
+      "delay_to_net1_ns": 248,
+      "delay_to_net81_ns": 72,
+      "split_fraction": null
+    },
+    "64": {
+      "axis": "X",
+      "tap_index": 63,
+      "delay_to_net1_ns": 252,
+      "delay_to_net81_ns": 68,
+      "split_fraction": null
+    },
+    "65": {
+      "axis": "X",
+      "tap_index": 64,
+      "delay_to_net1_ns": 256,
+      "delay_to_net81_ns": 64,
+      "split_fraction": null
+    },
+    "66": {
+      "axis": "X",
+      "tap_index": 65,
+      "delay_to_net1_ns": 260,
+      "delay_to_net81_ns": 60,
+      "split_fraction": null
+    },
+    "67": {
+      "axis": "X",
+      "tap_index": 66,
+      "delay_to_net1_ns": 264,
+      "delay_to_net81_ns": 56,
+      "split_fraction": null
+    },
+    "68": {
+      "axis": "X",
+      "tap_index": 67,
+      "delay_to_net1_ns": 268,
+      "delay_to_net81_ns": 52,
+      "split_fraction": null
+    },
+    "69": {
+      "axis": "X",
+      "tap_index": 68,
+      "delay_to_net1_ns": 272,
+      "delay_to_net81_ns": 48,
+      "split_fraction": null
+    },
+    "70": {
+      "axis": "X",
+      "tap_index": 69,
+      "delay_to_net1_ns": 276,
+      "delay_to_net81_ns": 44,
+      "split_fraction": null
+    },
+    "71": {
+      "axis": "X",
+      "tap_index": 70,
+      "delay_to_net1_ns": 280,
+      "delay_to_net81_ns": 40,
+      "split_fraction": null
+    },
+    "72": {
+      "axis": "X",
+      "tap_index": 71,
+      "delay_to_net1_ns": 284,
+      "delay_to_net81_ns": 36,
+      "split_fraction": null
+    },
+    "73": {
+      "axis": "X",
+      "tap_index": 72,
+      "delay_to_net1_ns": 288,
+      "delay_to_net81_ns": 32,
+      "split_fraction": null
+    },
+    "74": {
+      "axis": "X",
+      "tap_index": 73,
+      "delay_to_net1_ns": 292,
+      "delay_to_net81_ns": 28,
+      "split_fraction": null
+    },
+    "75": {
+      "axis": "X",
+      "tap_index": 74,
+      "delay_to_net1_ns": 296,
+      "delay_to_net81_ns": 24,
+      "split_fraction": null
+    },
+    "76": {
+      "axis": "X",
+      "tap_index": 75,
+      "delay_to_net1_ns": 300,
+      "delay_to_net81_ns": 20,
+      "split_fraction": null
+    },
+    "77": {
+      "axis": "X",
+      "tap_index": 76,
+      "delay_to_net1_ns": 304,
+      "delay_to_net81_ns": 16,
+      "split_fraction": null
+    },
+    "78": {
+      "axis": "X",
+      "tap_index": 77,
+      "delay_to_net1_ns": 308,
+      "delay_to_net81_ns": 12,
+      "split_fraction": null
+    },
+    "79": {
+      "axis": "X",
+      "tap_index": 78,
+      "delay_to_net1_ns": 312,
+      "delay_to_net81_ns": 8,
+      "split_fraction": null
+    },
+    "80": {
+      "axis": "X",
+      "tap_index": 79,
+      "delay_to_net1_ns": 316,
+      "delay_to_net81_ns": 4,
+      "split_fraction": null
+    },
+    "81": {
+      "axis": "X",
+      "tap_index": 80,
+      "delay_to_net1_ns": 320,
+      "delay_to_net81_ns": 0,
+      "split_fraction": null
+    },
+    "Y1": {
+      "axis": "Y",
+      "tap_index": 0,
+      "delay_to_net1_ns": 0,
+      "delay_to_net81_ns": 320,
+      "split_fraction": null
+    },
+    "Y2": {
+      "axis": "Y",
+      "tap_index": 1,
+      "delay_to_net1_ns": 4,
+      "delay_to_net81_ns": 316,
+      "split_fraction": null
+    },
+    "Y3": {
+      "axis": "Y",
+      "tap_index": 2,
+      "delay_to_net1_ns": 8,
+      "delay_to_net81_ns": 312,
+      "split_fraction": null
+    },
+    "Y4": {
+      "axis": "Y",
+      "tap_index": 3,
+      "delay_to_net1_ns": 12,
+      "delay_to_net81_ns": 308,
+      "split_fraction": null
+    },
+    "Y5": {
+      "axis": "Y",
+      "tap_index": 4,
+      "delay_to_net1_ns": 16,
+      "delay_to_net81_ns": 304,
+      "split_fraction": null
+    },
+    "Y6": {
+      "axis": "Y",
+      "tap_index": 5,
+      "delay_to_net1_ns": 20,
+      "delay_to_net81_ns": 300,
+      "split_fraction": null
+    },
+    "Y7": {
+      "axis": "Y",
+      "tap_index": 6,
+      "delay_to_net1_ns": 24,
+      "delay_to_net81_ns": 296,
+      "split_fraction": null
+    },
+    "Y8": {
+      "axis": "Y",
+      "tap_index": 7,
+      "delay_to_net1_ns": 28,
+      "delay_to_net81_ns": 292,
+      "split_fraction": null
+    },
+    "Y9": {
+      "axis": "Y",
+      "tap_index": 8,
+      "delay_to_net1_ns": 32,
+      "delay_to_net81_ns": 288,
+      "split_fraction": null
+    },
+    "Y10": {
+      "axis": "Y",
+      "tap_index": 9,
+      "delay_to_net1_ns": 36,
+      "delay_to_net81_ns": 284,
+      "split_fraction": null
+    },
+    "Y11": {
+      "axis": "Y",
+      "tap_index": 10,
+      "delay_to_net1_ns": 40,
+      "delay_to_net81_ns": 280,
+      "split_fraction": null
+    },
+    "Y12": {
+      "axis": "Y",
+      "tap_index": 11,
+      "delay_to_net1_ns": 44,
+      "delay_to_net81_ns": 276,
+      "split_fraction": null
+    },
+    "Y13": {
+      "axis": "Y",
+      "tap_index": 12,
+      "delay_to_net1_ns": 48,
+      "delay_to_net81_ns": 272,
+      "split_fraction": null
+    },
+    "Y14": {
+      "axis": "Y",
+      "tap_index": 13,
+      "delay_to_net1_ns": 52,
+      "delay_to_net81_ns": 268,
+      "split_fraction": null
+    },
+    "Y15": {
+      "axis": "Y",
+      "tap_index": 14,
+      "delay_to_net1_ns": 56,
+      "delay_to_net81_ns": 264,
+      "split_fraction": null
+    },
+    "Y16": {
+      "axis": "Y",
+      "tap_index": 15,
+      "delay_to_net1_ns": 60,
+      "delay_to_net81_ns": 260,
+      "split_fraction": null
+    },
+    "Y17": {
+      "axis": "Y",
+      "tap_index": 16,
+      "delay_to_net1_ns": 64,
+      "delay_to_net81_ns": 256,
+      "split_fraction": null
+    },
+    "Y18": {
+      "axis": "Y",
+      "tap_index": 17,
+      "delay_to_net1_ns": 68,
+      "delay_to_net81_ns": 252,
+      "split_fraction": null
+    },
+    "Y19": {
+      "axis": "Y",
+      "tap_index": 18,
+      "delay_to_net1_ns": 72,
+      "delay_to_net81_ns": 248,
+      "split_fraction": null
+    },
+    "Y20": {
+      "axis": "Y",
+      "tap_index": 19,
+      "delay_to_net1_ns": 76,
+      "delay_to_net81_ns": 244,
+      "split_fraction": null
+    },
+    "Y21": {
+      "axis": "Y",
+      "tap_index": 20,
+      "delay_to_net1_ns": 80,
+      "delay_to_net81_ns": 240,
+      "split_fraction": null
+    },
+    "Y22": {
+      "axis": "Y",
+      "tap_index": 21,
+      "delay_to_net1_ns": 84,
+      "delay_to_net81_ns": 236,
+      "split_fraction": null
+    },
+    "Y23": {
+      "axis": "Y",
+      "tap_index": 22,
+      "delay_to_net1_ns": 88,
+      "delay_to_net81_ns": 232,
+      "split_fraction": null
+    },
+    "Y24": {
+      "axis": "Y",
+      "tap_index": 23,
+      "delay_to_net1_ns": 92,
+      "delay_to_net81_ns": 228,
+      "split_fraction": null
+    },
+    "Y25": {
+      "axis": "Y",
+      "tap_index": 24,
+      "delay_to_net1_ns": 96,
+      "delay_to_net81_ns": 224,
+      "split_fraction": null
+    },
+    "Y26": {
+      "axis": "Y",
+      "tap_index": 25,
+      "delay_to_net1_ns": 100,
+      "delay_to_net81_ns": 220,
+      "split_fraction": null
+    },
+    "Y27": {
+      "axis": "Y",
+      "tap_index": 26,
+      "delay_to_net1_ns": 104,
+      "delay_to_net81_ns": 216,
+      "split_fraction": null
+    },
+    "Y28": {
+      "axis": "Y",
+      "tap_index": 27,
+      "delay_to_net1_ns": 108,
+      "delay_to_net81_ns": 212,
+      "split_fraction": null
+    },
+    "Y29": {
+      "axis": "Y",
+      "tap_index": 28,
+      "delay_to_net1_ns": 112,
+      "delay_to_net81_ns": 208,
+      "split_fraction": null
+    },
+    "Y30": {
+      "axis": "Y",
+      "tap_index": 29,
+      "delay_to_net1_ns": 116,
+      "delay_to_net81_ns": 204,
+      "split_fraction": null
+    },
+    "Y31": {
+      "axis": "Y",
+      "tap_index": 30,
+      "delay_to_net1_ns": 120,
+      "delay_to_net81_ns": 200,
+      "split_fraction": null
+    },
+    "Y32": {
+      "axis": "Y",
+      "tap_index": 31,
+      "delay_to_net1_ns": 124,
+      "delay_to_net81_ns": 196,
+      "split_fraction": null
+    },
+    "Y33": {
+      "axis": "Y",
+      "tap_index": 32,
+      "delay_to_net1_ns": 128,
+      "delay_to_net81_ns": 192,
+      "split_fraction": null
+    },
+    "Y34": {
+      "axis": "Y",
+      "tap_index": 33,
+      "delay_to_net1_ns": 132,
+      "delay_to_net81_ns": 188,
+      "split_fraction": null
+    },
+    "Y35": {
+      "axis": "Y",
+      "tap_index": 34,
+      "delay_to_net1_ns": 136,
+      "delay_to_net81_ns": 184,
+      "split_fraction": null
+    },
+    "Y36": {
+      "axis": "Y",
+      "tap_index": 35,
+      "delay_to_net1_ns": 140,
+      "delay_to_net81_ns": 180,
+      "split_fraction": null
+    },
+    "Y37": {
+      "axis": "Y",
+      "tap_index": 36,
+      "delay_to_net1_ns": 144,
+      "delay_to_net81_ns": 176,
+      "split_fraction": null
+    },
+    "Y38": {
+      "axis": "Y",
+      "tap_index": 37,
+      "delay_to_net1_ns": 148,
+      "delay_to_net81_ns": 172,
+      "split_fraction": null
+    },
+    "Y39": {
+      "axis": "Y",
+      "tap_index": 38,
+      "delay_to_net1_ns": 152,
+      "delay_to_net81_ns": 168,
+      "split_fraction": null
+    },
+    "Y40": {
+      "axis": "Y",
+      "tap_index": 39,
+      "delay_to_net1_ns": 156,
+      "delay_to_net81_ns": 164,
+      "split_fraction": null
+    },
+    "Y41": {
+      "axis": "Y",
+      "tap_index": 40,
+      "delay_to_net1_ns": 160,
+      "delay_to_net81_ns": 160,
+      "split_fraction": null
+    },
+    "Y42": {
+      "axis": "Y",
+      "tap_index": 41,
+      "delay_to_net1_ns": 164,
+      "delay_to_net81_ns": 156,
+      "split_fraction": null
+    },
+    "Y43": {
+      "axis": "Y",
+      "tap_index": 42,
+      "delay_to_net1_ns": 168,
+      "delay_to_net81_ns": 152,
+      "split_fraction": null
+    },
+    "Y44": {
+      "axis": "Y",
+      "tap_index": 43,
+      "delay_to_net1_ns": 172,
+      "delay_to_net81_ns": 148,
+      "split_fraction": null
+    },
+    "Y45": {
+      "axis": "Y",
+      "tap_index": 44,
+      "delay_to_net1_ns": 176,
+      "delay_to_net81_ns": 144,
+      "split_fraction": null
+    },
+    "Y46": {
+      "axis": "Y",
+      "tap_index": 45,
+      "delay_to_net1_ns": 180,
+      "delay_to_net81_ns": 140,
+      "split_fraction": null
+    },
+    "Y47": {
+      "axis": "Y",
+      "tap_index": 46,
+      "delay_to_net1_ns": 184,
+      "delay_to_net81_ns": 136,
+      "split_fraction": null
+    },
+    "Y48": {
+      "axis": "Y",
+      "tap_index": 47,
+      "delay_to_net1_ns": 188,
+      "delay_to_net81_ns": 132,
+      "split_fraction": null
+    },
+    "Y49": {
+      "axis": "Y",
+      "tap_index": 48,
+      "delay_to_net1_ns": 192,
+      "delay_to_net81_ns": 128,
+      "split_fraction": null
+    },
+    "Y50": {
+      "axis": "Y",
+      "tap_index": 49,
+      "delay_to_net1_ns": 196,
+      "delay_to_net81_ns": 124,
+      "split_fraction": null
+    },
+    "Y51": {
+      "axis": "Y",
+      "tap_index": 50,
+      "delay_to_net1_ns": 200,
+      "delay_to_net81_ns": 120,
+      "split_fraction": null
+    },
+    "Y52": {
+      "axis": "Y",
+      "tap_index": 51,
+      "delay_to_net1_ns": 204,
+      "delay_to_net81_ns": 116,
+      "split_fraction": null
+    },
+    "Y53": {
+      "axis": "Y",
+      "tap_index": 52,
+      "delay_to_net1_ns": 208,
+      "delay_to_net81_ns": 112,
+      "split_fraction": null
+    },
+    "Y54": {
+      "axis": "Y",
+      "tap_index": 53,
+      "delay_to_net1_ns": 212,
+      "delay_to_net81_ns": 108,
+      "split_fraction": null
+    },
+    "Y55": {
+      "axis": "Y",
+      "tap_index": 54,
+      "delay_to_net1_ns": 216,
+      "delay_to_net81_ns": 104,
+      "split_fraction": null
+    },
+    "Y56": {
+      "axis": "Y",
+      "tap_index": 55,
+      "delay_to_net1_ns": 220,
+      "delay_to_net81_ns": 100,
+      "split_fraction": null
+    },
+    "Y57": {
+      "axis": "Y",
+      "tap_index": 56,
+      "delay_to_net1_ns": 224,
+      "delay_to_net81_ns": 96,
+      "split_fraction": null
+    },
+    "Y58": {
+      "axis": "Y",
+      "tap_index": 57,
+      "delay_to_net1_ns": 228,
+      "delay_to_net81_ns": 92,
+      "split_fraction": null
+    },
+    "Y59": {
+      "axis": "Y",
+      "tap_index": 58,
+      "delay_to_net1_ns": 232,
+      "delay_to_net81_ns": 88,
+      "split_fraction": null
+    },
+    "Y60": {
+      "axis": "Y",
+      "tap_index": 59,
+      "delay_to_net1_ns": 236,
+      "delay_to_net81_ns": 84,
+      "split_fraction": null
+    },
+    "Y61": {
+      "axis": "Y",
+      "tap_index": 60,
+      "delay_to_net1_ns": 240,
+      "delay_to_net81_ns": 80,
+      "split_fraction": null
+    },
+    "Y62": {
+      "axis": "Y",
+      "tap_index": 61,
+      "delay_to_net1_ns": 244,
+      "delay_to_net81_ns": 76,
+      "split_fraction": null
+    },
+    "Y63": {
+      "axis": "Y",
+      "tap_index": 62,
+      "delay_to_net1_ns": 248,
+      "delay_to_net81_ns": 72,
+      "split_fraction": null
+    },
+    "Y64": {
+      "axis": "Y",
+      "tap_index": 63,
+      "delay_to_net1_ns": 252,
+      "delay_to_net81_ns": 68,
+      "split_fraction": null
+    },
+    "Y65": {
+      "axis": "Y",
+      "tap_index": 64,
+      "delay_to_net1_ns": 256,
+      "delay_to_net81_ns": 64,
+      "split_fraction": null
+    },
+    "Y66": {
+      "axis": "Y",
+      "tap_index": 65,
+      "delay_to_net1_ns": 260,
+      "delay_to_net81_ns": 60,
+      "split_fraction": null
+    },
+    "Y67": {
+      "axis": "Y",
+      "tap_index": 66,
+      "delay_to_net1_ns": 264,
+      "delay_to_net81_ns": 56,
+      "split_fraction": null
+    },
+    "Y68": {
+      "axis": "Y",
+      "tap_index": 67,
+      "delay_to_net1_ns": 268,
+      "delay_to_net81_ns": 52,
+      "split_fraction": null
+    },
+    "Y69": {
+      "axis": "Y",
+      "tap_index": 68,
+      "delay_to_net1_ns": 272,
+      "delay_to_net81_ns": 48,
+      "split_fraction": null
+    },
+    "Y70": {
+      "axis": "Y",
+      "tap_index": 69,
+      "delay_to_net1_ns": 276,
+      "delay_to_net81_ns": 44,
+      "split_fraction": null
+    },
+    "Y71": {
+      "axis": "Y",
+      "tap_index": 70,
+      "delay_to_net1_ns": 280,
+      "delay_to_net81_ns": 40,
+      "split_fraction": null
+    },
+    "Y72": {
+      "axis": "Y",
+      "tap_index": 71,
+      "delay_to_net1_ns": 284,
+      "delay_to_net81_ns": 36,
+      "split_fraction": null
+    },
+    "Y73": {
+      "axis": "Y",
+      "tap_index": 72,
+      "delay_to_net1_ns": 288,
+      "delay_to_net81_ns": 32,
+      "split_fraction": null
+    },
+    "Y74": {
+      "axis": "Y",
+      "tap_index": 73,
+      "delay_to_net1_ns": 292,
+      "delay_to_net81_ns": 28,
+      "split_fraction": null
+    },
+    "Y75": {
+      "axis": "Y",
+      "tap_index": 74,
+      "delay_to_net1_ns": 296,
+      "delay_to_net81_ns": 24,
+      "split_fraction": null
+    },
+    "Y76": {
+      "axis": "Y",
+      "tap_index": 75,
+      "delay_to_net1_ns": 300,
+      "delay_to_net81_ns": 20,
+      "split_fraction": null
+    },
+    "Y77": {
+      "axis": "Y",
+      "tap_index": 76,
+      "delay_to_net1_ns": 304,
+      "delay_to_net81_ns": 16,
+      "split_fraction": null
+    },
+    "Y78": {
+      "axis": "Y",
+      "tap_index": 77,
+      "delay_to_net1_ns": 308,
+      "delay_to_net81_ns": 12,
+      "split_fraction": null
+    },
+    "Y79": {
+      "axis": "Y",
+      "tap_index": 78,
+      "delay_to_net1_ns": 312,
+      "delay_to_net81_ns": 8,
+      "split_fraction": null
+    },
+    "Y80": {
+      "axis": "Y",
+      "tap_index": 79,
+      "delay_to_net1_ns": 316,
+      "delay_to_net81_ns": 4,
+      "split_fraction": null
+    },
+    "Y81": {
+      "axis": "Y",
+      "tap_index": 80,
+      "delay_to_net1_ns": 320,
+      "delay_to_net81_ns": 0,
+      "split_fraction": null
+    }
+  },
+  "additional_copper_nets_not_on_delay_chain": [
+    "A1",
+    "A2",
+    "B1",
+    "YA1",
+    "YA2",
+    "YB1",
+    "YB2"
+  ]
+}

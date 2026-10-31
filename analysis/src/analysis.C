@@ -10,8 +10,13 @@
 #include <vector>
 
 #include "../../include/Object.hh"
+#include "../include/garfield_lut.h"
 
 using namespace std;
+
+static const double SIGMA_MM = 0.749;       // fixed experimental resolution (mm)
+static const double SIGMA_COORD = SIGMA_MM; // Geant4 positions are mm.
+static const double ABOVE_MAX_MARKER = -999.0; // marker for energy above LUT max
 
 static Double_t GetCosTheta(Double_t x1, Double_t y1, double_t z1, Double_t x2, Double_t y2, double_t z2)
 {
@@ -41,9 +46,20 @@ static Double_t GetDistance(Double_t x1, Double_t y1, Double_t x2, Double_t y2)
 }
 
 void analysis(const char *infile = "../../build/root_file/CryMu.root",
-    const char *outfile = "../../build/root_file/CryMuAna.root")
+    const char *outfile = "../../build/root_file/CryMuAna.root",
+    const char *lutfile = "rpc_cluster_params.root")
 {
   TRandom *rand = new TRandom();
+
+  // ── Load Garfield LUT ──────────────────────────────────────────
+  GarfieldLUT lut;
+  bool useLUT = lut.Load(lutfile);
+  if (!useLUT) {
+    cout << "WARNING: Garfield LUT not found, using fixed sigma=" << SIGMA_MM << " mm\n";
+  } else {
+    cout << "Using Garfield LUT: gasGap=" << lut.gasZ << " cm, E="
+         << lut.voltage / lut.gasZ << " V/cm\n";
+  }
 
   TFile *file_in = TFile::Open(infile);
   if (!file_in || !file_in->IsOpen()) {
@@ -53,10 +69,8 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
 
   TTree *tree_in = (TTree *)file_in->Get("tree");
   TClonesArray *Edeps = NULL;
-  //TClonesArray *Tracks = NULL;
   TClonesArray *Event = NULL;
   tree_in->SetBranchAddress("Edeps", &Edeps);
-  //tree_in->SetBranchAddress("Tracks", &Tracks);
   tree_in->SetBranchAddress("Event", &Event);
   tree_in->GetEntry(0);
   TTree *params_in = (TTree *)file_in->Get("params");
@@ -71,13 +85,10 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   TTree *tree_out = new TTree("tree", "tree");
   vector<Double_t> XEdep(nlayer), YEdep(nlayer), ZEdep(nlayer);
   vector<Double_t> XSmeared(nlayer), YSmeared(nlayer);
+  vector<Double_t> ClusterE(nlayer), ClusterR(nlayer);
   Double_t CosThetaEdep, CosThetaSmeared;
   Double_t Ang, AngSmeared;
   Double_t E;
-  Int_t SourcePid;
-  Double_t SourcePx, SourcePy, SourcePz;
-  Double_t SourceX, SourceY, SourceZ;
-  Double_t ThetaP, PhiP;
 
   tree_out->Branch("XEdep", &XEdep);
   tree_out->Branch("YEdep", &YEdep);
@@ -89,110 +100,124 @@ void analysis(const char *infile = "../../build/root_file/CryMu.root",
   tree_out->Branch("Ang", &Ang);
   tree_out->Branch("AngSmeared", &AngSmeared);
   tree_out->Branch("E", &E);
-  //tree_out->Branch("SourcePid", &SourcePid);
-  //tree_out->Branch("SourcePx", &SourcePx);
-  //tree_out->Branch("SourcePy", &SourcePy);
-  //tree_out->Branch("SourcePz", &SourcePz);
-  //tree_out->Branch("ThetaP", &ThetaP);
-  //tree_out->Branch("PhiP", &PhiP);
-  //tree_out->Branch("SourceX", &SourceX);
-  //tree_out->Branch("SourceY", &SourceY);
-  //tree_out->Branch("SourceZ", &SourceZ);
+  tree_out->Branch("ClusterE", &ClusterE);
+  tree_out->Branch("ClusterR", &ClusterR);
 
+  struct RawHit { double x, y, e; int pid; };
+  struct Cluster { double x, y, e; int pid; double rlut; };
 
-  // Temporaries.
-  vector<Double_t> X2(nlayer), Y2(nlayer), Z2(nlayer), E2(nlayer);
   Long64_t nvalid = 0;
   struct timeval start, end;
   gettimeofday(&start, NULL);
   double dz = 325 - params->LayerZ[0];
-
   Long64_t nentry = tree_in->GetEntries();
 
   for(Long64_t ientry = 0; ientry < nentry; ientry++) {
     if(ientry % 1000 == 0) {
-      cout << "Processing progress: " << fixed << setprecision(2) << (ientry / (double)nentry) * 100 << "%" << endl;
+      cout << "Processing progress: " << fixed << setprecision(2)
+           << (ientry / (double)nentry) * 100 << "%" << endl;
     }
     tree_in->GetEntry(ientry);
 
     bool valid = true;
-    
-    // Simulate detector response.
-    E2.assign(E2.size(), 0);
-    X2.assign(X2.size(), 0);
-    Y2.assign(Y2.size(), 0);
-    Z2.assign(Z2.size(), 0);
+    // Collect raw hits per layer
+    vector<vector<RawHit>> layerHits(nlayer);
     Int_t nedep = Edeps->GetEntries();
-    //Int_t ntrack = Tracks->GetEntries();
-
     for(Int_t iedep = 0; iedep < nedep; ++iedep) {
       auto edep = (Edep *)Edeps->UncheckedAt(iedep);
-      assert((size_t)edep->Id < E2.size());
-      string process = edep->Process >= 0 ? ((Process *)Processes->UncheckedAt(edep->Process))->Name : "";
-      //cout << "Processing Edep: id=" << edep->Id << " pid=" << edep->Pid << " trackid=" << edep->trackID << " process=" << process << endl;
-
-      E2[edep->Id] += edep->Value;
-      X2[edep->Id] += edep->Value * edep->X;
-      Y2[edep->Id] += edep->Value * edep->Y;
-      Z2[edep->Id] += edep->Value * params->LayerZ[edep->Id];
+      if ((size_t)edep->Id >= nlayer) continue;
+      layerHits[edep->Id].push_back({edep->X, edep->Y, edep->Value, edep->Pid});
     }
 
     for (size_t l = 0; l < nlayer; ++l) {
-      
-      bool trigger = (E2[0] > 0 && E2[1] > 0) || (E2[1] > 0 && E2[2] > 0) || (E2[2] > 0 && E2[3] > 0);
-      if(!trigger) {
-        valid = false;
-        break;
-      }
-      
-      XEdep[l] = X2[l] / E2[l];
-      YEdep[l] = Y2[l] / E2[l];     
-      ZEdep[l] = Z2[l] / E2[l] + dz;
+      auto &hits = layerHits[l];
 
-      // Simulate detector resolution.
-      Double_t radius, phi, deltaphi, newphi;
-      Double_t sigma = 0.749;  // mm
-      radius = hypot(XEdep[l], YEdep[l]);  // mm
-      if(radius == 0) {
-        XSmeared[l] = XEdep[l];
-        YSmeared[l] = YEdep[l];
+      // Energy-weighted barycenter (unchanged)
+      double sumE = 0, sumX = 0, sumY = 0;
+      for (auto &h : hits) { sumE += h.e; sumX += h.e * h.x; sumY += h.e * h.y; }
+      if (sumE <= 2.72e-5) { valid = false; break; }
+      XEdep[l] = sumX / sumE;
+      YEdep[l] = sumY / sumE;
+      ZEdep[l] = params->LayerZ[l] + dz;
+
+      // ── Cluster merging on RAW hits (cross-pid supported) ──
+      if (useLUT && hits.size() >= 2) {
+        // Sort by energy descending (seed = largest energy hit)
+        sort(hits.begin(), hits.end(),
+             [](const RawHit &a, const RawHit &b) { return a.e > b.e; });
+
+        vector<Cluster> clusters;
+        for (auto &h : hits) {
+          // Use fixed experimental sigma as the merging criterion
+          // (the user wants merge based on sigma=0.749 mm)
+          bool merged = false;
+          for (auto &c : clusters) {
+            double d = GetDistance(h.x, h.y, c.x, c.y);
+            // Merge if distance < 2 * sigma  (fixed, not from LUT)
+            if (d < 2.0 * SIGMA_COORD) {
+              double E_total = c.e + h.e;
+              // Cross-pid energy-weighted LUT radius:
+              // R = (c.e/E_total)*LUT[c.pid](E_total) + (h.e/E_total)*LUT[h.pid](E_total)
+              double R_LUT = lut.InterpolateRMS(c.pid, h.pid, c.e, h.e);
+              // Flag if above max
+              if (lut.IsAboveMax(E_total)) { c.rlut = ABOVE_MAX_MARKER; }
+              else { c.rlut = R_LUT; }
+              // Barycenter merge
+              c.x = (c.x * c.e + h.x * h.e) / E_total;
+              c.y = (c.y * c.e + h.y * h.e) / E_total;
+              c.e = E_total;
+              merged = true;
+              break;
+            }
+          }
+          if (!merged) {
+            double r = lut.InterpolateRMS(h.pid, h.e);
+            if (lut.IsAboveMax(h.e)) r = ABOVE_MAX_MARKER;
+            clusters.push_back({h.x, h.y, h.e, h.pid, r});
+          }
+        }
+
+        // Dominant cluster = largest energy after merging
+        size_t best = 0;
+        for (size_t i = 1; i < clusters.size(); ++i)
+          if (clusters[i].e > clusters[best].e) best = i;
+
+        auto &dom = clusters[best];
+        ClusterE[l] = dom.e;
+        ClusterR[l] = dom.rlut == ABOVE_MAX_MARKER ? ABOVE_MAX_MARKER : 10.0 * dom.rlut;
+
+        // ── Smear with FIXED experimental sigma ────────────
+        XSmeared[l] = dom.x + rand->Gaus(0, SIGMA_COORD);
+        YSmeared[l] = dom.y + rand->Gaus(0, SIGMA_COORD);
       } else {
-        phi = atan2(YEdep[l], XEdep[l]);
-        deltaphi = rand->Gaus(0, sigma) / radius;
-        newphi = phi + deltaphi;
-        XSmeared[l] = radius * cos(newphi);
-        YSmeared[l] = radius * sin(newphi);
+        // Single hit or no LUT
+        ClusterE[l] = sumE;
+        if (useLUT) {
+          int pid0 = hits.empty() ? 13 : hits[0].pid;
+          double r = lut.InterpolateRMS(pid0, sumE);
+          ClusterR[l] = lut.IsAboveMax(sumE) ? ABOVE_MAX_MARKER : 10.0 * r;
+        } else {
+          ClusterR[l] = SIGMA_COORD;
+        }
+        // Smear with fixed sigma
+        XSmeared[l] = XEdep[l] + rand->Gaus(0, SIGMA_COORD);
+        YSmeared[l] = YEdep[l] + rand->Gaus(0, SIGMA_COORD);
       }
-      
     }
 
-    CosThetaEdep = GetCosTheta(XEdep, YEdep, ZEdep);
+    if (!valid) continue;
+
+    CosThetaEdep   = GetCosTheta(XEdep,    YEdep,    ZEdep);
     CosThetaSmeared = GetCosTheta(XSmeared, YSmeared, ZEdep);
-    Ang = TMath::ACos(CosThetaEdep);
+    Ang      = TMath::ACos(CosThetaEdep);
     AngSmeared = TMath::ACos(CosThetaSmeared);
-    //cout << "ang: " << Ang << endl;
 
     auto event = (::Event *)Event->UncheckedAt(0);
-    E = event->E, SourcePid = event->Pid;
-    //SourcePx = event->Px, SourcePy = event->Py, SourcePz = event->Pz;
-    //ThetaP = TMath::ATan(TMath::Sqrt(SourcePx*SourcePx + SourcePy*SourcePy) / SourcePz);
-    //PhiP = TMath::ATan(SourcePy / SourcePx);
-    //SourceX = event->X, SourceY = event->Y, SourceZ = event->Z;
+    E = event->E;
 
-    if (!valid) continue;
     nvalid++;
-
     tree_out->Fill();
   }
-
-  gettimeofday(&end, NULL);
-  time_t elapsedTime = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
-  printf("time = %lf s\n", elapsedTime / 1e6);
-  cout << "Event count: " << nentry << endl;
-  cout << "Event valid: " << nvalid << endl;
-  double quotient = static_cast<double>(nvalid) / nentry;
-  double efficiency = quotient * 100;
-  cout << "Efficiency: " << fixed << setprecision(2) << efficiency << "%" << endl;
 
   file_out->cd();
   file_out->Write(NULL, TObject::kOverwrite);

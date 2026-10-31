@@ -1,0 +1,9 @@
+/build-rpc/
+/build/
+/.part1_build/
+/.presentation*/
+/.presentation*.txt
+/deliverables/
+/rpc_response/results/
+__pycache__/
+*.pyc

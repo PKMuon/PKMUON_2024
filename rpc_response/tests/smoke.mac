@@ -1,0 +1,8 @@
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/random/setSeeds 12345 67890
+# Launch with MUPOS_RPC_PENCIL_BEAM=1 (existing production source is Gaisser-Tang).
+/rlt/SetFileName ../rpc_response/results/geant4_smoke.root
+/run/beamOn 200

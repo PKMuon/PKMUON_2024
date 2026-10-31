@@ -1,0 +1,67 @@
+schema_version: 1
+units: {length: mm, time: ns, energy: eV, pressure: Torr, temperature: K}
+gas:
+  composition_percent: {C2H2F4: 100.0}
+  temperature_k: 298.15
+  pressure_torr: 760.0
+geometry:
+  gas_gap_mm: 2.0
+  glass_thickness_each_mm: 2.7
+  active_electrode_size_mm: [280.0, 280.0]
+  orientation: horizontal_aligned_only
+voltage:
+  external_electrode_v: 10100.0
+  effective_gas_v: 10100.0
+  field_v_per_cm: 50500.0
+  note: User confirmed low-rate DC steady-state approximation; glass voltage drop neglected.
+readout:
+  mode: empirical_ideal_spatial_multi
+  mode_note: Manifest only; invoke rpc_digitize with --spatial-multi 5 explicitly.
+  spatial_separation_sigma_factor: 5.0
+  spatial_separation_scan_sigma_factors: [3.0, 5.0, 10.0]
+  spatial_separation_mm: 3.745
+  spatial_multi_note: User-authorized ideal spatial response using simulated track centroids; not calibrated waveform or delay-line pairing.
+  sigma_x_mm: 0.749
+  sigma_y_mm: 0.749
+  coincidence_window_ns: 50.0
+  coincidence_window_definition: event_grouping_after_delay_correction_not_raw_tdc_gate
+  delay_x_mm_per_ns: null
+  delay_y_mm_per_ns: null
+  dead_time_ns: null
+  two_pulse_resolution_ns: null
+  delay_block_model: 1507-40A
+  delay_blocks_per_axis: 8
+  nominal_block_delay_ns: 40.0
+  nominal_tap_delay_ns: 4.0
+  nominal_chain_delay_ns: 320.0
+  nominal_tap_intervals: 80
+  nominal_readout_positions: 81
+  nominal_pitch_x_mm: 3.457
+  nominal_pitch_y_mm: 3.463
+  nominal_x_offset_mm: 1.062
+  tap_to_strip_mapping: assumed_sequential_matching_current_geometry
+  timing_noise_model: equal_independent_endpoint_jitter_from_spatial_sigma_not_unique
+physics:
+  ionization_owner: geant4_local_deposit
+  w_ev: null
+  ionization_fluctuations: uncalibrated
+  intrinsic_avalanche_saturation: uncalibrated
+  inter_avalanche_space_charge: excluded_first_stage
+  measured_sigma_scope: assumed_total_single_hit_core
+status: empirical_baseline_and_transport_tools_only
+muon_standard:
+  particle: mu-
+  kinetic_energy_ev: 1000000000.0
+  incidence_deg: 0.0
+  sample_events: 10000
+  seed: 20261019
+  position_distribution: uniform_x_y_minus100_to100_mm
+  ionization_owner: standalone_Heed_with_delta_cascade
+  avalanche_model: cached_independent_linear_single_electron_reference
+  charge_status: invalid_if_any_electron_draw_exceeds_guard
+  coordinate_model: true_crossing_plus_empirical_total_sigma_via_nominal_delay_endpoints
+  standard_energy_grid_gev: [0.1, 0.3, 1.0, 3.0, 10.0, 100.0]
+  independent_validation_energies_gev: [0.2, 0.6, 2.0, 6.0, 30.0]
+  interpolation: whole_event_log_energy_convex_mixture
+  extrapolation: disabled
+  interpolation_domain: normal_incidence_mu_minus_same_gas_gap_field_and_sigma_only

@@ -35,6 +35,8 @@
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
 #include "Run.hh"
+#include <TRandom.h>
+#include <cstdlib>
 
 int main(int argc, char **argv)
 {
@@ -49,6 +51,8 @@ int main(int argc, char **argv)
   uint64_t seed = Run::GetSeed();
   G4cout << "seed=" << seed << G4endl;
   G4Random::setTheSeed(seed);
+  // TH2::GetRandom2 in the existing Gaisser-Tang source uses ROOT's RNG.
+  if (const char *rootSeed = std::getenv("MUPOS_ROOT_SEED")) gRandom->SetSeed(std::stoull(rootSeed));
 
   G4RunManager *runManager = new G4RunManager;
 

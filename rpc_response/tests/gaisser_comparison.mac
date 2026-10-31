@@ -1,0 +1,10 @@
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/random/setSeeds 20261020 87654321
+/gun/setMinEnergy 0.1 GeV
+/gun/setMaxEnergy 1000 GeV
+/rlt/SetFileName ../rpc_response/results/comparison_20261020/gaisser_100k.root
+/run/printProgress 10000
+/run/beamOn 100000

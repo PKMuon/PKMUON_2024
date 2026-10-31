@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "authorization": "2026-10-30 user authorized literature values and sensitivity scans",
+  "provenance_registry": "rpc_response/references.json",
+  "parameters": {
+    "glass_er": {
+      "baseline": 8,
+      "scan": [
+        6,
+        8,
+        10
+      ],
+      "references": [
+        "R008",
+        "R010"
+      ],
+      "note": "8 and 10 are literature examples; 6 is a sensitivity preset, not a measured bound",
+      "priority_status": "fallback: no numerical value identified in R013/R014/R015 detector description"
+    },
+    "glass_bulk_resistivity_ohm_cm": {
+      "baseline": 1000000000000.0,
+      "scan": [
+        10000000000.0,
+        100000000000.0,
+        1000000000000.0
+      ],
+      "references": [
+        "R008",
+        "R010"
+      ],
+      "priority_status": "fallback: no numerical value identified in R013/R014/R015 detector description"
+    },
+    "pet_er": {
+      "baseline": 3.25,
+      "scan": [
+        2.8,
+        3.25,
+        3.7
+      ],
+      "references": [
+        "R011"
+      ],
+      "note": "baseline is manufacturer typical PET at 25C,1kHz; 2.8 and 3.7 are sensitivity presets, not uncertainty bounds or a fitted dispersion law",
+      "priority_status": "fallback: no numerical value identified in R013/R014/R015 detector description"
+    },
+    "graphite_sheet_ohm_sq": {
+      "baseline": 10000000,
+      "scan": [
+        300000,
+        1000000,
+        3000000,
+        10000000,
+        30000000
+      ],
+      "references": [
+        "R014",
+        "R015",
+        "R010"
+      ],
+      "note": "10 MOhm/sq from same-family PKU RPC papers; 0.3M is old external-literature comparison, 1M/3M/30M are sensitivity presets, not material uncertainty bounds"
+    },
+    "graphite_er": {
+      "baseline": 10,
+      "scan": [
+        8,
+        10,
+        12
+      ],
+      "references": [
+        "R010"
+      ],
+      "note": "10 is the adopted model value from Table3; 8 and 12 are sensitivity presets",
+      "priority_status": "fallback: no numerical value identified in R013/R014/R015 detector description"
+    },
+    "graphite_thickness_mm": {
+      "baseline": 0.2,
+      "scan": [
+        0.02,
+        0.1,
+        0.2
+      ],
+      "references": [
+        "R010"
+      ],
+      "note": "0.2 is project geometry,0.1 is Table3 example,0.02 is sensitivity preset; keep sheet resistance fixed when thickness changes"
+    },
+    "glass_thickness_mm": {
+      "baseline": 2.7,
+      "source": "config/newrpc.yaml",
+      "category": "project_geometry",
+      "literature_comparison": {
+        "value": 2.6,
+        "references": [
+          "R013",
+          "R014",
+          "R015"
+        ],
+        "reason_not_adopted": "Current project geometry specifies 2.7 mm"
+      }
+    },
+    "pet_thickness_mm": {
+      "baseline": 0.1,
+      "source": "config/newrpc.yaml",
+      "category": "project_geometry",
+      "references": [
+        "R013",
+        "R015"
+      ]
+    },
+    "gas_gap_mm": {
+      "baseline": 2.0,
+      "source": "config/newrpc.yaml",
+      "category": "project_geometry",
+      "references": [
+        "R013",
+        "R014",
+        "R015"
+      ]
+    },
+    "fr4_er": {
+      "baseline": 4.8,
+      "source": "user PCB LAYER1DIELCONST",
+      "category": "pcb_design"
+    }
+  },
+  "status": "PKU-priority parameter manifest; actual PCB geometry and confirmed pure gas/high voltage retained",
+  "full_response_requirements": "3D segmented-electrode boundaries; resistive-layer dynamics; explicit circuit loading and actual charge histories",
+  "source_priority": [
+    "actual project measurements, PCB and user-confirmed operating conditions",
+    "R013 PKU proposal and direct related RPC references R014/R015",
+    "other literature fallback",
+    "explicit sensitivity presets"
+  ]
+}

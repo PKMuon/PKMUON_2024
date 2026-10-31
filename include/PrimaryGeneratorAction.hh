@@ -50,6 +50,8 @@ private:
   G4int InputState;
   G4int fNPrimary;
   G4double fDetectorMaxZ, fDetectorHalfX, fDetectorHalfY;
+  G4double fPlaneSourceZ=0, fPlaneHalfX=0, fPlaneHalfY=0;
+  std::vector<G4double> fPlaneGasCenters;
 };
 
 #endif

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "EdepData.hh"
+#include "RpcSegment.hh"
 #include "globals.hh"
 
 class TFile;
@@ -21,6 +22,7 @@ class PrimaryGeneratorAction;
 class DetectorConstruction;
 class G4Step;
 class G4Track;
+class G4ParticleGun;
 class Event;
 
 class Run {
@@ -37,6 +39,7 @@ public:
   void FillAndReset();
   void AutoSave();
   void AddStep(const G4Step *);
+  void RecordPrimary(G4ParticleGun *, G4int mode=0, G4int proposals=1);
   Event *GetEvent();
 
 
@@ -58,9 +61,19 @@ private:
   std::map<EdepKey, EdepValue> fEdep;
   std::vector<bool> fStatus;
   G4long fIEvent;
+  bool fLutReady = false;
+  TTree *fRpcSegments = nullptr;
+  RpcSegment fRpcSegment;
+  std::vector<G4double> fRpcGapCenters;
+  G4double fRpcGasHalfZ = 0;
+  TTree *fRpcPrimaries = nullptr, *fRpcLegacyEdeps = nullptr;
+  RpcPrimary fRpcPrimary;
+  RpcLegacyEdep fRpcLegacyEdep;
+  std::map<int,int> fRpcParents;
 
 
   void BuildProcessMap();
+  void RecordRpcSegment(const G4Step *);
 };
 
 #endif  // GEANT4_INTRODUCTION_RUN_H
