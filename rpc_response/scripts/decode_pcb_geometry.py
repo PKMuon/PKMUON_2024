@@ -37,7 +37,7 @@ while o<len(b):
 assert len(pads)==count('Pads6')
 board=props(blocks(s['Board6/Data'])[0]);stack={k:v for k,v in board.items() if k in ['LAYER1COPTHICK','LAYER1DIELCONST','LAYER1DIELHEIGHT','LAYER1DIELMATERIAL','TOPCONST','TOPHEIGHT','BOTTOMCONST','BOTTOMHEIGHT']}
 data=dict(source=str(SOURCE),sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),units='mm',status='decoded copper primitives; not yet complete FEM geometry; arcs/vias/regions/polygons retained in raw streams',stackup_declared=stack,nets=[n['NAME'] for n in nets],components=components,fills=fills,tracks=tracks,pads=pads)
-(OUT/'pcb_geometry.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
+(Path(__file__).resolve().parents[2]/'config/pcb_geometry.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
 with (OUT/'pad_nets.csv').open('w',newline='',encoding='utf-8-sig') as f:
  w=csv.DictWriter(f,fieldnames=list(pads[0]));w.writeheader();w.writerows(pads)
 print(json.dumps({'counts':{k:len(data[k]) for k in ['nets','components','fills','tracks','pads']},'stackup':stack,'net_names':data['nets']},ensure_ascii=False))

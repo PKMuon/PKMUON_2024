@@ -19,7 +19,7 @@ status=status.rename(columns={'n_outside_linear_guard':'n_above_population_marke
 generation=json.loads((W/'currents_generation.json').read_text()) if (W/'currents_generation.json').exists() else {'population_marker':10000000}
 marker=generation['population_marker']
 curr=np.fromfile(W/'currents.f64',dtype='<f8').reshape(N,600);dt=.1;shape_t=np.arange(601)*dt;h=(shape_t/5)*np.exp(1-shape_t/5)
-g=json.loads((R/'rpc_response/config/pcb_geometry.json').read_text(encoding='utf-8'));centres={}
+g=json.loads((R/'config/pcb_geometry.json').read_text(encoding='utf-8'));centres={}
 for axis in ['X','Y']:
  c=[]
  for n in range(1,82):
@@ -47,13 +47,13 @@ for i,r in enumerate(ev.itertuples(index=False)):
 df=pd.DataFrame(rows);df.to_csv(P/'muon_four_trigger_times.csv',index=False);pd.DataFrame({'time_ns':t,**example}).to_csv(P/'event0_shaped_waveforms.csv',index=False)
 plt.rcParams.update({'font.size':12,'xtick.direction':'in','ytick.direction':'in','xtick.top':True,'ytick.right':True,'axes.linewidth':1.2})
 for guarded in [False,True]:
- fig,axes=plt.subplots(1,2,figsize=(13,5.3))
+ fig,axes=plt.subplots(1,2,figsize=(13,6.2))
  for ax,axis in zip(axes,['X','Y']):
   ok=df[axis+'_timing_valid']
   if guarded:ok=ok&df.below_population_marker
   hist=ax.hist2d(df.loc[ok,'T_'+axis+'1_ns'],df.loc[ok,'T_'+axis+'81_ns'],bins=[np.linspace(20,340,161)]*2,cmin=1,cmap='viridis');fig.colorbar(hist[3],ax=ax,label='Events / (2 ns x 2 ns)')
   ax.set(xlabel=f'T({axis} net1), 20% crossing (ns)',ylabel=f'T({axis} net81), 20% crossing (ns)',title=f'{axis} direction: {int(ok.sum())} timed events');ax.set_aspect('equal');ax.minorticks_on()
  title=f'Below user population marker {marker:.0e}' if guarded else f'Unsaturated linear reference; user marker {marker:.0e}, no population-based rejection'
- fig.suptitle('1 GeV mu- Heed sample: '+title,fontsize=14);fig.tight_layout();name='below_marker_time_2d' if guarded else 'muon1GeV_time_2d';fig.savefig(P/(name+'.png'),dpi=190);fig.savefig(P/(name+'.pdf'));plt.close(fig)
+ fig.suptitle('1 GeV mu- Heed sample',fontsize=14,y=.98);fig.tight_layout(rect=(0,.04,1,.94),pad=1.8);name='below_marker_time_2d' if guarded else 'muon1GeV_time_2d';fig.savefig(P/(name+'.png'),dpi=190,bbox_inches='tight',pad_inches=.2);fig.savefig(P/(name+'.pdf'),bbox_inches='tight',pad_inches=.2);plt.close(fig)
 summary={'source':'existing standalone TrackHeed mu- sample, kinetic energy 1GeV, normal +Z incidence, uniform x,y[-100,100]mm, t0=0','source_events':N,'ionization_seed':20261019,'avalanche_seed':20261031,'local_current':'sum of all starting electrons at actual Heed birth times and drift distances; independent linear birth/death histories, 0.01mm steps','new_run':'new avalanche and waveform digitization; reused existing Heed ionization, not a new Geant4 run','below_marker_events':int(df.below_population_marker.sum()),'above_marker_events':int((~df.below_population_marker).sum()),'population_marker':marker,'marker_meaning':'user-selected diagnostic marker, not a physical saturation/validity boundary; no clipping or resampling; raising marker does not remove space-charge limitations','timing_valid':{a:int(df[a+'_timing_valid'].sum()) for a in ['X','Y']},'assumptions':['4mm FWHM Gaussian sharing assigned around incident muon x/y; individual delta-electron transverse offsets not available in source CSV','5ns preset unipolar shaping','equal X/Y and endpoint splitting','no space charge/saturation, noise or empirical coordinate sigma'],'threshold_fraction':.2,'dt_ns':dt,'references':['R001','R002','R006','R007','R014','R015'],'source_sha256':hashlib.sha256((S/'muon_1GeV_normal_v1_electrons.csv').read_bytes()).hexdigest()}
 (P/'summary.json').write_text(json.dumps(summary,indent=2),encoding='utf-8');print(json.dumps(summary))

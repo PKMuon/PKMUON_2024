@@ -23,7 +23,7 @@ def route(rows,topology,dt=.1,end=500,fraction_to_1=.5):
             delay=r['delay_to_net'+side+'_ns'];deposit(out[r['axis']+'_net'+side],row.t0_ns+delay,row.t1_ns+delay,q*fraction,dt)
     return {'t_center_ns':(np.arange(nb)+.5)*dt,**strips,**out}
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('input');p.add_argument('output');p.add_argument('--topology',default=str(Path(__file__).parents[1]/'config/pcb_delay_topology.json'));p.add_argument('--dt-ns',type=float,default=.1);p.add_argument('--end-ns',type=float,default=500);p.add_argument('--fraction-to-net1',type=float,default=.5);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('input');p.add_argument('output');p.add_argument('--topology',default=str(Path(__file__).parents[2]/'config/pcb_delay_topology.json'));p.add_argument('--dt-ns',type=float,default=.1);p.add_argument('--end-ns',type=float,default=500);p.add_argument('--fraction-to-net1',type=float,default=.5);a=p.parse_args()
     dest=Path(a.output)
     if dest.exists():raise FileExistsError(dest)
     topology=json.loads(Path(a.topology).read_text(encoding='utf-8'));rows=pd.read_csv(a.input,dtype={'net':str});data=route(rows,topology,a.dt_ns,a.end_ns,a.fraction_to_net1)

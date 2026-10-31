@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from trigger_readout import trigger,coordinate
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('input');p.add_argument('output');p.add_argument('--fraction',type=float,default=.2);p.add_argument('--geometry',default=str(Path(__file__).parents[1]/'config/pcb_geometry.json'));a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('input');p.add_argument('output');p.add_argument('--fraction',type=float,default=.2);p.add_argument('--geometry',default=str(Path(__file__).parents[2]/'config/pcb_geometry.json'));a=p.parse_args()
  dest=Path(a.output)
  if dest.exists():raise FileExistsError(dest)
  g=json.loads(Path(a.geometry).read_text(encoding='utf-8'));centres={}

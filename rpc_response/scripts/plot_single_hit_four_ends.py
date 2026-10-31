@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import fftconvolve
 from strip_delay_readout import route
 R=Path(__file__).resolve().parents[2];P=R/'deliverables/Single_Hit_Four_Ends_20261031';P.mkdir(parents=True,exist_ok=True)
-trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv');top=json.loads((R/'rpc_response/config/pcb_delay_topology.json').read_text())
+trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv');top=json.loads((R/'config/pcb_delay_topology.json').read_text())
 rows=[]
 for net in ['11','Y21']:
  for r in trace.itertuples(index=False):rows.append(dict(net=net,t0_ns=r.t0_ns,t1_ns=r.t1_ns,current_nA=r.current_nA*.5))

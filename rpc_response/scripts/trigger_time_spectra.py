@@ -17,7 +17,7 @@ from trigger_readout import trigger,coordinate
 args=argparse.ArgumentParser();args.add_argument('--events',type=int,default=5000);args.add_argument('--dt-ns',type=float,default=.1);args.add_argument('--output',default='deliverables/Trigger20_Spectra_20261031');args=args.parse_args()
 if args.events<1 or args.dt_ns<=0:raise ValueError('Invalid scan size')
 R=Path(__file__).resolve().parents[2];P=R/args.output;P.mkdir(parents=True,exist_ok=True)
-g=json.loads((R/'rpc_response/config/pcb_geometry.json').read_text(encoding='utf-8'));trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv')
+g=json.loads((R/'config/pcb_geometry.json').read_text(encoding='utf-8'));trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv')
 centres=[]
 for axis in ['X','Y']:
  c=[]

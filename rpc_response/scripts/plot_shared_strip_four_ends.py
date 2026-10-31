@@ -10,7 +10,7 @@ from scipy.signal import fftconvolve
 from strip_charge_sharing import fractions
 from strip_delay_readout import route
 R=Path(__file__).resolve().parents[2];P=R/'deliverables/Shared_Strip_Four_Ends_20261031';P.mkdir(parents=True,exist_ok=True)
-g=json.loads((R/'rpc_response/config/pcb_geometry.json').read_text(encoding='utf-8'));top=json.loads((R/'rpc_response/config/pcb_delay_topology.json').read_text(encoding='utf-8'))
+g=json.loads((R/'config/pcb_geometry.json').read_text(encoding='utf-8'));top=json.loads((R/'config/pcb_delay_topology.json').read_text(encoding='utf-8'))
 trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv');dt=.02;tau=5.;fwhm=4.;sigma=fwhm/(2*np.sqrt(2*np.log(2)))
 # Extract actual channel centres, independent of the old Geant4 idealized geometry.
 xc=[];yc=[]

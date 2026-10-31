@@ -14,7 +14,7 @@ R=Path(__file__).resolve().parents[2]
 P=R/'deliverables/Strip_Waveforms_20261030';P.mkdir(parents=True,exist_ok=True)
 trace=pd.read_csv(R/'rpc_response/examples/single_electron_trace.csv')
 meta=json.loads((R/'rpc_response/examples/single_electron_trace_metadata.json').read_text(encoding='utf-8-sig'))
-top=json.loads((R/'rpc_response/config/pcb_delay_topology.json').read_text())
+top=json.loads((R/'config/pcb_delay_topology.json').read_text())
 rows=[]
 # Each template's total current is divided equally between the X/Y views.
 # Hit B is a shifted/scaled copy, not an independent avalanche realization.

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 sys.path.insert(0,str(Path(__file__).parents[1]/'scripts'))
 from strip_delay_readout import route
-t=json.loads((Path(__file__).parents[1]/'config/pcb_delay_topology.json').read_text())
+t=json.loads((Path(__file__).parents[2]/'config/pcb_delay_topology.json').read_text())
 # Two temporally coincident separated strips must retain two pulses at each end.
 rows=pd.DataFrame([dict(net='11',t0_ns=0.,t1_ns=1.,current_nA=2.),dict(net='71',t0_ns=0.,t1_ns=1.,current_nA=4.)])
 o=route(rows,t,dt=.1,end=400)

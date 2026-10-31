@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection,PatchCollection
 from matplotlib.patches import Rectangle
 P=Path(__file__).resolve().parents[1]/'results/strip_readout_20261030'
-j=json.loads((P/'pcb_geometry.json').read_text(encoding='utf-8'))
+j=json.loads((Path(__file__).resolve().parents[2]/'config/pcb_geometry.json').read_text(encoding='utf-8'))
 edges=[]
 for cid,c in enumerate(j['components']):
  if c['PATTERN']!='Stest2':continue
@@ -24,7 +24,7 @@ for prefix,axis in [('', 'X'),('Y','Y')]:
   routes[name]={'axis':axis,'tap_index':n-1,'delay_to_net1_ns':4*(n-1),'delay_to_net81_ns':4*(81-n),'split_fraction':None}
 extra=sorted({f['net'] for f in j['fills']}|{t['net'] for t in j['tracks']},key=str)
 extra=[n for n in extra if n not in routes and n is not None]
-(P/'pcb_delay_topology.json').write_text(json.dumps({'source_sha256':j['sha256'],'status':'pin netlist decoded; 4 ns uses previously specified 1507-40A; copper routing propagation, impedances and transfer functions not calculated','edges':edges,'signal_routes':routes,'additional_copper_nets_not_on_delay_chain':extra},indent=2),encoding='utf-8')
+(Path(__file__).resolve().parents[2]/'config/pcb_delay_topology.json').write_text(json.dumps({'source_sha256':j['sha256'],'status':'pin netlist decoded; 4 ns uses previously specified 1507-40A; copper routing propagation, impedances and transfer functions not calculated','edges':edges,'signal_routes':routes,'additional_copper_nets_not_on_delay_chain':extra},indent=2),encoding='utf-8')
 plt.rcParams.update({'font.size':12,'xtick.direction':'in','ytick.direction':'in'})
 fig,ax=plt.subplots(figsize=(10,10))
 fills=[f for f in j['fills'] if f['layer'] in [1,32]]
