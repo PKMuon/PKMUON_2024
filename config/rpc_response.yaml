@@ -49,6 +49,14 @@ physics:
   inter_avalanche_space_charge: excluded_first_stage
   measured_sigma_scope: assumed_total_single_hit_core
 status: empirical_baseline_and_transport_tools_only
+waveform_timing_reference:
+  population_marker_electrons: 100000000000000
+  numerical_safety_bound_electrons: 1000000000000000
+  population_marker_source: user_authorized_program_preset_2026_10_31_not_literature_physics
+  population_based_rejection: false
+  avalanche_model: independent_unsaturated_linear_birth_death
+  space_charge_and_saturation: excluded
+  note: Current waveform exporter has matching CLI default; manifest is not auto-loaded. Raising marker does not change avalanche histories.
 muon_standard:
   particle: mu-
   kinetic_energy_ev: 1000000000.0

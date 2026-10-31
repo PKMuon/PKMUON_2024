@@ -1,5 +1,7 @@
 # 条带波形20%判时与位置读出（2026-10-31）
 
+最新用户设定：暂不根据雪崩电子数筛选事例，将波形生成器默认人口标记提高到10^14电子，独立数值安全界限为10^15。该标记不是文献物理界限。波形生成器新增可选第5参数指定标记；输出_generation.json记录实际值。当前默认时间谱路径为`Muon1GeV_Trigger20_HighMarker_20261031`。新表字段`below_population_marker`不代表物理有效，旧的`within_linear_reference_guard`命名不再使用。此前10^7阈值资料保留为历史记录。
+
 新增1GeV源路径：`scripts/muon_waveform_reference.cc`读取既有Heed逐电子CSV，重新抽样各电子家系雪崩并累积事例电流；`scripts/muon_trigger_time_spectra.py`再执行共享、延迟、成形和20%判时。输出见 `../deliverables/Muon1GeV_Trigger20_20261031/`。10000个源事例中9974个超出线性参考界限，全量图仅为未饱和形式参考，26个界限内子样本另图，不能用任一图宣称已预测完整RPC响应。原下面5000样本均匀位置研究仍保留作为算法对照，不与1GeV实际电离事例混同。
 
 旧经验重心入口保留对照。新增的 `scripts/digitize_strip_waveforms.py` 从四端成形波形重新提取时间并重建位置，不直接使用真值位置或端点峰时。
