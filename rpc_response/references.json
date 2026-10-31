@@ -17,7 +17,7 @@
       "url": "https://garfieldpp.web.cern.ch/doxygen/UserGuide.pdf",
       "locator": "Ch. 5 Tracks, Ch. 7 Signals; Getting started weighting-field example",
       "used_for": "Heed/Magboltz接口、逐电极Ramo信号及成形函数",
-      "used_in": "PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/electrode_signals.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; 第一部分报告",
+      "used_in": "PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/electrode_signals.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md; 第一部分报告",
       "checked": "2026-10-30",
       "status": "adopted"
     },
@@ -95,7 +95,7 @@
       "url": "https://pdf.dzsc.com/20090603/200903200838338978.pdf",
       "locator": "Doc #97025；原厂资料转存",
       "used_for": "1507-40A每块40 ns、每抽头4 ns；非实测传输函数",
-      "used_in": "scripts/pcb_readout_topology.py; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; config/rpc_response.yaml",
+      "used_in": "scripts/pcb_readout_topology.py; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md; config/rpc_response.yaml",
       "checked": "2026-10-30",
       "status": "adopted"
     },
@@ -173,7 +173,7 @@
       "url": "https://arxiv.org/abs/2402.13483",
       "locator": "用户本地PDF为v2, 2024-03-02；PDF p.4 Fig.6及正文，p.14 refs.[63–66]；期刊版DOI 10.1103/PhysRevD.110.016017（不能混同版本页码）",
       "used_for": "优先装置谱系：float glass、2 mm气隙、100 μm PET、4 ns延迟；原型2.6 mm玻璃与当前2.7 mm不同；文中未来混合气不覆盖当前纯R134a",
-      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py",
+      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md",
       "checked": "2026-10-30",
       "status": "adopted"
     },
@@ -186,7 +186,7 @@
       "url": "https://doi.org/10.1016/j.nima.2011.10.006",
       "locator": "NIM A 663,22–25；Sec.2,p.23；作者单位公开全文 https://researchgroups.pku.edu.cn/_tsf/00/0E/mYfayyMfyQnq.pdf；R013引用[63]",
       "used_for": "石墨方阻约10^7 Ω/□；同系列原型与前端历史信息。300 MHz与放大器型号不唯一确定传递函数",
-      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py",
+      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md",
       "checked": "2026-10-30",
       "status": "adopted"
     },
@@ -199,7 +199,7 @@
       "url": "https://doi.org/10.1088/1674-1137/37/1/016002",
       "locator": "Chinese Physics C 37,016002；Sec.2,p.016002-2；R013引用[64]",
       "used_for": "再次核对10^7 Ω/□、100 μm PET、1507-40A及4 ns抽头；约4mm电荷轮廓FWHM用作高斯共享演示的宽度参考，非本PCB拟合；所报坐标FWHM与本项目σ分开",
-      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py",
+      "used_in": "PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md",
       "checked": "2026-10-30",
       "status": "adopted"
     }
