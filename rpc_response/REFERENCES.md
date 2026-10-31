@@ -20,7 +20,7 @@ Garfield++ Collaboration，2025.1。类别：manual。
 
 用途：Heed/Magboltz接口、逐电极Ramo信号及成形函数。
 
-使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/electrode_signals.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md; 第一部分报告。
+使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/electrode_signals.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; scripts/muon_trigger_time_spectra.py; TRIGGER20_READOUT.md; 第一部分报告。
 
 
 
@@ -34,7 +34,7 @@ W. Riegler, C. Lippmann, R. Veenhof，2003。类别：paper。
 
 用途：RPC电离、雪崩统计与空间电荷背景。
 
-使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; 第一部分报告。
+使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/muon_waveform_reference.cc; 第一部分报告。
 
 
 
@@ -48,7 +48,7 @@ D. Pfeiffer et al.，2019。类别：paper。
 
 用途：输运/电离模块边界及避免重复计数。
 
-使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; 第一部分报告。
+使用位置：PROGRAM_STRUCTURE_AND_PHYSICS.md; scripts/muon_waveform_reference.cc; 第一部分报告。
 
 
 
@@ -104,7 +104,7 @@ Data Delay Devices Inc.，1997。类别：datasheet。
 
 用途：1507-40A每块40 ns、每抽头4 ns；非实测传输函数。
 
-使用位置：scripts/pcb_readout_topology.py; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md; config/rpc_response.yaml。
+使用位置：scripts/pcb_readout_topology.py; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; scripts/muon_trigger_time_spectra.py; TRIGGER20_READOUT.md; config/rpc_response.yaml。
 
 
 
@@ -188,7 +188,7 @@ Xudong Yu et al.，2024。类别：paper。
 
 用途：优先装置谱系：float glass、2 mm气隙、100 μm PET、4 ns延迟；原型2.6 mm玻璃与当前2.7 mm不同；文中未来混合气不覆盖当前纯R134a。
 
-使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md。
+使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; scripts/muon_trigger_time_spectra.py; TRIGGER20_READOUT.md。
 
 
 
@@ -202,7 +202,7 @@ Qite Li, Yanlin Ye, Chao Wen, Wei Ji, Yushou Song, Rongrong Ma, Chen Zhou, Yuche
 
 用途：石墨方阻约10^7 Ω/□；同系列原型与前端历史信息。300 MHz与放大器型号不唯一确定传递函数。
 
-使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md。
+使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; scripts/muon_trigger_time_spectra.py; TRIGGER20_READOUT.md。
 
 
 
@@ -216,7 +216,7 @@ Qite Li, Yanlin Ye, Wei Ji, Chao Wen, Hongtao Liu, Yucheng Ge，2013。类别：
 
 用途：再次核对10^7 Ω/□、100 μm PET、1507-40A及4 ns抽头；约4mm电荷轮廓FWHM用作高斯共享演示的宽度参考，非本PCB拟合；所报坐标FWHM与本项目σ分开。
 
-使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; TRIGGER20_READOUT.md。
+使用位置：PKU_PARAMETER_PRIORITY.md; config/strip_material_scan.json; STRIP_CONNECTION_LOGIC.md; scripts/strip_delay_readout.py; scripts/plot_strip_waveform_demo.py; scripts/shape_strip_waveforms.py; scripts/plot_single_hit_four_ends.py; scripts/plot_shared_strip_four_ends.py; scripts/trigger_time_spectra.py; scripts/muon_trigger_time_spectra.py; TRIGGER20_READOUT.md。
 
 
 
