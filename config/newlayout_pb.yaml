@@ -30,8 +30,8 @@ world_major_gap:
   hidden: hidden
   solid: bottom_up
   components: [target]
-  x: &rpc_x 400 mm
-  y: &rpc_y 400 mm
+  x: &rpc_x 390 mm
+  y: &rpc_y 390 mm
   z: 220 mm
   offset: [0, 0, 0]
   material: &world_material newrpc_air
