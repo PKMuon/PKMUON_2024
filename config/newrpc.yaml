@@ -97,8 +97,8 @@ newrpc_content_box:
 
 newrpc_cover:
   solid: box
-  x: 400 mm
-  y: 400 mm
+  x: 390 mm
+  y: 390 mm
   z: 3 mm
   material: newrpc_fr4
 
