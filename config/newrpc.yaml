@@ -100,8 +100,8 @@ newrpc_content_box:
 newrpc_without_bottom:
   solid: bottom_up
   components: [newrpc_content_box]
-  x: 400 mm
-  y: 400 mm
+  x: 390 mm
+  y: 390 mm
   z: 40 mm
   offset: [0, 0, -2.5 mm]
   material: newrpc_shell
@@ -115,8 +115,8 @@ newrpc_bottom_connection_gas:
 
 newrpc_cover:
   solid: box
-  x: 400 mm
-  y: 400 mm
+  x: 390 mm
+  y: 390 mm
   z: 3 mm
   material: newrpc_fr4
 
